@@ -3,6 +3,8 @@ const app = express();
 const userController = require("../controllers/user.controllers");
 
 app.route("/").get(userController.landing_page);
+app.route("/logout").get(userController.logout);
+app.route('/user_account').get(userController.user_account)
 
 app
   .route("/user_login")

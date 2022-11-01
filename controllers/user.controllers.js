@@ -18,7 +18,7 @@ module.exports = {
   // render user signup page.------------------------
   user_signup_page: (req, res) => {
     if (!req.session.isAuth) {
-      res.render("user_signup");
+      res.render("user_signup",{emailExist:req.session.exists});
     } else {
       res.redirect("/");
     }
@@ -29,8 +29,10 @@ module.exports = {
   user_signup: async (req, res) => {
     const { first_name, last_name, username, phone_no, email, password } =
       req.body; // asigning user data to variables.
+    req.session.exists = false;
     let user = await userModel.findOne({ email }); // checking if user email exist in database.
     if (user) {
+      req.session.exists = true;
       return res.redirect("/user_signup");
     } // two or more users with same email can't exist.
     const hashedPsw = await bcrypt.hash(password, 12); // else continue and hash password.
@@ -72,4 +74,15 @@ module.exports = {
     req.session.isAuth = true; // then save the state that the user is authenticated.
     res.redirect("/");
   },
+  logout: (req, res) => {
+    req.session.destroy();
+    res.redirect("/");
+  },
+  user_account: (req, res) => {
+    if (req.session.isAuth) {
+      res.render("user_account");
+    } else {
+      res.redirect("/");
+    }
+  }
 };

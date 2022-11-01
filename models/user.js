@@ -11,11 +11,11 @@ var user = new Schema({
   },
   first_name: {
     type: String,
-    required: true
+    // required: true
   },
   last_name: {
     type: String,
-    required: true
+    // required: true
   },
   email: {
     type: String,
@@ -24,7 +24,7 @@ var user = new Schema({
   },
   phone_no: {
     type: Number,
-    required: true
+    // required: true
   },
   password: {
     type: String,
