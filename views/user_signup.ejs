@@ -1,0 +1,37 @@
+<%- include('partials/header.ejs') %>      <!-- header -->
+
+<main class="form-signin m-auto p-5 text-center">
+    <form action="/user_signup" method="post">
+      <img class="mb-4 navbar-brand" src="../public/images/tRavel-logo.png" alt="tRavel-logo">
+      <h1 class="h4 mb-3 fw-normal">Create an account</h1>
+  
+      <div class="form-floating">
+        <input type="text" class="form-control mb-4" id="firstname" placeholder="First Name" name="first_name">
+        <label for="floatingInput">First name</label>
+      </div>
+      <div class="form-floating">
+        <input type="text" class="form-control mb-4" id="lastname" placeholder="Last Name" name="last_name">
+        <label for="floatingInput">Last name</label>
+      </div>
+      <div class="form-floating">
+        <input type="text" class="form-control mb-4" id="username" placeholder="username" name="username">
+        <label for="floatingInput">User name</label>
+      </div>
+      <div class="form-floating">
+        <input type="email" class="form-control mb-4" id="email" placeholder="name@example.com" name="email">
+        <label for="floatingInput">Email address</label>
+      </div>
+      <div class="form-floating">
+        <input type="tel" class="form-control mb-4" id="phoneno" placeholder="9876543210" name="phone_no">
+        <label for="floatingInput">Phone no</label>
+      </div>
+      <div class="form-floating">
+        <input type="password" class="form-control mb-4" id="floatingPassword" placeholder="Password" name="password">
+        <label for="floatingPassword">Password</label>
+      </div>
+      <button class="btn btn-lg btn-primary my-3" type="submit">Create account</button><br>
+      <a href="/user_login"><button class="btn btn-lg btn-primary" type="button">Sign in with existing account</button></a> 
+    </form>
+  </main>
+
+<%- include('partials/footer.ejs') %>      <!-- footer -->
