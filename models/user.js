@@ -1,9 +1,9 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var user = new Schema({
-  type_of_user: {
+  type: {
     type: String,
-    // required: true
+    default: 'user'
   },
   username: {
     type: String,

@@ -5,12 +5,12 @@ module.exports = {
   // render landing_page ----------------------------
   landing_page: (req, res) => {
     if (req.session.isAuth) {
-      res.render("landing_page", {
+      res.render("user/landing_page", {
         login: true,
         username: req.session.user,
       });
     } else {
-      res.render("landing_page", { login: false });
+      res.render("user/landing_page", { login: false });
     }
   },
   // ------------------------------------------------
@@ -18,7 +18,7 @@ module.exports = {
   // render user signup page.------------------------
   user_signup_page: (req, res) => {
     if (!req.session.isAuth) {
-      res.render("user_signup",{emailExist:req.session.exists});
+      res.render("user/user_signup", { emailExist: req.session.exists });
     } else {
       res.redirect("/");
     }
@@ -52,7 +52,7 @@ module.exports = {
   // render user signin page.------------------------
   user_login_page: (req, res) => {
     if (!req.session.isAuth) {
-      res.render("user_login");
+      res.render("user/user_login",{ loginErr: req.session.loginError });
     } else {
       res.redirect("/");
     }
@@ -62,12 +62,16 @@ module.exports = {
   // user login--------------------------------------
   user_login: async (req, res) => {
     const { email, password } = req.body; // asigning user entered datas to variables.
-    const user = await userModel.findOne({ email }); // checking if the email exist in database.
+    const user = await userModel.findOne({
+      $and: [{ email: email }, { type: "user" }],
+    }); // checking if the email exist in database.
     if (!user) {
+      req.session.loginError = "Invalid email or password";
       return res.redirect("/user_login");
     } // If entered email doesn't exist..
     const isMatch = await bcrypt.compare(password, user.password); // If it does exist, check password..
     if (!isMatch) {
+      req.session.loginError = "Invalid email or password";
       return res.redirect("/user_login");
     } // If the password is incorrect..
     req.session.user = user.username; // else continue
@@ -75,14 +79,16 @@ module.exports = {
     res.redirect("/");
   },
   logout: (req, res) => {
-    req.session.destroy();
-    res.redirect("/");
+    req.session.destroy((err) => {
+      if (err) throw err;
+      res.redirect("/");
+    });
   },
   user_account: (req, res) => {
     if (req.session.isAuth) {
-      res.render("user_account");
+      res.render("user/user_account");
     } else {
       res.redirect("/");
     }
-  }
+  },
 };
