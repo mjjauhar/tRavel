@@ -2,7 +2,7 @@ var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
 var product = new Schema({
-  product_category: {
+  category: {
     type: String,
   },
   stock: {
@@ -26,6 +26,10 @@ var product = new Schema({
   price: {
     type: Number,
     // required: true
+  },
+  is_deleted: {
+    type: Boolean,
+    default: false,
   },
   created_date: {
     type: Date,

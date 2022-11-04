@@ -1,0 +1,56 @@
+<%- include('../partials/header.ejs') %>
+    <%- include('../partials/admin_navbar.ejs') %>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div
+                class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Users</h1>
+                
+            </div>
+            <div class="container">
+                <table class="table" id="productsTable">
+                    <thead>
+                        <tr class="text-light bg-secondary">
+                            <th scope="col"></th>
+                            <th scope="col">Name</th>
+                            <th scope="col">username</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Phone no</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Is Blocked?</th>
+                            <!-- <th scope="col" class="text-end pe-5">Options</th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% users.forEach(function(user){ %>
+                            <tr>
+                                <th scope="row"></th>
+                                <td class="fw-bold">
+                                    <%= user.first_name %> <%= user.last_name %>
+                                </td>
+                                <td>
+                                    <%= user.username %>
+                                </td>
+                                <td>
+                                    <%= user.email %>
+                                </td>
+                                <td>
+                                    <%= user.phone_no %>
+                                </td>
+                                <td>
+                                    <%= user.type %>
+                                </td>
+                                <td>
+                                    <%= user.is_blocked %>
+                                </td>
+                                
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+        </div>
+        </div>
+
+        <%- include('../partials/footer.ejs') %>

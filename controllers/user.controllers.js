@@ -1,16 +1,19 @@
 const userModel = require("../models/user");
+const productModel = require("../models/product");
 const bcrypt = require("bcrypt");
 
 module.exports = {
   // render landing_page ----------------------------
-  landing_page: (req, res) => {
+  landing_page: async (req, res) => {
+    let products = await productModel.find({ is_deleted: false });
     if (req.session.isAuth) {
       res.render("user/landing_page", {
         login: true,
         username: req.session.user,
+        products,
       });
     } else {
-      res.render("user/landing_page", { login: false });
+      res.render("user/landing_page", { login: false, products });
     }
   },
   // ------------------------------------------------
@@ -52,7 +55,10 @@ module.exports = {
   // render user signin page.------------------------
   user_login_page: (req, res) => {
     if (!req.session.isAuth) {
-      res.render("user/user_login",{ loginErr: req.session.loginError });
+      res.render("user/user_login", {
+        emailErr: req.session.emailError,
+        passwordErr: req.session.passwordError,
+      });
     } else {
       res.redirect("/");
     }
@@ -65,13 +71,15 @@ module.exports = {
     const user = await userModel.findOne({
       $and: [{ email: email }, { type: "user" }],
     }); // checking if the email exist in database.
+    req.session.emailError = false;
+    req.session.passwordError = false;
     if (!user) {
-      req.session.loginError = "Invalid email or password";
+      req.session.emailError = "Invalid email";
       return res.redirect("/user_login");
     } // If entered email doesn't exist..
     const isMatch = await bcrypt.compare(password, user.password); // If it does exist, check password..
     if (!isMatch) {
-      req.session.loginError = "Invalid email or password";
+      req.session.passwordError = "Invalid password";
       return res.redirect("/user_login");
     } // If the password is incorrect..
     req.session.user = user.username; // else continue

@@ -6,12 +6,50 @@
                 class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">Products</h1>
                 <div class="btn-toolbar mb-2 mb-md-0">
-                    <a href="/admin/products/add_products"><button type="button"
+                    <a href="/admin/products/add_product"><button type="button"
                             class="btn btn-sm btn-outline-success">Add Product</button></a>
                 </div>
             </div>
-
-            <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+            <div class="container">
+                <table class="table" id="productsTable">
+                    <thead>
+                        <tr class="text-light bg-secondary">
+                            <th scope="col"></th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Image</th>
+                            <th scope="col" class="text-end pe-5">Options</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% products.forEach(function(product){ %>
+                            <tr>
+                                <th scope="row"></th>
+                                <td class="fw-bold">
+                                    <%= product.name %>
+                                </td>
+                                <td>
+                                    <%= product.category %>
+                                </td>
+                                <td>
+                                    <%= product.description %>
+                                </td>
+                                <td>
+                                    <%= product.price %>
+                                </td>
+                                <td><img src="/<%= product.imgUrl %>" alt="img" style="width:50px;height:50px;"></td>
+                                <td class="text-end">
+                                    <a href="/admin/products/edit_product/<%= product._id %>" class="btn btn-primary m-1">Edit</a>
+                                    <a href="/admin/products/delete_product/<%= product._id %>" class="btn btn-danger m-1"
+                                        onclick="return confirm('Are you sure to delete <%= product.name %>')">Delete</a>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+            </div>
         </main>
         </div>
         </div>

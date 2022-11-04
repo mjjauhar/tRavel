@@ -9,7 +9,6 @@ const multer = require("multer");
 const connection = require("./config/connection");
 const userRouter = require("./routes/user.routes");
 const adminRouter = require("./routes/admin.routes");
-const { path } = require("./routes/admin.routes");
 
 // session configurations
 app.use(function (req, res, next) {
@@ -25,6 +24,7 @@ app.use(
   })
 );
 
+// photo and other file upload using multer
 const fileStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "public/images/product_img");

@@ -1,0 +1,48 @@
+<%- include('../partials/header.ejs') %>
+
+    <main class="col-md-9 ms-sm-auto col-lg-12 px-md-4">
+        <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Edit product</h1>
+            <a href="/admin/products"><button type="button" class="btn btn-sm btn-outline-danger">Cancel</button></a>
+        </div>
+        <div class="container">
+            <form action="/admin/products/edit_product/<%= product._id %>" method="post" enctype="multipart/form-data">
+                <label for="">Name</label>
+                <input type="text" name="name" class="form-control mb-4" placeholder="<%= product.name %>" required>
+
+                <label for="">Description</label>
+                <input type="text" name="description" class="form-control mb-4"
+                    placeholder="<%= product.description %>">
+
+                <label for="">Category</label>
+                <input type="text" name="category" class="form-control mb-4" placeholder="<%= product.category %>">
+
+                <label for="">Price</label>
+                <input type="number" name="price" class="form-control mb-4" placeholder="<%= product.price %>" required>
+
+                <label for="">Stock</label>
+                <input type="number" name="stock" class="form-control mb-4" placeholder="<%= product.stock %>">
+                <div class="row">
+                    <div class="col-md-10 col">
+                        <label for="">Image</label>
+                        <input type="file" name="imgUrl" class="form-control mb-4" onchange="viewImage(event)">
+                    </div>
+                    <div class="col-md-2 col">
+                        <img src="/<%= product.imgUrl %>" alt="image" style="width: 100px; height:auto;" class="m-3"
+                            id="imgView">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-success">Submit</button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        function viewImage(event) {
+            document.getElementById('imgView').src = URL.createObjectURL(event.target.files[0]);
+        }
+    </script>
+
+    <%- include('../partials/footer.ejs') %>

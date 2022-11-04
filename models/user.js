@@ -62,8 +62,9 @@ var user = new Schema({
     //   required: true
     }
   },
-  blocked: {
+  is_blocked: {
     type: Boolean,
+    default: false,
     // required: true
   }
 });
