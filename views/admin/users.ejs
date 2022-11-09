@@ -1,56 +1,128 @@
 <%- include('../partials/header.ejs') %>
-    <%- include('../partials/admin_navbar.ejs') %>
+  <%- include('../partials/admin_navbar.ejs') %>
 
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <div
-                class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">Users</h1>
-                
-            </div>
-            <div class="container">
-                <table class="table" id="productsTable">
-                    <thead>
-                        <tr class="text-light bg-secondary">
-                            <th scope="col"></th>
-                            <th scope="col">Name</th>
-                            <th scope="col">username</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Phone no</th>
-                            <th scope="col">Type</th>
-                            <th scope="col">Is Blocked?</th>
-                            <!-- <th scope="col" class="text-end pe-5">Options</th> -->
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% users.forEach(function(user){ %>
-                            <tr>
-                                <th scope="row"></th>
-                                <td class="fw-bold">
-                                    <%= user.first_name %> <%= user.last_name %>
-                                </td>
-                                <td>
-                                    <%= user.username %>
-                                </td>
-                                <td>
-                                    <%= user.email %>
-                                </td>
-                                <td>
-                                    <%= user.phone_no %>
-                                </td>
-                                <td>
-                                    <%= user.type %>
-                                </td>
-                                <td>
-                                    <%= user.is_blocked %>
-                                </td>
-                                
-                            </tr>
-                            <% }) %>
-                    </tbody>
-                </table>
-            </div>
-        </main>
-        </div>
-        </div>
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <div
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Users</h1>
 
-        <%- include('../partials/footer.ejs') %>
+      </div>
+      <div class="container">
+        <table class="table" id="productsTable">
+          <thead>
+            <tr class="text-light bg-secondary sorter-header">
+              <th scope="col"></th>
+              <th scope="col" onclick="sortTable(0)">Name<small class="btn-sm btn-outline-dark" style="cursor: pointer;">sort</small></th>
+              <th scope="col">username</th>
+              <th scope="col">Email</th>
+              <th scope="col">Phone no</th>
+              <th scope="col" onclick="sortTable(1)">created_date<small class="btn-sm btn-outline-dark" style="cursor: pointer;">sort</small></th>
+              <th scope="col">Type</th>
+              <th scope="col">Blocked?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% users.forEach(function(user){ %>
+              <tr class="indexed">
+                <th scope="row"></th>
+                <td class="fw-bold indexed">
+                  <%= user.first_name %>
+                    <%= user.last_name %>
+                </td>
+                <td>
+                  <%= user.username %>
+                </td>
+                <td>
+                  <%= user.email %>
+                </td>
+                <td>
+                  <%= user.phone_no %>
+                </td>
+                <td>
+                  <small>
+                    <%= user.created_date %>
+                  </small>
+                </td>
+                <td>
+                  <%= user.type %>
+                </td>
+                <td>
+                  <% if(user.is_blocked === false){ %>
+                  <p class="text-success"><%= user.is_blocked %></p>
+                  <form action="/admin/users/block_user/<%= user._id %>" method="post">
+                    <button class="btn-sm btn-outline-dark" type="submit">block</button>
+                  </form>
+                  <% } else { %>
+                  <p class="text-danger"><%= user.is_blocked %></p>
+                    <form action="/admin/users/unblock_user/<%= user._id %>" method="post">
+                      <button class="btn-sm btn-outline-dark" type="submit">unblock</button>
+                    </form>
+                  <% } %>
+                </td>
+
+              </tr>
+              <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </main>
+    </div>
+    </div>
+
+    <script>
+      function sortTable(n) {
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.getElementById("productsTable");
+        switching = true;
+        // Set the sorting direction to ascending:
+        dir = "asc";
+        /* Make a loop that will continue until
+        no switching has been done: */
+        while (switching) {
+          // Start by saying: no switching is done:
+          switching = false;
+          rows = table.rows;
+          /* Loop through all table rows (except the
+          first, which contains table headers): */
+          for (i = 1; i < (rows.length - 1); i++) {
+            // Start by saying there should be no switching:
+            shouldSwitch = false;
+            /* Get the two elements you want to compare,
+            one from current row and one from the next: */
+            x = rows[i].getElementsByTagName("TD")[n];
+            y = rows[i + 1].getElementsByTagName("TD")[n];
+            /* Check if the two rows should switch place,
+            based on the direction, asc or desc: */
+            if (dir == "asc") {
+              if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                // If so, mark as a switch and break the loop:
+                shouldSwitch = true;
+                break;
+              }
+            } else if (dir == "desc") {
+              if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                // If so, mark as a switch and break the loop:
+                shouldSwitch = true;
+                break;
+              }
+            }
+          }
+          if (shouldSwitch) {
+            /* If a switch has been marked, make the switch
+            and mark that a switch has been done: */
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            // Each time a switch is done, increase this count by 1:
+            switchcount ++;
+          } else {
+            /* If no switching has been done AND the direction is "asc",
+            set the direction to "desc" and run the while loop again. */
+            if (switchcount == 0 && dir == "asc") {
+              dir = "desc";
+              switching = true;
+            }
+          }
+        }
+      }
+      </script>
+    <%- include('../partials/footer.ejs') %>

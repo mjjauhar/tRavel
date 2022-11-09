@@ -23,6 +23,9 @@ app
 
 // user management
 app. route("/users").get(adminController.users);
+app.route('/users/block_user/:id').post(adminController.blockUser);
+app.route('/users/unblock_user/:id').post(adminController.unblockUser);
+
 
 // Admin logout
 app.route("/admin_logout").post(adminController.admin_logout);

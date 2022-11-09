@@ -16,7 +16,7 @@ module.exports = {
   products: async (req, res) => {
     if (req.session.isAdminAuth) {
       let products = await productModel.find({ is_deleted: false });
-      console.log(products);
+      // console.log(products);
       res.render("admin/products", { products });
     } else {
       res.redirect("/admin/admin_login");
@@ -98,14 +98,29 @@ module.exports = {
         res.redirect("/admin/products");
       });
   },
+
+  // SHOW USERS
   users: async (req, res) => {
     if (req.session.isAdminAuth) {
-      let users = await userModel.find();
-      console.log(users);
+      let sort = { created_date: -1 }
+      let users = await userModel.find().sort(sort);
       res.render("admin/users", { users });
     } else {
       res.redirect("/admin/admin_login");
     }
+  },
+
+  // BLOCK USER
+  blockUser: async (req, res) => {
+    let id = req.params.id;
+    await userModel.findByIdAndUpdate({ _id: id }, { $set: { is_blocked: true } });
+    res.redirect("/admin/users");
+  },
+  // UNBLOCK USER
+  unblockUser: async (req, res) => {
+    let id = req.params.id;
+    await userModel.findByIdAndUpdate({ _id: id }, { $set: { is_blocked: false } });
+    res.redirect("/admin/users");
   },
 
   // LOGIN PAGE

@@ -11,7 +11,7 @@ var user = new Schema({
   },
   first_name: {
     type: String,
-    // required: true
+    required: true
   },
   last_name: {
     type: String,
@@ -30,19 +30,13 @@ var user = new Schema({
     type: String,
     required: true
   },
-  otp: {
-    type: String,
-    // required: true
-  },
-  active: {
-    type: Boolean
-  },
-  last_active: {
-    type: String
+  otp_verified: {
+    type: Boolean,
+    default: false,
   },
   created_date: {
     type: Date,
-    // required: true
+    required: true
   },
   modified_date: {
     type: Date,

@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark mx-2 mt-2 rounded myNavbar">
   <div class="container-fluid">
-    <a href="#"
+    <a href="/"
       ><img
         class="navbar-brand"
         src="/public/images/logo-no-background.svg"
@@ -25,27 +25,99 @@
           placeholder="Search"
           aria-label="Search"
         />
-        <button class="btn btn-light" type="submit"><i class="bi bi-search"></i></button>
+        <button class="btn btn-light" type="submit">
+          <i class="bi bi-search"></i>
+        </button>
       </form>
-      <ul class="navbar-nav mb-lg-0 ms-auto pe-5">
-        <li class="nav-item">
-          <a class="nav-link active pe-5" aria-current="page" href="#">Home</a>
+      <ul class="navbar-nav mb-lg-0 ms-auto">
+        <li class="nav-item text-center me-5">
+          <a href="/"
+            ><img
+              src="/public/images/icons/house.svg"
+              alt="Account-icon"
+              style="width: 20px"
+          /></a>
+          <a class="nav-link active" aria-current="page" href="/">Home</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link active pe-5" aria-current="page" href="#">Wishlist</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active pe-5" aria-current="page" href="#">Orders</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active pe-5" aria-current="page" href="#">Cart</a>
-        </li>
-        <li class="nav-item">
+        <li class="nav-item text-center me-5">
           <% if(login) { %>
-          <a class="nav-link active pe-5" aria-current="page" href="/user_account"><%= username %></a>
+          <div class="dropdown">
+            <a data-bs-toggle="dropdown"
+              ><img
+                src="/public/images/icons/person.svg"
+                alt="Account-icon"
+                style="width: 25px; cursor: pointer"
+            /></a>
+            <a
+              class="nav-link active"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Account</a
+            >
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item" href="/user_account"
+                  ><i class="bi bi-person"></i><small> My Profile</small></a
+                >
+              </li>
+              <li>
+                <a class="dropdown-item" href="#"
+                  ><i class="bi bi-cart2"></i>
+                  <small> Orders & Returns</small></a
+                >
+              </li>
+              <li>
+                <a class="dropdown-item" href="#"
+                  ><i class="bi bi-envelope"></i>
+                  <small> My Addresses</small></a
+                >
+              </li>
+              <li>
+                <form method="post" action="/logout">
+                  <button class="dropdown-item text-danger">
+                    <i class="bi bi-dash-lg"></i> <small> Logout</small>
+                  </button>
+                </form>
+              </li>
+            </ul>
+          </div>
           <% } else { %>
-            <a class="nav-link active" aria-current="page" href="/user_login">Login</a>
+          <a href="/user_login"
+            ><img
+              src="/public/images/icons/person.svg"
+              alt="Account-icon"
+              style="width: 23px"
+          /></a>
+          <a class="nav-link active" aria-current="page" href="/user_login"
+            >Login</a
+          >
           <% } %>
+        </li>
+        <li class="nav-item text-center me-5">
+          <img
+            src="/public/images/icons/heart.svg"
+            alt="Account-icon"
+            style="width: 20px"
+          />
+          <a class="nav-link active" aria-current="page" href="#">Wishlist</a>
+        </li>
+        <li class="nav-item text-center me-5">
+          <img
+            src="/public/images/icons/bag.svg"
+            alt="Account-icon"
+            style="width: 20px"
+          />
+          <a class="nav-link active" aria-current="page" href="#">Orders</a>
+        </li>
+        <li class="nav-item text-center me-5">
+          <img
+            src="/public/images/icons/cart2.svg"
+            alt="Account-icon"
+            style="width: 23px"
+          />
+          <a class="nav-link active" aria-current="page" href="#">Cart</a>
         </li>
       </ul>
     </div>

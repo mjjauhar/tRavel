@@ -1,9 +1,36 @@
 .myNavbar {
-    background: #0E5255;
+  background: #0e5255;
 }
 .navbar-brand {
-    width: 90px;
+  width: 90px;
 }
 .navbar-brand-login {
-    width: 200px;
+  width: 200px;
+}
+.login_img {
+  width: 639px;
+  height: 92vh;
+  left: 0px;
+  top: 110px;
+  background: #d9d9d9;
+}
+.login_img h2 {
+  display: flex;
+  align-items: center;
+  font-family: "Itim", cursive;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 64px;
+  line-height: 77px;
+
+  color: #3d4344;
+}
+.rectangle {
+  width: 300px;
+  height: 70px;
+  background-color: #ffffff;
+  border-radius: 7px;
+  box-shadow: 1px 1px 3px #dbdbdb;
+  margin-bottom: 25px;
+  margin-top: 15px;
 }

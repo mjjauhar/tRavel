@@ -1,7 +1,85 @@
 <%- include('../partials/header.ejs') %>
+<section style="background-color: #f7f8f9">
+  <%- include('../partials/navbar.ejs') %>
+  <div class="container-fluid mt-4">
+    <div class="row">
+      <div class="col-3">
+        <div class="rectangle ps-4 pt-2 text-dark">
+          <h5><b><%= username %></b></h5>
+          <p>9048153733</p>
+        </div>
 
-    <form method="post" action="/logout">
-        <button class="text-decoration-none btn btn-warning">Logout</button>
-    </form>
+        <a href="" class="text-decoration-none"
+          ><div class="rectangle d-flex ps-4 align-items-center text-dark">
+            <i class="bi bi-cart2"></i>
+            <big> &ensp; Orders & Returns</big>
+          </div></a
+        >
+        <a href="" class="text-decoration-none"
+          ><div class="rectangle d-flex ps-4 align-items-center text-dark">
+            <i class="bi bi-person"></i>
+            <big> &ensp; My Profile</big>
+          </div></a
+        >
 
-    <%- include('../partials/footer.ejs') %>
+        <a href="" class="text-decoration-none"
+          ><div class="rectangle d-flex ps-4 align-items-center text-dark">
+            <i class="bi bi-envelope"></i>
+            <big> &ensp; Address</big>
+          </div></a
+        >
+
+        <form
+          method="post"
+          action="/logout"
+          class="rectangle ps-2 d-flex align-items-center"
+        >
+          <button class="btn-lg text-decoration-none btn text-danger">
+            <i class="bi bi-box-arrow-right"></i> &ensp; Logout
+          </button>
+        </form>
+      </div>
+      <div class="col-9">
+        <form>
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-6">
+                <div class="mb-5">
+                  <label for="username" class="form-label">username</label>
+                  <input type="text" class="form-control" name="username" />
+                </div>
+                <div class="mb-5">
+                  <label for="first_name" class="form-label">First name</label>
+                  <input type="text" class="form-control" name="first_name" />
+                </div>
+                <div class="mb-5">
+                  <label for="phone_no" class="form-label">Mobile Number</label>
+                  <input type="tel" class="form-control" name="phone_no" />
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="mb-5">
+                  <label for="password" class="form-label">password</label>
+                  <input type="password" class="form-control" name="password" />
+                </div>
+                <div class="mb-5">
+                  <label for="last_name" class="form-label">Last name</label>
+                  <input type="text" class="form-control" name="last_name" />
+                </div>
+                <div class="mb-5">
+                  <label for="email" class="form-label">Email</label>
+                  <input type="email" class="form-control" name="email" />
+                </div>
+              </div>
+            </div>
+            <div class="text-end">
+              <button type="submit" class="btn btn-warning">Submit</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+<%- include('../partials/footer_infos.ejs') %> <%-
+include('../partials/footer.ejs') %>
