@@ -3,13 +3,14 @@ const productModel = require("../models/product");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 
+
 // Otp config
 var otp = Math.random();
 otp = otp * 1000000;
 otp = parseInt(otp);
 console.log(otp);
 
-var email;
+var email2;
 
 let transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -71,6 +72,7 @@ const user_signup = async (req, res) => {
     password: hashedPsw,
   }); // creating new user.
 
+  email2 = email;
   // send mail with defined transport object
   var mailOptions = {
     to: email,
@@ -118,7 +120,7 @@ const otp_login = async (req, res) => {
 
 const resend_otp = function (req, res) {
   var mailOptions = {
-    to: email,
+    to: email2,
     subject: "Otp for registration is: ",
     html:
       "<h3>OTP for account verification is </h3>" +
@@ -133,7 +135,7 @@ const resend_otp = function (req, res) {
     }
     console.log("Message sent: %s", info.messageId);
     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-    res.render("otp_login", { msg: "otp has been sent" });
+    res.render("user/otp_login", { user, msg: "otp has been sent" });
   });
 };
 
