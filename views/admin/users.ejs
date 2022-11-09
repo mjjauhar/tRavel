@@ -12,11 +12,11 @@
           <thead>
             <tr class="text-light bg-secondary sorter-header">
               <th scope="col"></th>
-              <th scope="col" onclick="sortTable(0)">Name<small class="btn-sm btn-outline-dark" style="cursor: pointer;">sort</small></th>
+              <th scope="col">Name</th>
               <th scope="col">username</th>
               <th scope="col">Email</th>
               <th scope="col">Phone no</th>
-              <th scope="col" onclick="sortTable(1)">created_date<small class="btn-sm btn-outline-dark" style="cursor: pointer;">sort</small></th>
+              <th scope="col">created_date</th>
               <th scope="col">Type</th>
               <th scope="col">Blocked?</th>
             </tr>
@@ -69,7 +69,7 @@
     </div>
     </div>
 
-    <script>
+    <!-- <script>
       function sortTable(n) {
         var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
         table = document.getElementById("productsTable");
@@ -124,5 +124,5 @@
           }
         }
       }
-      </script>
+      </script> -->
     <%- include('../partials/footer.ejs') %>

@@ -46,6 +46,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/", userRouter);
 app.use("/admin", adminRouter);
 
-app.listen(8000, () =>
-  console.log("Server running on port http://localhost:8000/")
+app.listen(8008, () =>
+  console.log("Server running on port http://localhost:8008/")
 );

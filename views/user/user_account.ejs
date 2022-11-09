@@ -5,8 +5,8 @@
     <div class="row">
       <div class="col-3">
         <div class="rectangle ps-4 pt-2 text-dark">
-          <h5><b><%= username %></b></h5>
-          <p>9048153733</p>
+          <h5><b><%= full_name %></b></h5>
+          <p><%= phone_no %></p>
         </div>
 
         <a href="" class="text-decoration-none"
@@ -40,40 +40,84 @@
         </form>
       </div>
       <div class="col-9">
-        <form>
+        <form method="post" action="/user_account/<%= userId %>">
           <div class="container-fluid">
             <div class="row">
               <div class="col-6">
                 <div class="mb-5">
                   <label for="username" class="form-label">username</label>
-                  <input type="text" class="form-control" name="username" />
+                  <input
+                    id="id"
+                    type="text"
+                    class="form-control"
+                    name="username"
+                    value="<%= username %>"
+                  />
                 </div>
                 <div class="mb-5">
                   <label for="first_name" class="form-label">First name</label>
-                  <input type="text" class="form-control" name="first_name" />
+                  <input
+                    id="id"
+                    type="text"
+                    class="form-control"
+                    name="first_name"
+                    value="<%= first_name %>"
+                  />
                 </div>
                 <div class="mb-5">
                   <label for="phone_no" class="form-label">Mobile Number</label>
-                  <input type="tel" class="form-control" name="phone_no" />
+                  <input
+                    id="id"
+                    type="tel"
+                    class="form-control"
+                    name="phone_no"
+                    value="<%= phone_no %>"
+                  />
                 </div>
               </div>
               <div class="col-6">
                 <div class="mb-5">
                   <label for="password" class="form-label">password</label>
-                  <input type="password" class="form-control" name="password" />
+
+                  <input
+                    type="password"
+                    class="form-control"
+                    name="password"
+                    id="id"
+                  />
                 </div>
                 <div class="mb-5">
                   <label for="last_name" class="form-label">Last name</label>
-                  <input type="text" class="form-control" name="last_name" />
+                  <input
+                    id="id"
+                    type="text"
+                    class="form-control"
+                    name="last_name"
+                    value="<%= last_name %>"
+                  />
                 </div>
                 <div class="mb-5">
                   <label for="email" class="form-label">Email</label>
-                  <input type="email" class="form-control" name="email" />
+                  <input
+                    id="id"
+                    type="email"
+                    class="form-control"
+                    name="email"
+                    value="<%= email %>"
+                  />
                 </div>
               </div>
             </div>
             <div class="text-end">
-              <button type="submit" class="btn btn-warning">Submit</button>
+              <p id="noChange"></p>
+              <button
+                id="btn"
+                type="submit"
+                class="btn btn-warning"
+                onclick="return confirm('Are you sure to save changes ?')"
+              >
+                Submit
+              </button>
             </div>
           </div>
         </form>
@@ -81,5 +125,16 @@
     </div>
   </div>
 </section>
+
+<!-- <script>
+  function watchChange() {
+    var name = document.getElementById("id");
+    if (name.value != name.defaultValue) {
+      confirm("Are you sure to save changes ?");
+    } else {
+      window.alert("No changes to save.");
+    }
+  }
+</script> -->
 <%- include('../partials/footer_infos.ejs') %> <%-
 include('../partials/footer.ejs') %>

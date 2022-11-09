@@ -33,7 +33,7 @@ var product = new Schema({
   },
   created_date: {
     type: Date,
-    // required: true
+    required: true
   },
   modified_date: {
     type: Date,

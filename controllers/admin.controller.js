@@ -15,7 +15,8 @@ module.exports = {
   // SHOW PRODUCTS PAGE
   products: async (req, res) => {
     if (req.session.isAdminAuth) {
-      let products = await productModel.find({ is_deleted: false });
+      let sort = { created_date: -1 };
+      let products = await productModel.find({ is_deleted: false }).sort(sort);
       // console.log(products);
       res.render("admin/products", { products });
     } else {
@@ -36,6 +37,8 @@ module.exports = {
   add_products: async function (req, res) {
     const { name, description, category, stock, price } = req.body; // asigning product data to variables.
     console.log("reached add_products");
+    const created_date = new Date();
+
     const newProduct = new productModel({
       name,
       description,
@@ -43,6 +46,7 @@ module.exports = {
       imgUrl: req.file.path,
       category,
       stock,
+      created_date,
     });
     const result = await newProduct.save();
     res.redirect("/admin/products");
@@ -102,7 +106,7 @@ module.exports = {
   // SHOW USERS
   users: async (req, res) => {
     if (req.session.isAdminAuth) {
-      let sort = { created_date: -1 }
+      let sort = { created_date: -1 };
       let users = await userModel.find().sort(sort);
       res.render("admin/users", { users });
     } else {
@@ -113,13 +117,19 @@ module.exports = {
   // BLOCK USER
   blockUser: async (req, res) => {
     let id = req.params.id;
-    await userModel.findByIdAndUpdate({ _id: id }, { $set: { is_blocked: true } });
+    await userModel.findByIdAndUpdate(
+      { _id: id },
+      { $set: { is_blocked: true } }
+    );
     res.redirect("/admin/users");
   },
   // UNBLOCK USER
   unblockUser: async (req, res) => {
     let id = req.params.id;
-    await userModel.findByIdAndUpdate({ _id: id }, { $set: { is_blocked: false } });
+    await userModel.findByIdAndUpdate(
+      { _id: id },
+      { $set: { is_blocked: false } }
+    );
     res.redirect("/admin/users");
   },
 

@@ -2,7 +2,7 @@ const userModel = require("../models/user");
 const productModel = require("../models/product");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
-
+const Swal = require("sweetalert2");
 
 // Otp config
 var otp = Math.random();
@@ -26,11 +26,13 @@ let transporter = nodemailer.createTransport({
 
 // render landing_page ----------------------------
 const landing_page = async (req, res) => {
-  let products = await productModel.find({ is_deleted: false, otp_verified:true });
+  let products = await productModel.find({
+    is_deleted: false,
+    otp_verified: true,
+  });
   if (req.session.isAuth) {
     res.render("user/landing_page", {
       login: true,
-      username: req.session.user,
       products,
     });
   } else {
@@ -94,7 +96,7 @@ const user_signup = async (req, res) => {
 
   await user
     .save()
-    .then(res.render("user/otp_login", { user, msg:"" }))
+    .then(res.render("user/otp_login", { user, msg: "" }))
     .catch((err) => {
       console.log(err);
     });
@@ -170,6 +172,7 @@ const user_login = async (req, res) => {
     return res.redirect("/user_login");
   } // If the password is incorrect..
   req.session.user = user.username;
+  req.session.userId = user._id;
   req.session.isAuth = true; // then save the state that the user is authenticated.
   res.redirect("/");
 };
@@ -181,17 +184,58 @@ const logout = (req, res) => {
   });
 };
 
-const user_account = (req, res) => {
+const user_account = async (req, res) => {
   if (req.session.isAuth) {
+    const userId = req.session.userId;
+    const user = await userModel.find({ _id: userId });
+    const full_name = `${user[0].first_name} ${user[0].last_name}`;
+    const phone_no = user[0].phone_no;
+    const email = user[0].email;
+    const first_name = user[0].first_name;
+    const last_name = user[0].last_name;
+    const username = user[0].username;
+
     res.render("user/user_account", {
       login: true,
-      username: req.session.user,
+      userId,
+      full_name,
+      phone_no,
+      email,
+      first_name,
+      last_name,
+      username,
     });
   } else {
     res.redirect("/");
   }
 };
 
+// EDIT USER
+const edit_user = async (req, res) => {
+  if (req.session.isAuth) {
+    const userId = req.params.id;
+    const { username, phone_no, email, first_name, last_name } = req.body;
+
+    const save_user_edits = await userModel.findOneAndUpdate(
+      { _id: userId },
+      {
+        $set: {
+          username,
+          phone_no,
+          email,
+          first_name,
+          last_name,
+        },
+      }
+    );
+    await save_user_edits.save().then(() => {
+      res.redirect("/user_account");
+      console.log("user info edited");
+    });
+  } else {
+    res.redirect("/");
+  }
+};
 module.exports = {
   user_account,
   logout,
@@ -202,4 +246,5 @@ module.exports = {
   landing_page,
   resend_otp,
   otp_login,
+  edit_user,
 };
