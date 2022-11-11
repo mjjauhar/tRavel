@@ -2,29 +2,25 @@ const userModel = require("../models/user");
 const productModel = require("../models/product");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
-const Swal = require("sweetalert2");
 
-// Otp config
-var otp = Math.random();
-otp = otp * 1000000;
-otp = parseInt(otp);
-console.log(otp);
+/////////////////////////////////// SESSION MIDDLEWARE ///////////////////////////////////
+const proceedIfLoggedIn = (req, res, next) => {
+  if (req.session.isAuth) {
+    next();
+  } else {
+    res.redirect("/");
+  }
+};
+const proceedIfLoggedOut = (req, res, next) => {
+  if (!req.session.isAuth) {
+    next();
+  } else {
+    res.redirect("/");
+  }
+};
 
-var email2;
-
-let transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  service: "Gmail",
-
-  auth: {
-    user: "travelauthentication@gmail.com",
-    pass: "eabbvzhvhdifpqea",
-  },
-});
-
-// render landing_page ----------------------------
+/////////////////////////////////// RENDERS ///////////////////////////////////
+// render_landing_page ----------------------------
 const landing_page = async (req, res) => {
   let products = await productModel.find({
     is_deleted: false,
@@ -39,18 +35,116 @@ const landing_page = async (req, res) => {
     res.render("user/landing_page", { login: false, products });
   }
 };
-// ------------------------------------------------
-
-// render user signup page.------------------------
+// render_user_signup_page.------------------------
 const user_signup_page = (req, res) => {
-  if (!req.session.isAuth) {
-    res.render("user/user_signup", { emailExist: req.session.exists });
+  res.render("user/user_signup", { emailExist: req.session.exists });
+};
+// render_user_signin_page.------------------------
+const user_login_page = (req, res) => {
+  res.render("user/user_login", {
+    emailErr: req.session.emailError,
+    passwordErr: req.session.passwordError,
+  });
+};
+// render_user_account_page
+const user_account = async (req, res) => {
+  const userId = req.session.userId;
+  const user = await userModel.find({ _id: userId });
+  const full_name = `${user[0].first_name} ${user[0].last_name}`;
+  const phone_no = user[0].phone_no;
+  const email = user[0].email;
+  const first_name = user[0].first_name;
+  const last_name = user[0].last_name;
+  const username = user[0].username;
+
+  res.render("user/user_account", {
+    login: true,
+    userId,
+    full_name,
+    phone_no,
+    email,
+    first_name,
+    last_name,
+    username,
+  });
+};
+
+/////////////////////////////////// EDIT DATA ///////////////////////////////////
+// EDIT USER
+const edit_user = async (req, res) => {
+  const userId = req.params.id;
+  const { username, phone_no, email, first_name, last_name } = req.body;
+  const save_user_edits = await userModel.findOneAndUpdate(
+    { _id: userId },
+    {
+      $set: {
+        username,
+        phone_no,
+        email,
+        first_name,
+        last_name,
+      },
+    }
+  );
+  await save_user_edits.save().then(() => {
+    res.redirect("/user_account");
+    console.log("user info edited");
+  });
+};
+
+/////////////////////////////////// USER REGISTER AND LOGIN ///////////////////////////////////
+// OTP CONFIG
+var otp = Math.random();
+otp = otp * 1000000;
+otp = parseInt(otp);
+console.log(otp);
+var email2;
+let transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  service: "Gmail",
+  auth: {
+    user: "travelauthentication@gmail.com",
+    pass: "eabbvzhvhdifpqea",
+  },
+});
+
+// Resend OTP
+const resend_otp = function (req, res) {
+  var mailOptions = {
+    to: email2,
+    subject: "Otp for registration is: ",
+    html:
+      "<h3>OTP for account verification is </h3>" +
+      "<h1 style='font-weight:bold;'>" +
+      otp +
+      "</h1>", // html body
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return console.log(error);
+    }
+    console.log("Message sent: %s", info.messageId);
+    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+    res.render("user/otp_login", { user, msg: "otp has been sent" });
+  });
+};
+
+// OTP Validation
+const otp_login = async (req, res) => {
+  let usrId = req.params.id;
+  if (req.body.otp == otp) {
+    await userModel.findOneAndUpdate(
+      { _id: usrId },
+      { $set: { otp_verified: true } }
+    );
+    res.redirect("/user_login");
   } else {
-    res.redirect("/");
+    res.render("user/otp_login", { user, msg: "otp is incorrect" });
   }
 };
-// ------------------------------------------------
-
 // Post Request that handles Signup
 const user_signup = async (req, res) => {
   const { first_name, last_name, username, phone_no, email, password } =
@@ -103,57 +197,6 @@ const user_signup = async (req, res) => {
 };
 // ------------------------------------------------
 
-const otp_login = async (req, res) => {
-  if (!req.session.isAuth) {
-    let usrId = req.params.id;
-    if (req.body.otp == otp) {
-      await userModel.findOneAndUpdate(
-        { _id: usrId },
-        { $set: { otp_verified: true } }
-      );
-      res.redirect("/user_login");
-    } else {
-      res.render("user/otp_login", { user, msg: "otp is incorrect" });
-    }
-  } else {
-    res.redirect("/");
-  }
-};
-
-const resend_otp = function (req, res) {
-  var mailOptions = {
-    to: email2,
-    subject: "Otp for registration is: ",
-    html:
-      "<h3>OTP for account verification is </h3>" +
-      "<h1 style='font-weight:bold;'>" +
-      otp +
-      "</h1>", // html body
-  };
-
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      return console.log(error);
-    }
-    console.log("Message sent: %s", info.messageId);
-    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-    res.render("user/otp_login", { user, msg: "otp has been sent" });
-  });
-};
-
-// render user signin page.------------------------
-const user_login_page = (req, res) => {
-  if (!req.session.isAuth) {
-    res.render("user/user_login", {
-      emailErr: req.session.emailError,
-      passwordErr: req.session.passwordError,
-    });
-  } else {
-    res.redirect("/");
-  }
-};
-// ------------------------------------------------
-
 // user login--------------------------------------
 const user_login = async (req, res) => {
   const { email, password } = req.body; // asigning user entered datas to variables.
@@ -184,58 +227,6 @@ const logout = (req, res) => {
   });
 };
 
-const user_account = async (req, res) => {
-  if (req.session.isAuth) {
-    const userId = req.session.userId;
-    const user = await userModel.find({ _id: userId });
-    const full_name = `${user[0].first_name} ${user[0].last_name}`;
-    const phone_no = user[0].phone_no;
-    const email = user[0].email;
-    const first_name = user[0].first_name;
-    const last_name = user[0].last_name;
-    const username = user[0].username;
-
-    res.render("user/user_account", {
-      login: true,
-      userId,
-      full_name,
-      phone_no,
-      email,
-      first_name,
-      last_name,
-      username,
-    });
-  } else {
-    res.redirect("/");
-  }
-};
-
-// EDIT USER
-const edit_user = async (req, res) => {
-  if (req.session.isAuth) {
-    const userId = req.params.id;
-    const { username, phone_no, email, first_name, last_name } = req.body;
-
-    const save_user_edits = await userModel.findOneAndUpdate(
-      { _id: userId },
-      {
-        $set: {
-          username,
-          phone_no,
-          email,
-          first_name,
-          last_name,
-        },
-      }
-    );
-    await save_user_edits.save().then(() => {
-      res.redirect("/user_account");
-      console.log("user info edited");
-    });
-  } else {
-    res.redirect("/");
-  }
-};
 module.exports = {
   user_account,
   logout,
@@ -247,4 +238,6 @@ module.exports = {
   resend_otp,
   otp_login,
   edit_user,
+  proceedIfLoggedIn,
+  proceedIfLoggedOut,
 };

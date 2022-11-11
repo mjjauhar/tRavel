@@ -40,13 +40,13 @@ include('../partials/admin_navbar.ejs') %>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-light" href="/admin/sub_categories">
+            <a class="nav-link text-dark admin_rectangle" href="#">
               <span data-feather="file" class="align-text-bottom"></span>
               Sub Categories
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-dark admin_rectangle" href="/admin/users">
+            <a class="nav-link text-light" href="/admin/users">
               <span data-feather="users" class="align-text-bottom"></span>
               Users
             </a>
@@ -58,7 +58,14 @@ include('../partials/admin_navbar.ejs') %>
       <div
         class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
       >
-        <h1 class="h2">Users</h1>
+        <h1 class="h2">Sub Categories</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+          <a href="/admin/sub_categories/add_sub_category"
+            ><button type="button" class="btn btn-sm btn-outline-success">
+              Add New Sub Category
+            </button></a
+          >
+        </div>
       </div>
       <div class="container">
         <table class="table" id="productsTable">
@@ -66,60 +73,52 @@ include('../partials/admin_navbar.ejs') %>
             <tr class="text-dark bg-light shadow sorter-header">
               <th scope="col"></th>
               <th scope="col">Name</th>
-              <th scope="col">username</th>
-              <th scope="col">Email</th>
-              <th scope="col">Phone no</th>
-              <th scope="col" style="width: 18%;">created_date</th>
-              <th scope="col">Type</th>
+              <th scope="col"style="width: 34%;">Description</th>
+              <th scope="col">Main category</th>
+              <th scope="col">created_date</th>
               <th scope="col">Status</th>
-              <th scope="col">Button</th>
+              <th scope="col" class="text-end pe-5">Button</th>
             </tr>
           </thead>
           <tbody>
-            <% users.forEach(function(user){ %>
+            <% sub_categories.forEach(function(sub_category){ %>
             <tr class="indexed">
               <th scope="row"></th>
-              <td class="fw-bold indexed">
-                <%= user.first_name %> <%= user.last_name %>
-              </td>
-              <td><%= user.username %></td>
-              <td><%= user.email %></td>
-              <td><%= user.phone_no %></td>
+              <td class="fw-bold indexed"><%= sub_category.name %></td>
+              <td><small><%= sub_category.description %></small></td>
+              <td><%= sub_category.main_category %></td>
               <td>
-                <small> <%= moment(user.created_date).format('llll') %> </small>
+                <small> <%= moment(sub_category.created_date).format('llll') %> </small>
               </td>
-              <td><%= user.type %></td>
-              <% if(user.is_blocked === false){ %>
+              <% if(sub_category.delete === false){ %>
+              <td><p class="text-success">Active</p></td>
               <td>
-                <small class="text-success">ACTIVE</small>
-              </td>
-              <td>
-                <form
-                  action="/admin/users/block_user/<%= user._id %>"
-                  method="post"
+                <a
+                  href="/admin/sub_categories/edit_sub_category/<%= sub_category._id %>"
+                  class="btn-sm btn-outline-primary btn"
+                  >Edit</a
                 >
-                  <button
-                    class="btn-sm btn btn-outline-danger"
-                    type="submit"
-                  >
-                    <small>BLOCK</small>
-                  </button>
-                </form>
+                <a
+                  href="/admin/sub_categories/delete_sub_category/<%= sub_category._id %>"
+                  class="btn-sm btn-outline-danger btn"
+                  onclick="return confirm('Are you sure to delete <%= sub_category.name %>')"
+                  >Delete</a
+                >
               </td>
               <% } else { %>
-              <td><small class="text-danger">BLOCKED</small></td>
+              <td><p class="text-danger">Deleted</p></td>
               <td>
-                <form
-                  action="/admin/users/unblock_user/<%= user._id %>"
-                  method="post"
+                <a
+                  href="/admin/sub_categories/edit_sub_category/<%= sub_category._id %>"
+                  class="btn-sm btn-outline-primary btn"
+                  >Edit</a
                 >
-                  <button
-                    class="btn-sm btn btn-outline-success"
-                    type="submit"
-                  >
-                    <small>UNBLOCK</small>
-                  </button>
-                </form>
+                <a
+                  href="/admin/sub_categories/restore_sub_category/<%= sub_category._id %>"
+                  class="btn-sm btn-outline-danger btn"
+                  onclick="return confirm('Are you sure to restore <%= sub_category.name %>')"
+                  >Restore</a
+                >
               </td>
               <% } %>
             </tr>

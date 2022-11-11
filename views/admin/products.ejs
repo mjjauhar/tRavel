@@ -1,64 +1,128 @@
-<%- include('../partials/header.ejs') %>
-    <%- include('../partials/admin_navbar.ejs') %>
-
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <div
-                class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">Products</h1>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <a href="/admin/products/add_product"><button type="button"
-                            class="btn btn-sm btn-outline-success">Add Product</button></a>
-                </div>
-            </div>
-            <div class="container">
-                <table class="table" id="productsTable">
-                    <thead>
-                        <tr class="text-light bg-secondary">
-                            <th scope="col"></th>
-                            <th scope="col">Title</th>
-                            <th scope="col">Category</th>
-                            <th scope="col">Description</th>
-                            <th scope="col">Price</th>
-                            <th scope="col">created_date</th>
-                            <th scope="col">Image</th>
-                            <th scope="col" class="text-end pe-5">Options</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% products.forEach(function(product){ %>
-                            <tr>
-                                <th scope="row"></th>
-                                <td class="fw-bold">
-                                    <%= product.name %>
-                                </td>
-                                <td>
-                                    <%= product.category %>
-                                </td>
-                                <td>
-                                    <%= product.description %>
-                                </td>
-                                <td>
-                                    <%= product.price %>
-                                </td>
-                                <td>
-                                    <small>
-                                      <%= product.created_date %>
-                                    </small>
-                                </td>
-                                <td><img src="/<%= product.imgUrl %>" alt="img" style="width:50px;height:50px;"></td>
-                                
-                                <td class="text-end">
-                                    <a href="/admin/products/edit_product/<%= product._id %>" class="btn btn-primary m-1">Edit</a>
-                                    <a href="/admin/products/delete_product/<%= product._id %>" class="btn btn-danger m-1"
-                                        onclick="return confirm('Are you sure to delete <%= product.name %>')">Delete</a>
-                                </td>
-                            </tr>
-                            <% }) %>
-                    </tbody>
-                </table>
-            </div>
-        </main>
+<%- include('../partials/header.ejs') %> <%-
+include('../partials/admin_navbar.ejs') %>
+<div class="container-fluid">
+  <div class="row">
+    <nav
+      id="sidebarMenu"
+      class="col-md-3 col-lg-2 d-md-block myColor sidebar sidenav collapse"
+    >
+      <div class="position-sticky pt-3 sidebar-sticky">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a
+              class="nav-link active text-light"
+              aria-current="page"
+              href="/admin/dashboard"
+            >
+              <span data-feather="home" class="align-text-bottom"></span>
+              Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="#">
+              <span data-feather="file" class="align-text-bottom"></span>
+              Orders
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link text-dark admin_rectangle"
+              href="/admin/products"
+            >
+              <span
+                data-feather="shopping-cart"
+                class="align-text-bottom"
+              ></span>
+              Products
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="/admin/main_categories">
+              <span data-feather="file" class="align-text-bottom"></span>
+              Main Categories
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="/admin/sub_categories">
+              <span data-feather="file" class="align-text-bottom"></span>
+              Sub Categories
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="/admin/users">
+              <span data-feather="users" class="align-text-bottom"></span>
+              Users
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <div
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+      >
+        <h1 class="h2">Products</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+          <a href="/admin/products/add_product"
+            ><button type="button" class="btn btn-sm btn-outline-success">
+              Add Product
+            </button></a
+          >
         </div>
-        </div>
+      </div>
+      <div class="container">
+        <table class="table" id="productsTable">
+          <thead>
+            <tr class="text-dark bg-light shadow sorter-header">
+              <th scope="col"></th>
+              <th scope="col" style="width: 14%;">Title</th>
+              <th scope="col">Category</th>
+              <th scope="col" style="width: 35%;">Description</th>
+              <th scope="col">Price</th>
+              <th scope="col" style="width: 18%;">created_date</th>
+              <th scope="col">Image</th>
+              <th scope="col" class="text-end pe-5">Options</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% products.forEach(function(product){ %>
+            <tr>
+              <th scope="row"></th>
+              <td class="fw-bold"><%= product.name %></td>
+              <td><%= product.category %></td>
+              <td><small><%= product.description %></small></td>
+              <td><%= product.price %></td>
+              <td>
+                <small> <%= moment(product.created_date).format('llll') %> </small>
+              </td>
+              <td>
+                <img
+                  src="/<%= product.imgUrl %>"
+                  alt="img"
+                  style="width: 50px; height: 50px"
+                />
+              </td>
 
-        <%- include('../partials/footer.ejs') %>
+              <td class="text-end">
+                <a
+                  href="/admin/products/edit_product/<%= product._id %>"
+                  class="btn-sm btn-outline-primary btn mt-2"
+                  >Edit</a
+                >
+                <a
+                  href="/admin/products/delete_product/<%= product._id %>"
+                  class="btn-sm btn-outline-danger btn mt-2"
+                  onclick="return confirm('Are you sure to delete <%= product.name %>')"
+                  >Delete</a
+                >
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<%- include('../partials/footer.ejs') %>

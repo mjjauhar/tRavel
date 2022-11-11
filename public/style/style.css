@@ -1,5 +1,20 @@
-.myNavbar {
+.myColor {
   background: #0e5255;
+}
+.half_trapezoid {
+	border-bottom: 30px solid #ffea28;
+	border-right: 15px solid transparent;
+	height: 0;
+	width: 100px;
+}
+.sidenav {
+  height: 100%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  overflow-x: hidden;
+  padding-top: 60px;
 }
 .navbar-brand {
   width: 90px;
@@ -33,4 +48,11 @@
   box-shadow: 1px 1px 3px #dbdbdb;
   margin-bottom: 25px;
   margin-top: 15px;
+}
+.admin_rectangle {
+  box-shadow: inset 3px 3px 3px;
+  width: 216px;
+  height: 48px;
+  background-color: #ffffff;
+  border-radius: 7px 0px 0px 7px;
 }

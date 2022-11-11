@@ -1,29 +1,23 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
-var product = new Schema({
-  category: {
-    type: Schema.Types.ObjectId,
-    ref: "ProductSubCategory",
+var product_sub_category = new Schema({
+  main_category: {
+    type: String,
+    required: true,
   },
   name: {
     type: String,
     required: true,
   },
-  price: {
-    type: Number,
-    required: true,
-  },
-  is_deleted: {
+  delete: {
     type: Boolean,
     default: false,
   },
-  stock: Number,
-  imgUrl: String,
   description: String,
   created_date: Date,
   modified_date: Date,
   deleted_date: Date,
 });
 
-module.exports = mongoose.model("product", product);
+module.exports = mongoose.model("ProductSubCategory", product_sub_category);

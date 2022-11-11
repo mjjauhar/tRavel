@@ -5,7 +5,7 @@
     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
   >
     <h1 class="h2">Add new product</h1>
-    <a href="/admin/products"
+    <a href="/admin/main_categories"
       ><button type="button" class="btn btn-sm btn-outline-danger">
         Cancel
       </button></a
@@ -13,36 +13,14 @@
   </div>
   <div class="container">
     <form
-      action="/admin/products/add_product"
+      action="/admin/main_categories/add_main_category"
       method="post"
-      enctype="multipart/form-data"
     >
       <label for="">Name</label>
       <input type="text" name="name" class="form-control mb-4" required />
 
       <label for="">Description</label>
       <input type="text" name="description" class="form-control mb-4" />
-      <label for="">Category</label>
-      <select
-        name="main_category"
-        class="form-select mb-4"
-        aria-label="Default select example"
-      >
-        <% sub_categories.forEach(function(sub_category){ %>
-        <option value="<%= sub_category._id %>">
-          <%= sub_category.name %>
-        </option>
-        <% }) %>
-      </select>
-
-      <label for="">Price</label>
-      <input type="number" name="price" class="form-control mb-4" required />
-
-      <label for="">Stock</label>
-      <input type="number" name="stock" class="form-control mb-4" />
-
-      <label for="">Image</label>
-      <input type="file" name="imgUrl" class="form-control mb-4" />
 
       <button type="submit" class="btn btn-success">Submit</button>
     </form>
