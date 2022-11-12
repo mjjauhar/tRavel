@@ -80,16 +80,16 @@ include('../partials/admin_navbar.ejs') %>
             <tr class="indexed">
               <th scope="row"></th>
               <td class="fw-bold indexed">
-                <%= user.first_name %> <%= user.last_name %>
+                <%= user?.first_name %> <%= user?.last_name %>
               </td>
-              <td><%= user.username %></td>
-              <td><%= user.email %></td>
-              <td><%= user.phone_no %></td>
+              <td><%= user?.username %></td>
+              <td><%= user?.email %></td>
+              <td><%= user?.phone_no %></td>
               <td>
-                <small> <%= moment(user.created_date).format('llll') %> </small>
+                <small> <%= moment(user?.created_date).format('llll') %> </small>
               </td>
-              <td><%= user.type %></td>
-              <% if(user.is_blocked === false){ %>
+              <td><%= user?.type %></td>
+              <% if(user?.is_blocked === false){ %>
               <td>
                 <small class="text-success">ACTIVE</small>
               </td>

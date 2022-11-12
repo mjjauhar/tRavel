@@ -83,10 +83,10 @@ include('../partials/admin_navbar.ejs') %>
             <% main_categories.forEach(function(main_category){ %>
             <tr class="indexed">
               <th scope="row"></th>
-              <td class="fw-bold indexed"><%= main_category.name %></td>
-              <td><small><%= main_category.description %></small></td>
+              <td class="fw-bold indexed"><%= main_category?.name %></td>
+              <td><small><%= main_category?.description %></small></td>
               <td>
-                <small> <%= moment(main_category.created_date).format('llll') %> </small>
+                <small> <%= moment(main_category?.created_date).format('llll') %> </small>
               </td>
               <% if(main_category.delete === false){ %>
               <td><p class="text-success">Active</p></td>

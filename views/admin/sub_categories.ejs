@@ -84,11 +84,11 @@ include('../partials/admin_navbar.ejs') %>
             <% sub_categories.forEach(function(sub_category){ %>
             <tr class="indexed">
               <th scope="row"></th>
-              <td class="fw-bold indexed"><%= sub_category.name %></td>
-              <td><small><%= sub_category.description %></small></td>
-              <td><%= sub_category.main_category %></td>
+              <td class="fw-bold indexed"><%= sub_category?.name %></td>
+              <td><small><%= sub_category?.description %></small></td>
+              <td><%= sub_category?.main_category %></td>
               <td>
-                <small> <%= moment(sub_category.created_date).format('llll') %> </small>
+                <small> <%= moment(sub_category?.created_date).format('llll') %> </small>
               </td>
               <% if(sub_category.delete === false){ %>
               <td><p class="text-success">Active</p></td>

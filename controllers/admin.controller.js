@@ -41,7 +41,6 @@ module.exports = {
       .find({ is_deleted: false })
       .populate("category")
       .sort(sort);
-    // let date = moment(products).format('llll');
     res.render("admin/products", { products, moment });
   },
   // RENDER ADD PRODUCT PAGE //
@@ -81,7 +80,6 @@ module.exports = {
   get_add_sub_category_page: async (req, res) => {
     let main_categories = await mainCategoryModel.find();
     let sub_categories = await subCategoryModel.find();
-    console.log(main_categories[0].name);
     res.render("admin/add_sub_category", { main_categories, sub_categories });
   },
   // RENDER EDIT SUB CATEGORY PAGE //
@@ -114,6 +112,7 @@ module.exports = {
     });
     const result = await newProduct.save();
     res.redirect("/admin/products");
+    console.log("...NEW PRODUCT ADDED...");
     console.log(result);
   },
   // ADD MAIN CATEGORY //
@@ -128,6 +127,7 @@ module.exports = {
     });
     const result = await newMainCategory.save();
     res.redirect("/admin/main_categories");
+    console.log("...NEW MAIN CATEGORY ADDED...");
     console.log(result);
   },
   // ADD SUB CATEGORY //

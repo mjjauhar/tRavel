@@ -88,12 +88,12 @@ include('../partials/admin_navbar.ejs') %>
             <% products.forEach(function(product){ %>
             <tr>
               <th scope="row"></th>
-              <td class="fw-bold"><%= product.name %></td>
-              <td><%= product.category %></td>
-              <td><small><%= product.description %></small></td>
-              <td><%= product.price %></td>
+              <td class="fw-bold"><%= product?.name %></td>
+              <td><%= product?.category?.name %></td>
+              <td><small><%= product?.description %></small></td>
+              <td><%= product?.price %></td>
               <td>
-                <small> <%= moment(product.created_date).format('llll') %> </small>
+                <small> <%= moment(product?.created_date).format('llll') %> </small>
               </td>
               <td>
                 <img
