@@ -13,12 +13,19 @@ const {
   user_signup,
   otp_login,
   resend_otp,
+  user_address,
+  add_user_address,
+  edit_user_address,
 } = require("../controllers/user.controllers");
 
 app.route("/").get(landing_page);
 app.route("/logout").post(proceedIfLoggedIn, logout);
 app.route("/user_account").get(proceedIfLoggedIn, user_account);
 app.route("/user_account/:id").post(proceedIfLoggedIn, edit_user);
+
+app.route("/user_address").get(proceedIfLoggedIn, user_address);
+app.route("/add/user_address/:id").post(proceedIfLoggedIn, add_user_address);
+app.route("/edit/user_address/:id").post(proceedIfLoggedIn, edit_user_address);
 
 app
   .route("/user_login")

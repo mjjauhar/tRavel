@@ -2,6 +2,7 @@ const userModel = require("../models/user");
 const productModel = require("../models/product");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
+require('dotenv').config();
 
 /////////////////////////////////// SESSION MIDDLEWARE ///////////////////////////////////
 const proceedIfLoggedIn = (req, res, next) => {
@@ -69,6 +70,17 @@ const user_account = async (req, res) => {
   });
 };
 
+const user_address = async (req, res) => {
+  const userId = req.session.userId;
+  const user = await userModel.find({ _id: userId });
+  const full_name = `${user[0].first_name} ${user[0].last_name}`;
+  const phone_no = user[0].phone_no;
+  res.render("user/user_address", { login: true, userId, full_name, phone_no });
+};
+
+/////////////////////////////////// EDIT DATA ///////////////////////////////////
+const add_user_address = (req, res) => {};
+
 /////////////////////////////////// EDIT DATA ///////////////////////////////////
 // EDIT USER
 const edit_user = async (req, res) => {
@@ -92,6 +104,8 @@ const edit_user = async (req, res) => {
   });
 };
 
+const edit_user_address = (req, res) => {};
+
 /////////////////////////////////// USER REGISTER AND LOGIN ///////////////////////////////////
 // OTP CONFIG
 var otp = Math.random();
@@ -105,8 +119,8 @@ let transporter = nodemailer.createTransport({
   secure: true,
   service: "Gmail",
   auth: {
-    user: "travelauthentication@gmail.com",
-    pass: "eabbvzhvhdifpqea",
+    user: process.env.AUTH_MAIL,
+    pass: process.env.AUTH_MAIL_PASS,
   },
 });
 
@@ -208,12 +222,12 @@ const user_login = async (req, res) => {
   if (!user) {
     req.session.emailError = "Invalid email";
     return res.redirect("/user_login");
-  } // If entered email doesn't exist..
+  } 
   const isMatch = await bcrypt.compare(password, user.password); // If it does exist, check password..
   if (!isMatch) {
     req.session.passwordError = "Invalid password";
     return res.redirect("/user_login");
-  } // If the password is incorrect..
+  } 
   req.session.user = user.username;
   req.session.userId = user._id;
   req.session.isAuth = true; // then save the state that the user is authenticated.
@@ -240,4 +254,7 @@ module.exports = {
   edit_user,
   proceedIfLoggedIn,
   proceedIfLoggedOut,
+  user_address,
+  add_user_address,
+  edit_user_address,
 };

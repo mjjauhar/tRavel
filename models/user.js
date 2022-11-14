@@ -1,17 +1,19 @@
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 var user = new Schema({
   type: {
     type: String,
-    default: 'user'
+    default: "user",
   },
   username: {
     type: String,
-    required: true
+    required: true,
+    lowercase: true,
+    trim: true,
   },
   first_name: {
     type: String,
-    required: true
+    required: true,
   },
   last_name: {
     type: String,
@@ -20,7 +22,13 @@ var user = new Schema({
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    lowercase: true,
+    validate(value) {
+      if (!validator.isEmail(value)) {
+        throw new Error("Email is invalid");
+      }
+    },
   },
   phone_no: {
     type: Number,
@@ -28,7 +36,14 @@ var user = new Schema({
   },
   password: {
     type: String,
-    required: true
+    required: true,
+    minLength: 3,
+    trim: true,
+    validate(value) {
+      if (value.toLowerCase().includes("password")) {
+        throw new Error("password musn’t contain password");
+      }
+    },
   },
   otp_verified: {
     type: Boolean,
@@ -36,31 +51,16 @@ var user = new Schema({
   },
   created_date: {
     type: Date,
-    required: true
+    required: true,
   },
   modified_date: {
     type: Date,
-    // required: true
-  },
-  address: {
-    country: {
-      type: String,
-    //   required: true
-    },
-    pincode: {
-      type: Number,
-    //   required: true
-    },
-    place: {
-      type: String,
-    //   required: true
-    }
   },
   is_blocked: {
     type: Boolean,
     default: false,
-    // required: true
-  }
+    required: true
+  },
 });
 
-module.exports = mongoose.model('user', user);
+module.exports = mongoose.model("user", user);

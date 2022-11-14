@@ -34,7 +34,15 @@
             <label for="floatingInput" class="form-label">Email address</label>
           </div>
           <% if(emailErr){ %>
-          <p class="error text-danger"><%= emailErr %></p>
+          <div class="alert alert-danger alert-dismissible mx-5 my-3" >
+            <div><%= emailErr %></div>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
           <% } %>
           <div class="form-floating mx-5">
             <input
@@ -48,10 +56,19 @@
             <label for="floatingPassword" class="form-label">Password</label>
           </div>
           <% if(passwordErr){ %>
-          <p class="error text-danger"><%= passwordErr %></p>
+          <div class="alert alert-danger alert-dismissible mx-5 my-3" >
+            <div><%= passwordErr %></div>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
           <% } %>
           <!-- An element to toggle between password visibility -->
-          <br><input type="checkbox" onclick="myFunction()" /> Show Password <br>
+          <br /><input type="checkbox" onclick="myFunction()" /> Show Password
+          <br />
 
           <button class="btn btn-lg btn-primary my-3" type="submit">
             Log in</button
