@@ -20,7 +20,7 @@
           style="width: 15rem; height: 15rem"
         />
         <div class="card-body">
-          <a href="" class="text-decoration-none"><h5 class="card-title fw-bold text-truncate"><%= product.name %></h5></a>
+          <a href="/<%= product.name %>/<%= product._id %>" class="text-decoration-none"><h5 class="card-title fw-bold text-truncate"><%= product.name %></h5></a>
           <p class="card-text text-truncate"><%= product.description %></p>
           <p class="card-text text-dark fw-bold ps-2 half_trapezoid">
             <%= product.price %>

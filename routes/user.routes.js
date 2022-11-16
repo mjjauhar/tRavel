@@ -18,9 +18,12 @@ const {
   edit_address,
   edit_address_page,
   delete_address,
+  product_page,
 } = require("../controllers/user.controllers");
 
 app.route("/").get(landing_page);
+app.route("/:productname/:id").get(product_page);
+
 app.route("/user/logout").post(proceedIfLoggedIn, logout);
 app.route("/user/account").get(proceedIfLoggedIn, account);
 app.route("/user/account/:id").post(proceedIfLoggedIn, edit_user);

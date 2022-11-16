@@ -26,7 +26,6 @@ const proceedIfLoggedOut = (req, res, next) => {
 const landing_page = async (req, res) => {
   let products = await productModel.find({
     is_deleted: false,
-    otp_verified: true,
   });
   if (req.session.isAuth) {
     res.render("user/landing_page", {
@@ -35,6 +34,22 @@ const landing_page = async (req, res) => {
     });
   } else {
     res.render("user/landing_page", { login: false, products });
+  }
+};
+const product_page = async (req, res) => {
+  const proId = req.params.id;
+  let product = await productModel.findOne({
+    is_deleted: false,
+    _id: proId,
+  });
+
+  if (req.session.isAuth) {
+    res.render("user/product_page", {
+      login: true,
+      product
+    });
+  } else {
+    res.render("user/product_page", { login: false, product });
   }
 };
 // render_user_signup_page.------------------------
@@ -349,4 +364,5 @@ module.exports = {
   edit_address,
   edit_address_page,
   delete_address,
+  product_page,
 };

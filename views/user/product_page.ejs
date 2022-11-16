@@ -1,0 +1,57 @@
+<%- include('../partials/header.ejs') %> <%- include('../partials/navbar.ejs')
+%>
+
+<div class="container-fluid mt-2">
+  <div class="row">
+    <div class="col-6">
+      <div
+        id="carouselExampleFade"
+        class="carousel slide carousel-fade"
+        data-bs-ride="carousel"
+      >
+        <div class="carousel-inner rounded">
+          <div class="carousel-item active">
+            <img src="/<%= product.imgUrl %>" class="d-block w-100" alt="..." />
+          </div>
+          <!-- <div class="carousel-item">
+                    <img src="..." class="d-block w-100" alt="...">
+                  </div>
+                  <div class="carousel-item">
+                    <img src="..." class="d-block w-100" alt="...">
+                  </div> -->
+        </div>
+        <button
+          class="carousel-control-prev"
+          type="button"
+          data-bs-target="#carouselExampleFade"
+          data-bs-slide="prev"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button
+          class="carousel-control-next"
+          type="button"
+          data-bs-target="#carouselExampleFade"
+          data-bs-slide="next"
+        >
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+    <div class="col-6">
+        <p class="fw-bold h4 mt-5 ms-5"><%= product.name %></p>
+        <p class="mt-4 ms-5"><%= product.description %></p>
+        <p class="h2 mt-4 ms-5">Rs <%= product.price %></p>
+        <a href="">
+            <p class="btn btn-lg btn-warning mt-4 ms-5">
+                Add to Cart
+            </p>
+        </a>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer_infos.ejs') %> <%-
+include('../partials/footer.ejs') %>
