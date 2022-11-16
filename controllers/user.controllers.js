@@ -119,7 +119,7 @@ const edit_address_page = async (req, res) => {
   });
 };
 
-/////////////////////////////////// EDIT DATA ///////////////////////////////////
+/////////////////////////////////// ADD DATA ///////////////////////////////////
 const add_address = async (req, res) => {
   const userId = req.session.userId;
   const push_address = req.body;
@@ -168,9 +168,6 @@ const edit_address = async (req, res) => {
   const userId = req.session.userId;
   var addId = req.params.id;
   const { country, name, phone_no, pincode, type } = req.body;
-  // console.log(userId);
-  // console.log(addId);
-  // let adr = await addressModel.findOne({ user: addId });
   await addressModel.updateMany(
     { user: userId, "address._id": addId },
     {
@@ -182,6 +179,17 @@ const edit_address = async (req, res) => {
         "address.$.type": type,
       },
     }
+  );
+  res.redirect("/user/address");
+};
+
+const delete_address = async (req, res) => {
+  const userId = req.session.userId;
+  var addId = req.params.id;
+
+  await addressModel.updateOne(
+    { user: userId },
+    { $pull: { address: { _id: addId } } }
   );
   res.redirect("/user/address");
 };
@@ -340,4 +348,5 @@ module.exports = {
   add_address,
   edit_address,
   edit_address_page,
+  delete_address,
 };

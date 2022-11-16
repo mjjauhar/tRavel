@@ -5,14 +5,36 @@
     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
   >
     <h1 class="h2">Edit Address</h1>
-    <a href="/user/address"
-      ><button type="button" class="btn btn-sm btn-outline-danger">
-        Cancel
-      </button></a
-    >
+    <form action="/user/delete/address/<%= addId %>" method="post">
+      <button
+        class="btn-sm btn-outline-danger btn mt-2"
+        onclick="return confirm('Are you sure to delete this <%= type %> address')"
+      >
+        Delete
+      </button>
+    </form>
   </div>
   <div class="container">
     <form action="/user/edit/address/<%= addId %>" method="post">
+      <label for="">Type</label>
+      <select
+        name="type"
+        class="form-select form-select mb-4"
+        aria-label=".form-select-sm example"
+      >
+        <% if(type) { %>
+        <option selected><%= type %></option>
+        <% } else { %>
+        <option selected>Select an option</option>
+        <% } %> <% if(type === "home") { %>
+        <option value="office">office</option>
+        <% } else if(type === "office") { %>
+        <option value="home">home</option>
+        <% } else { %>
+        <option value="home">home</option>
+        <option value="office">office</option>
+        <% } %>
+      </select>
       <label for="">Name</label>
       <input
         type="text"
@@ -45,22 +67,10 @@
         value="<%= pincode %>"
       />
 
-      <label for="">Type</label>
-      <input
-        type="text"
-        name="type"
-        class="form-control mb-4"
-        value="<%= type %>"
-      />
-      <label for="">Type</label>
-      <input
-        type="text"
-        name="id"
-        class="form-control mb-4"
-        value="<%= addId %>"
-      />
-
       <button type="submit" class="btn btn-success">Submit</button>
+      <a href="/user/address"
+        ><button type="button" class="btn btn-outline-danger">Cancel</button></a
+      >
     </form>
   </div>
 </main>

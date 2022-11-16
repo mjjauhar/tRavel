@@ -17,6 +17,7 @@ const {
   add_address,
   edit_address,
   edit_address_page,
+  delete_address,
 } = require("../controllers/user.controllers");
 
 app.route("/").get(landing_page);
@@ -26,8 +27,11 @@ app.route("/user/account/:id").post(proceedIfLoggedIn, edit_user);
 
 app.route("/user/address").get(proceedIfLoggedIn, address);
 app.route("/user/add/address/:id").post(proceedIfLoggedIn, add_address);
-app.route("/user/edit/address/:id").get(proceedIfLoggedIn, edit_address_page);
-app.route("/user/edit/address/:id").post(proceedIfLoggedIn, edit_address);
+app.route("/user/delete/address/:id").post(proceedIfLoggedIn, delete_address)
+app
+  .route("/user/edit/address/:id")
+  .get(proceedIfLoggedIn, edit_address_page)
+  .post(proceedIfLoggedIn, edit_address);
 
 app
   .route("/user/login")
