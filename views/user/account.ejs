@@ -5,7 +5,11 @@
     <div class="row">
       <div class="col-3">
         <div class="rectangle ps-4 pt-2 text-dark">
+          <% if(full_name) { %>
           <h5><b><%= full_name %></b></h5>
+          <% } else { %>
+          <h5><b><%= username %></b></h5>
+          <% } %>
           <p><%= phone_no %></p>
         </div>
 
@@ -15,14 +19,16 @@
             <big> &ensp; Orders & Returns</big>
           </div></a
         >
-        <a href="" class="text-decoration-none"
-          ><div class="selected_rectangle d-flex ps-4 align-items-center text-dark">
+        <a href="/user/account" class="text-decoration-none"
+          ><div
+            class="selected_rectangle d-flex ps-4 align-items-center text-dark"
+          >
             <i class="bi bi-person"></i>
             <big> &ensp; My Profile</big>
           </div></a
         >
 
-        <a href="/user_address" class="text-decoration-none"
+        <a href="/user/address" class="text-decoration-none"
           ><div class="rectangle d-flex ps-4 align-items-center text-dark">
             <i class="bi bi-envelope"></i>
             <big> &ensp; Address</big>
@@ -31,7 +37,7 @@
 
         <form
           method="post"
-          action="/logout"
+          action="/user/logout"
           class="rectangle ps-2 d-flex align-items-center"
         >
           <button class="btn-lg text-decoration-none btn text-danger">
@@ -40,7 +46,7 @@
         </form>
       </div>
       <div class="col-9">
-        <form method="post" action="/user_account/<%= userId %>">
+        <form method="post" action="/user/account/<%= userId %>">
           <div class="container-fluid">
             <div class="row">
               <div class="col-6">
@@ -64,6 +70,7 @@
                     value="<%= first_name %>"
                   />
                 </div>
+
                 <div class="mb-5">
                   <label for="phone_no" class="form-label">Mobile Number</label>
                   <input
@@ -77,14 +84,25 @@
               </div>
               <div class="col-6">
                 <div class="mb-5">
-                  <label for="password" class="form-label">password</label>
-
-                  <input
-                    type="password"
-                    class="form-control"
-                    name="password"
-                    id="id"
-                  />
+                  <label for="gender" class="form-label">Gender</label>
+                  <select
+                    name="gender"
+                    class="form-select form-select"
+                    aria-label=".form-select-sm example"
+                  >
+                    <% if(gender) { %>
+                    <option selected><%= gender %></option>
+                    <% } else { %>
+                    <option selected>Select an option</option>
+                    <% } %> <% if(gender === "male") { %>
+                    <option value="female">female</option>
+                    <% } else if(gender === "female") { %>
+                    <option value="male">male</option>
+                    <% } else { %>
+                    <option value="female">female</option>
+                    <option value="male">male</option>
+                    <% } %>
+                  </select>
                 </div>
                 <div class="mb-5">
                   <label for="last_name" class="form-label">Last name</label>
@@ -109,7 +127,6 @@
               </div>
             </div>
             <div class="text-end">
-              <p id="noChange"></p>
               <button
                 type="button"
                 class="btn btn-secondary"

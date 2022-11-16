@@ -68,7 +68,7 @@ module.exports = {
   edit_main_category_page: async (req, res) => {
     let mCatId = req.params.id;
     let main_category = await mainCategoryModel.findOne({ _id: mCatId });
-    res.render("admin/main_categories/edit_main_category", { main_category });
+    res.render("admin/edit_main_category", { main_category });
   },
   // RENDER SUB CATEGORY //
   sub_categories: async (req, res) => {
@@ -85,8 +85,9 @@ module.exports = {
   // RENDER EDIT SUB CATEGORY PAGE //
   edit_sub_category_page: async (req, res) => {
     let sCatId = req.params.id;
+    let main_categories = await mainCategoryModel.find();
     let sub_category = await subCategoryModel.findOne({ _id: sCatId });
-    res.render("admin/sub_categories/edit_sub_category", { sub_category });
+    res.render("admin/edit_sub_category", { sub_category, main_categories });
   },
   // RENDER USERS //
   users: async (req, res) => {

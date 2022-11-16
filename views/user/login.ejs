@@ -15,7 +15,7 @@
     </div>
     <div class="col-12 col-md-6 text-center">
       <main class="form-signin">
-        <form action="/user_login" method="post">
+        <form action="/user/login" method="post">
           <img
             class="mb-4 navbar-brand-login"
             src="/public/images/logo-no-background.svg"
@@ -32,18 +32,12 @@
               name="email"
             />
             <label for="floatingInput" class="form-label">Email address</label>
+
+            <% if(emailErr){ %>
+              <span class="position-absolute top-0 end-0 translate-middle badge rounded-pill bg-danger">Invalid email</span>
+              <% } %>
           </div>
-          <% if(emailErr){ %>
-          <div class="alert alert-danger alert-dismissible mx-5 my-3" >
-            <div><%= emailErr %></div>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="alert"
-              aria-label="Close"
-            ></button>
-          </div>
-          <% } %>
+
           <div class="form-floating mx-5">
             <input
               type="password"
@@ -54,18 +48,11 @@
               minlength="3"
             />
             <label for="floatingPassword" class="form-label">Password</label>
+            <% if(passwordErr){ %>
+              <span class="position-absolute top-0 end-0 translate-middle badge rounded-pill bg-danger">Wrong Password</span>
+              <% } %>
           </div>
-          <% if(passwordErr){ %>
-          <div class="alert alert-danger alert-dismissible mx-5 my-3" >
-            <div><%= passwordErr %></div>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="alert"
-              aria-label="Close"
-            ></button>
-          </div>
-          <% } %>
+      
           <!-- An element to toggle between password visibility -->
           <br /><input type="checkbox" onclick="myFunction()" /> Show Password
           <br />
@@ -73,10 +60,7 @@
           <button class="btn btn-lg btn-primary my-3" type="submit">
             Log in</button
           ><br />
-          <!-- <a href="/otp_login_1" class="btn btn-lg btn-primary" type="button">
-            Login wih OTP
-          </a> -->
-          <a href="/user_signup" class="btn btn-lg btn-primary" type="button">
+          <a href="/user/signup" class="btn btn-lg btn-primary" type="button">
             Create account
           </a>
         </form>

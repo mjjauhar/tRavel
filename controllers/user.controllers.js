@@ -1,8 +1,9 @@
 const userModel = require("../models/user");
 const productModel = require("../models/product");
+const addressModel = require("../models/address");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
-require('dotenv').config();
+require("dotenv").config();
 
 /////////////////////////////////// SESSION MIDDLEWARE ///////////////////////////////////
 const proceedIfLoggedIn = (req, res, next) => {
@@ -37,18 +38,18 @@ const landing_page = async (req, res) => {
   }
 };
 // render_user_signup_page.------------------------
-const user_signup_page = (req, res) => {
-  res.render("user/user_signup", { emailExist: req.session.exists });
+const signup_page = (req, res) => {
+  res.render("user/signup", { emailExist: req.session.exists });
 };
 // render_user_signin_page.------------------------
-const user_login_page = (req, res) => {
-  res.render("user/user_login", {
+const login_page = (req, res) => {
+  res.render("user/login", {
     emailErr: req.session.emailError,
     passwordErr: req.session.passwordError,
   });
 };
 // render_user_account_page
-const user_account = async (req, res) => {
+const account = async (req, res) => {
   const userId = req.session.userId;
   const user = await userModel.find({ _id: userId });
   const full_name = `${user[0].first_name} ${user[0].last_name}`;
@@ -57,8 +58,9 @@ const user_account = async (req, res) => {
   const first_name = user[0].first_name;
   const last_name = user[0].last_name;
   const username = user[0].username;
+  const gender = user[0].gender;
 
-  res.render("user/user_account", {
+  res.render("user/account", {
     login: true,
     userId,
     full_name,
@@ -67,25 +69,82 @@ const user_account = async (req, res) => {
     first_name,
     last_name,
     username,
+    gender,
   });
 };
 
-const user_address = async (req, res) => {
+const address = async (req, res) => {
   const userId = req.session.userId;
-  const user = await userModel.find({ _id: userId });
-  const full_name = `${user[0].first_name} ${user[0].last_name}`;
-  const phone_no = user[0].phone_no;
-  res.render("user/user_address", { login: true, userId, full_name, phone_no });
+  const user = await userModel.findOne({ _id: userId });
+  const getUserAddresses = await addressModel.findOne({ user: userId });
+  let userAddresses;
+  if (getUserAddresses != null) {
+    userAddresses = getUserAddresses.address;
+  } else {
+    userAddresses = [];
+  }
+  const full_name = `${user.first_name} ${user.last_name}`;
+  const phone_no = user.phone_no;
+  res.render("user/address", {
+    login: true,
+    userId,
+    full_name,
+    phone_no,
+    userAddresses,
+  });
+};
+
+const edit_address_page = async (req, res) => {
+  const addIndex = req.params.id;
+  const userId = req.session.userId;
+  const getAddress = await addressModel.findOne({ user: userId });
+  const name = getAddress.address[addIndex].name;
+  const phone_no = getAddress.address[addIndex].phone_no;
+  const country = getAddress.address[addIndex].country;
+  const pincode = getAddress.address[addIndex].pincode;
+  const city = getAddress.address[addIndex].city;
+  const type = getAddress.address[addIndex].type;
+  const addId = getAddress.address[addIndex]._id;
+
+  // console.log(getAddress.address[addIndex].name);
+  res.render("user/edit_address", {
+    name,
+    phone_no,
+    country,
+    pincode,
+    city,
+    type,
+    addId,
+    addIndex,
+  });
 };
 
 /////////////////////////////////// EDIT DATA ///////////////////////////////////
-const add_user_address = (req, res) => {};
+const add_address = async (req, res) => {
+  const userId = req.session.userId;
+  const push_address = req.body;
+
+  let adr_exists_check = await addressModel.findOne({ user: userId });
+  if (adr_exists_check) {
+    await addressModel.findOneAndUpdate(
+      { userId },
+      { $push: { address: push_address } }
+    );
+  } else {
+    const new_address = new addressModel({
+      user: userId,
+      address: [push_address],
+    });
+    await new_address.save();
+  }
+  res.redirect("/user/address");
+};
 
 /////////////////////////////////// EDIT DATA ///////////////////////////////////
 // EDIT USER
 const edit_user = async (req, res) => {
   const userId = req.params.id;
-  const { username, phone_no, email, first_name, last_name } = req.body;
+  const { username, phone_no, email, first_name, last_name, gender } = req.body;
   const save_user_edits = await userModel.findOneAndUpdate(
     { _id: userId },
     {
@@ -95,16 +154,37 @@ const edit_user = async (req, res) => {
         email,
         first_name,
         last_name,
+        gender,
       },
     }
   );
   await save_user_edits.save().then(() => {
-    res.redirect("/user_account");
+    res.redirect("/user/account");
     console.log("user info edited");
   });
 };
 
-const edit_user_address = (req, res) => {};
+const edit_address = async (req, res) => {
+  const userId = req.session.userId;
+  var addId = req.params.id;
+  const { country, name, phone_no, pincode, type } = req.body;
+  // console.log(userId);
+  // console.log(addId);
+  // let adr = await addressModel.findOne({ user: addId });
+  await addressModel.updateMany(
+    { user: userId, "address._id": addId },
+    {
+      $set: {
+        "address.$.country": country,
+        "address.$.name": name,
+        "address.$.phone_no": phone_no,
+        "address.$.pincode": pincode,
+        "address.$.type": type,
+      },
+    }
+  );
+  res.redirect("/user/address");
+};
 
 /////////////////////////////////// USER REGISTER AND LOGIN ///////////////////////////////////
 // OTP CONFIG
@@ -142,32 +222,32 @@ const resend_otp = function (req, res) {
     }
     console.log("Message sent: %s", info.messageId);
     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-    res.render("user/otp_login", { user, msg: "otp has been sent" });
+    res.render("user/otp", { user, msg: "otp has been sent" });
   });
 };
 
 // OTP Validation
-const otp_login = async (req, res) => {
+const otp_validation = async (req, res) => {
   let usrId = req.params.id;
   if (req.body.otp == otp) {
     await userModel.findOneAndUpdate(
       { _id: usrId },
       { $set: { otp_verified: true } }
     );
-    res.redirect("/user_login");
+    res.redirect("/user/login");
   } else {
-    res.render("user/otp_login", { user, msg: "otp is incorrect" });
+    res.render("user/otp", { user, msg: "otp is incorrect" });
   }
 };
 // Post Request that handles Signup
-const user_signup = async (req, res) => {
-  const { first_name, last_name, username, phone_no, email, password } =
+const signup = async (req, res) => {
+  const { first_name, last_name, username, phone_no, email, password, gender } =
     req.body; // asigning user data to variables.
   req.session.exists = false;
   let user = await userModel.findOne({ email }); // checking if user email exist in database.
   if (user) {
     req.session.exists = true;
-    return res.redirect("/user_signup");
+    return res.redirect("/user/signup");
   } // two or more users with same email can't exist.
   const hashedPsw = await bcrypt.hash(password, 12); // else continue and hash password.
   const created_date = new Date();
@@ -179,6 +259,7 @@ const user_signup = async (req, res) => {
     created_date,
     phone_no,
     email,
+    gender,
     password: hashedPsw,
   }); // creating new user.
 
@@ -204,7 +285,7 @@ const user_signup = async (req, res) => {
 
   await user
     .save()
-    .then(res.render("user/otp_login", { user, msg: "" }))
+    .then(res.render("user/otp", { user, msg: "" }))
     .catch((err) => {
       console.log(err);
     });
@@ -212,22 +293,23 @@ const user_signup = async (req, res) => {
 // ------------------------------------------------
 
 // user login--------------------------------------
-const user_login = async (req, res) => {
+const login = async (req, res) => {
+  req.session.emailError = false;
+  req.session.passwordError = false;
   const { email, password } = req.body; // asigning user entered datas to variables.
   const user = await userModel.findOne({
     $and: [{ email: email }, { type: "user" }, { is_blocked: false }],
   }); // checking if the email exist in database.
-  req.session.emailError = false;
-  req.session.passwordError = false;
+
   if (!user) {
-    req.session.emailError = "Invalid email";
-    return res.redirect("/user_login");
-  } 
+    req.session.emailError = true;
+    return res.redirect("/user/login");
+  }
   const isMatch = await bcrypt.compare(password, user.password); // If it does exist, check password..
   if (!isMatch) {
-    req.session.passwordError = "Invalid password";
-    return res.redirect("/user_login");
-  } 
+    req.session.passwordError = true;
+    return res.redirect("/user/login");
+  }
   req.session.user = user.username;
   req.session.userId = user._id;
   req.session.isAuth = true; // then save the state that the user is authenticated.
@@ -242,19 +324,20 @@ const logout = (req, res) => {
 };
 
 module.exports = {
-  user_account,
+  account,
   logout,
-  user_login,
-  user_login_page,
-  user_signup,
-  user_signup_page,
+  login,
+  login_page,
+  signup,
+  signup_page,
   landing_page,
   resend_otp,
-  otp_login,
+  otp_validation,
   edit_user,
   proceedIfLoggedIn,
   proceedIfLoggedOut,
-  user_address,
-  add_user_address,
-  edit_user_address,
+  address,
+  add_address,
+  edit_address,
+  edit_address_page,
 };

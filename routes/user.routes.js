@@ -5,40 +5,42 @@ const {
   proceedIfLoggedIn,
   proceedIfLoggedOut,
   logout,
-  user_account,
+  account,
   edit_user,
-  user_login_page,
-  user_login,
-  user_signup_page,
-  user_signup,
-  otp_login,
+  login_page,
+  login,
+  signup_page,
+  signup,
+  otp_validation,
   resend_otp,
-  user_address,
-  add_user_address,
-  edit_user_address,
+  address,
+  add_address,
+  edit_address,
+  edit_address_page,
 } = require("../controllers/user.controllers");
 
 app.route("/").get(landing_page);
-app.route("/logout").post(proceedIfLoggedIn, logout);
-app.route("/user_account").get(proceedIfLoggedIn, user_account);
-app.route("/user_account/:id").post(proceedIfLoggedIn, edit_user);
+app.route("/user/logout").post(proceedIfLoggedIn, logout);
+app.route("/user/account").get(proceedIfLoggedIn, account);
+app.route("/user/account/:id").post(proceedIfLoggedIn, edit_user);
 
-app.route("/user_address").get(proceedIfLoggedIn, user_address);
-app.route("/add/user_address/:id").post(proceedIfLoggedIn, add_user_address);
-app.route("/edit/user_address/:id").post(proceedIfLoggedIn, edit_user_address);
-
-app
-  .route("/user_login")
-  .get(proceedIfLoggedOut, user_login_page)
-  .post(proceedIfLoggedOut, user_login);
+app.route("/user/address").get(proceedIfLoggedIn, address);
+app.route("/user/add/address/:id").post(proceedIfLoggedIn, add_address);
+app.route("/user/edit/address/:id").get(proceedIfLoggedIn, edit_address_page);
+app.route("/user/edit/address/:id").post(proceedIfLoggedIn, edit_address);
 
 app
-  .route("/user_signup")
-  .get(proceedIfLoggedOut, user_signup_page)
-  .post(proceedIfLoggedOut, user_signup);
+  .route("/user/login")
+  .get(proceedIfLoggedOut, login_page)
+  .post(proceedIfLoggedOut, login);
 
-app.route("/otp_login/:id").post(proceedIfLoggedOut, otp_login);
+app
+  .route("/user/signup")
+  .get(proceedIfLoggedOut, signup_page)
+  .post(proceedIfLoggedOut, signup);
 
-app.route("/resend").post(proceedIfLoggedOut, resend_otp);
+app.route("/user/signup/otp/:id").post(proceedIfLoggedOut, otp_validation);
+
+app.route("/user/otp/resend").post(proceedIfLoggedOut, resend_otp);
 
 module.exports = app;

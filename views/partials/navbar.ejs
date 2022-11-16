@@ -58,7 +58,7 @@
             >
             <ul class="dropdown-menu">
               <li>
-                <a class="dropdown-item" href="/user_account"
+                <a class="dropdown-item" href="/user/account"
                   ><i class="bi bi-person"></i><small> My Profile</small></a
                 >
               </li>
@@ -69,13 +69,13 @@
                 >
               </li>
               <li>
-                <a class="dropdown-item" href="#"
+                <a class="dropdown-item" href="/user/address"
                   ><i class="bi bi-envelope"></i>
                   <small> My Addresses</small></a
                 >
               </li>
               <li>
-                <form method="post" action="/logout">
+                <form method="post" action="/user/logout">
                   <button class="dropdown-item text-danger">
                     <i class="bi bi-dash-lg"></i> <small> Logout</small>
                   </button>
@@ -84,13 +84,13 @@
             </ul>
           </div>
           <% } else { %>
-          <a href="/user_login"
+          <a href="/user/login"
             ><img
               src="/public/images/icons/person.svg"
               alt="Account-icon"
               style="width: 23px"
           /></a>
-          <a class="nav-link active" aria-current="page" href="/user_login"
+          <a class="nav-link active" aria-current="page" href="/user/login"
             >Login</a
           >
           <% } %>

@@ -2,7 +2,7 @@
 <!-- header -->
 
 <main class="form-signin m-auto p-5 text-center">
-  <form action="/user_signup" method="post">
+  <form action="/user/signup" method="post">
     <img
       class="mb-4 navbar-brand"
       src="/public/images/logo-no-background.svg"
@@ -20,6 +20,7 @@
       />
       <label for="floatingInput">First name</label>
     </div>
+
     <div class="form-floating">
       <input
         type="text"
@@ -30,6 +31,7 @@
       />
       <label for="floatingInput">Last name</label>
     </div>
+
     <div class="form-floating">
       <input
         type="text"
@@ -39,8 +41,21 @@
         name="username"
         required
       />
-      <label for="floatingInput">User name</label>
+      <label for="floatingInput">User name<sup class="text-danger">*</sup></label>
     </div>
+
+    <div class="form-floating">
+      <input
+        type="text"
+        class="form-control mb-4"
+        id="gender"
+        placeholder="gender"
+        name="gender"
+        required
+      />
+      <label for="floatingInput">Gender<sup class="text-danger">*</sup></label>
+    </div>
+
     <div class="form-floating">
       <input
         type="email"
@@ -50,11 +65,12 @@
         name="email"
         required
       />
-      <label for="floatingInput">Email address</label>
+      <label for="floatingInput">Email address<sup class="text-danger">*</sup></label>
       <% if(emailExist) { %>
       <p class="text-danger">User with this email already exists</p>
       <% } %>
     </div>
+    
     <div class="form-floating">
       <input
         type="tel"
@@ -65,6 +81,7 @@
       />
       <label for="floatingInput">Phone no</label>
     </div>
+
     <div class="form-floating">
       <input
         type="password"
@@ -75,12 +92,12 @@
         minlength="3"
         required
       />
-      <label for="floatingPassword">Password</label>
+      <label for="floatingPassword">Password<sup class="text-danger">*</sup></label>
     </div>
     <button class="btn btn-lg btn-primary my-3" type="submit">
       Create account</button
     ><br />
-    <a href="/user_login"
+    <a href="/user/login"
       ><button class="btn btn-lg btn-primary" type="button">
         Log in with existing account
       </button></a

@@ -33,7 +33,10 @@ const {
 } = require("../controllers/admin.controller");
 
 // LOGIN
-app.route("/admin_login").get(ProceedIfLoggedOut, admin_login_page).post(ProceedIfLoggedOut, admin_login);
+app
+  .route("/admin_login")
+  .get(ProceedIfLoggedOut, admin_login_page)
+  .post(ProceedIfLoggedOut, admin_login);
 
 // DASHBOARD
 app.route("/dashboard").get(ProceedIfLoggedIn, dashboard);
@@ -45,8 +48,8 @@ app
   .get(ProceedIfLoggedIn, delete_products);
 app
   .route("/products/edit_product/:id")
-  .get(ProceedIfLoggedIn, edit_products_page);
-app.route("/products/edit_product/:id").post(ProceedIfLoggedIn, edit_products);
+  .get(ProceedIfLoggedIn, edit_products_page)
+  .post(ProceedIfLoggedIn, edit_products);
 app
   .route("/products/add_product")
   .get(ProceedIfLoggedIn, add_products_page)
@@ -66,9 +69,7 @@ app
   .get(ProceedIfLoggedIn, restore_main_category);
 app
   .route("/main_categories/edit_main_category/:id")
-  .get(ProceedIfLoggedIn, edit_main_category_page);
-app
-  .route("/main_categories/edit_main_category/:id")
+  .get(ProceedIfLoggedIn, edit_main_category_page)
   .post(ProceedIfLoggedIn, edit_main_category);
 
 // SUB CATEGORY
@@ -85,9 +86,7 @@ app
   .get(ProceedIfLoggedIn, restore_sub_category);
 app
   .route("/sub_categories/edit_sub_category/:id")
-  .get(ProceedIfLoggedIn, edit_sub_category_page);
-app
-  .route("/sub_categories/edit_sub_category/:id")
+  .get(ProceedIfLoggedIn, edit_sub_category_page)
   .post(ProceedIfLoggedIn, edit_sub_category);
 
 // USER

@@ -13,26 +13,18 @@ var user = new Schema({
   },
   first_name: {
     type: String,
-    required: true,
   },
   last_name: {
     type: String,
-    // required: true
   },
   email: {
     type: String,
     required: true,
     unique: true,
     lowercase: true,
-    validate(value) {
-      if (!validator.isEmail(value)) {
-        throw new Error("Email is invalid");
-      }
-    },
   },
   phone_no: {
     type: Number,
-    // required: true
   },
   password: {
     type: String,
@@ -44,6 +36,9 @@ var user = new Schema({
         throw new Error("password musn’t contain password");
       }
     },
+  },
+  gender: {
+    type: String,
   },
   otp_verified: {
     type: Boolean,
