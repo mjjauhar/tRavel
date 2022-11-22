@@ -56,12 +56,20 @@
           </div>
           <div class="col-md-3">
             <div class="card-body">
+              <% let inCart = cartItems.some(product =>
+              product.productId.toString() === item._id.toString() ) %> <%
+              if(inCart) { %>
+              <a href="/cart"
+                ><button class="btn w-100 btn-secondary">Go to cart</button></a
+              >
+              <% } else { %>
               <button
                 class="btn w-100 btn-warning"
                 onclick="addToCart('<%= item._id %>')"
               >
                 Add to cart
               </button>
+              <% } %>
               <button
                 class="mt-4 w-100 btn btn-danger"
                 onclick="removeFromWishlist('<%= item._id %>')"

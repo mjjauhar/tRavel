@@ -40,19 +40,43 @@
         </button>
       </div>
     </div>
-    <div class="col-6">
+    <div class="col-6" id="productCard">
       <p class="fw-bold h4 mt-5 ms-5"><%= product.name %></p>
       <p class="mt-4 ms-5"><%= product.description %></p>
       <p class="h2 mt-4 ms-5">Rs <%= product.price %></p>
-      <form action="/add/cart/<%= product._id %>" method="post">
-        <button
-          class="btn mt-4 ms-5 btn-warning"
-          type="submit
-          "
-        >
-          Add to cart
-        </button>
-      </form>
+
+      <!-- add to wishlist  -->
+      <% if ( login ) { %> <% let inCart = cartItems.some(item =>
+      item.productId.toString() === product._id.toString() ) %> <% if(inCart) {
+      %>
+      <a href="/cart"
+        ><button class="btn w-75 ms-5 btn-secondary">Go to cart</button></a
+      >
+      <% } else { %>
+      <button
+        class="btn w-75 ms-5 btn-warning"
+        onclick="addToCart('<%= product._id %>')"
+      >
+        Add to cart
+      </button>
+      <% } %> <% let inWishlist = wishlistItems.some(item => item._id.toString()
+      === product._id.toString() ) %> <% if(inWishlist) { %>
+      <button
+        class="btn-lg btn"
+        id="removeItem"
+        onclick="removeFromWishlist('<%= product._id %>')"
+      >
+        <i class="bi bi-heart-fill text-danger"></i>
+      </button>
+      <% } else { %>
+      <button
+        id="addItem"
+        class="btn-lg btn"
+        onclick="addToWishlist('<%= product._id %>')"
+      >
+        <i class="bi bi-heart text-danger"></i>
+      </button>
+      <% }} %>
     </div>
   </div>
 </div>

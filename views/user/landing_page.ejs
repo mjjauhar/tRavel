@@ -28,10 +28,9 @@
         />
         <div class="card-img-overlay">
           <h5 class="card-title">
-            <% if ( login ) { %> <% let wlimit = wishlistItems.length %> <% let
-            plimit = products.length %> <% let inWishlist =
-            wishlistItems.some(item => item._id.toString() ===
-            product._id.toString() ) %> <% if(inWishlist) { %>
+            <% if ( login ) { %> <% let inWishlist = wishlistItems.some(item =>
+            item._id.toString() === product._id.toString() ) %> <%
+            if(inWishlist) { %>
             <button
               class="btn-lg btn"
               id="removeItem"

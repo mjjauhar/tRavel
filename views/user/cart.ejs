@@ -26,30 +26,53 @@
             </div>
           </div>
           <div class="col-2 pt-5">
-            Qty
-            <input
+            Qty <% if( item?.quantity === 1 ){ %>
+            <button
+              disabled
               class="btn btn-sm btn-danger"
               type="button"
-              id="cart_increment"
-              onclick="decrementValue(); decreasePriceByQty('<%= item?.productId._id %>', '<%= item?.productId.price %>');"
-              value="-"
-            />
-            <input
-              name="quantity"
-              value="<%= item?.quantity %>"
-              maxlength="2"
-              max="10"
-              size="1"
-              id="number"
-              class="w-25"
-            />
-            <input
+              id="decrement_button"
+              onclick="decreasePriceByQty('<%= item?.productId._id %>', '<%= item?.productId.price %>');"
+            >
+              -
+            </button>
+            <% }else{ %>
+            <button
               class="btn btn-sm btn-danger"
               type="button"
-              id="cart_decrement"
-              onclick="incrementValue(); increasePriceByQty('<%= item?.productId._id %>', '<%= item?.productId.price %>');"
-              value="+"
-            />
+              id="decrement_button"
+              onclick="decreasePriceByQty('<%= item?.productId._id %>', '<%= item?.productId.price %>');"
+            >
+              -
+            </button>
+            <% } %>
+
+            <span
+              class="btn btn-sm mt-2 btn-secondary h1"
+              style="width: 3rem"
+              id="proQty"
+              ><%= item?.quantity %></span
+            >
+            <% if(item?.quantity === item?.productId.stock){ %>
+            <button
+              disabled
+              class="btn btn-sm btn-danger"
+              type="button"
+              id="increment_button"
+              onclick="increasePriceByQty('<%= item?.productId._id %>', '<%= item?.productId.price %>');"
+            >
+              +
+            </button>
+            <% }else{ %>
+            <button
+              class="btn btn-sm btn-danger"
+              type="button"
+              id="increment_button"
+              onclick="increasePriceByQty('<%= item?.productId._id %>', '<%= item?.productId.price %>');"
+            >
+              +
+            </button>
+            <% } %>
           </div>
           <div class="col-3">
             <div class="card-body">
@@ -105,23 +128,5 @@
   </div>
 </div>
 
-<script type="text/javascript">
-  function incrementValue() {
-    var value = parseInt(document.getElementById("number").value, 10);
-    value = isNaN(value) ? 0 : value;
-    if (value < 10) {
-      value++;
-      document.getElementById("number").value = value;
-    }
-  }
-  function decrementValue() {
-    var value = parseInt(document.getElementById("number").value, 10);
-    value = isNaN(value) ? 0 : value;
-    if (value > 1) {
-      value--;
-      document.getElementById("number").value = value;
-    }
-  }
-</script>
 <%- include('../partials/footer_infos.ejs') %> <%-
 include('../partials/footer.ejs') %>

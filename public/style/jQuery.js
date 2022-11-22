@@ -30,7 +30,7 @@ function removeFromWishlist(productId) {
 
 function removeFromCart(productId, productQty) {
   $.ajax({
-    url: "/remove/cart/" + productId +"/"+ productQty,
+    url: "/remove/cart/" + productId + "/" + productQty,
     method: "post",
     success: (response) => {
       if (response) {
@@ -60,7 +60,7 @@ function addToCart(productId) {
 
 function increasePriceByQty(productId, productPrice) {
   $.ajax({
-    url: "/increment/qty/cart/" + productId +"/"+ productPrice,
+    url: "/increment/qty/cart/" + productId + "/" + productPrice,
     method: "post",
     success: (response) => {
       if (response) {
@@ -75,7 +75,7 @@ function increasePriceByQty(productId, productPrice) {
 
 function decreasePriceByQty(productId, productPrice) {
   $.ajax({
-    url: "/decrement/qty/cart/" + productId +"/"+ productPrice,
+    url: "/decrement/qty/cart/" + productId + "/" + productPrice,
     method: "post",
     success: (response) => {
       if (response) {

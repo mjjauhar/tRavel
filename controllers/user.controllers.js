@@ -50,19 +50,32 @@ const landing_page = async (req, res) => {
 };
 // RENDER PRODUCT INFO
 const product_page = async (req, res) => {
+  const userId = req.session.userId;
   const proId = req.params.id;
+  const cart = await cartModel.findOne({ userId });
+  const cartItems = cart.items;
   let product = await productModel.findOne({
     is_deleted: false,
     _id: proId,
   });
-
+  const wishlist = await wishlistModel
+    .findOne({ userId: userId })
+    .populate("productId");
+  const wishlistItems = wishlist?.productId;
   if (req.session.isAuth) {
     res.render("user/product_page", {
       login: true,
       product,
+      wishlistItems,
+      cartItems,
     });
   } else {
-    res.render("user/product_page", { login: false, product });
+    res.render("user/product_page", {
+      login: false,
+      product,
+      wishlistItems: [],
+      cartItems: [],
+    });
   }
 };
 // RENDER CART
@@ -75,6 +88,7 @@ const cart = async (req, res) => {
     if (cart) {
       let itemsInCart = cart.items;
       let cart_total = cart.cartTotal;
+      // console.log(itemsInCart);
       res.render("user/cart", {
         login: true,
         itemsInCart,
@@ -105,7 +119,7 @@ const add_to_cart = async (req, res) => {
           $inc: { cartTotal: totalPrice },
         }
       );
-    } 
+    }
   } else {
     const new_cart = new cartModel({
       userId,
@@ -173,6 +187,8 @@ const wishlist = async (req, res) => {
   if (req.session.isAuth) {
     const userId = req.session.userId;
     const cart = await cartModel.findOne({ userId });
+    // console.log(cart.items);
+    const cartItems = cart.items;
     const wishlist = await wishlistModel
       .findOne({ userId })
       .populate("productId");
@@ -185,6 +201,7 @@ const wishlist = async (req, res) => {
     res.render("user/wishlist", {
       login: true,
       items,
+      cartItems,
     });
   } else {
     res.render("user/wishlist", { login: false });
