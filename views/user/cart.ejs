@@ -1,0 +1,127 @@
+<%- include('../partials/header.ejs') %> <%- include('../partials/navbar.ejs')
+%>
+<div class="container-fluid">
+  <div class="row" id="productCard">
+    <div class="col-8 pt-2">
+      <% if( login ) { %> <% itemsInCart.forEach(function(item){ %>
+      <div class="card mb-3">
+        <div class="row g-0">
+          <div class="col-2">
+            <img
+              src="<%= item?.productId.imgUrl %>"
+              class="img-fluid rounded-start img-thumbnail"
+              alt="product_img"
+              style="width: 12rem; height: 9rem"
+            />
+          </div>
+          <div class="col-5">
+            <div class="card-body">
+              <h5 class="card-title"><%= item?.productId.name %></h5>
+              <p class="card-text text-truncate">
+                <%= item.productId.description %>
+              </p>
+              <p class="card-text">
+                <big class="text-muted"><%= item?.productId.price %></big>
+              </p>
+            </div>
+          </div>
+          <div class="col-2 pt-5">
+            Qty
+            <input
+              class="btn btn-sm btn-danger"
+              type="button"
+              id="cart_increment"
+              onclick="decrementValue(); decreasePriceByQty('<%= item?.productId._id %>', '<%= item?.productId.price %>');"
+              value="-"
+            />
+            <input
+              name="quantity"
+              value="<%= item?.quantity %>"
+              maxlength="2"
+              max="10"
+              size="1"
+              id="number"
+              class="w-25"
+            />
+            <input
+              class="btn btn-sm btn-danger"
+              type="button"
+              id="cart_decrement"
+              onclick="incrementValue(); increasePriceByQty('<%= item?.productId._id %>', '<%= item?.productId.price %>');"
+              value="+"
+            />
+          </div>
+          <div class="col-3">
+            <div class="card-body">
+              <form action="" method="post">
+                <button class="btn w-100 btn-warning" type="button">
+                  Place Order
+                </button>
+              </form>
+              <button
+                class="mt-4 w-100 btn btn-danger"
+                id="removeItem"
+                onclick="removeFromCart('<%= item.productId._id %>','<%= item?.quantity %>')"
+              >
+                Remove item
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <% })} %>
+    </div>
+    <div class="col-4 pt-2">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title fw-bold">Order Summery</h4>
+          <div class="mb-3 d-flex justify-content-between">
+            <h5>Price:</h5>
+            <h5><%= cart_total %></h5>
+          </div>
+          <div class="mb-3 d-flex justify-content-between">
+            <h5>Discount:</h5>
+            <h5>0</h5>
+          </div>
+          <div>
+            <h5>
+              Free Delivery
+              <i
+                class="bi bi-check2-circle text-success"
+                style="font-size: 30px"
+              ></i>
+            </h5>
+          </div>
+          <hr />
+          <div
+            class="p-3 mb-2 bg-primary text-white d-flex justify-content-between"
+          >
+            <h5>Total Amount</h5>
+            <h5><%= cart_total %></h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  function incrementValue() {
+    var value = parseInt(document.getElementById("number").value, 10);
+    value = isNaN(value) ? 0 : value;
+    if (value < 10) {
+      value++;
+      document.getElementById("number").value = value;
+    }
+  }
+  function decrementValue() {
+    var value = parseInt(document.getElementById("number").value, 10);
+    value = isNaN(value) ? 0 : value;
+    if (value > 1) {
+      value--;
+      document.getElementById("number").value = value;
+    }
+  }
+</script>
+<%- include('../partials/footer_infos.ejs') %> <%-
+include('../partials/footer.ejs') %>

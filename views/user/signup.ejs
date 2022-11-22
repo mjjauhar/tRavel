@@ -2,7 +2,12 @@
 <!-- header -->
 
 <main class="form-signin m-auto p-5 text-center">
-  <form action="/user/signup" method="post">
+  <form
+    action="/user/signup"
+    class="g-3 needs-validation"
+    method="post"
+    novalidate
+  >
     <img
       class="mb-4 navbar-brand"
       src="/public/images/logo-no-background.svg"
@@ -10,10 +15,10 @@
     />
     <h1 class="h4 mb-3 fw-normal">Create an account</h1>
 
-    <div class="form-floating">
+    <div class="form-floating mb-4">
       <input
         type="text"
-        class="form-control mb-4"
+        class="form-control"
         id="firstname"
         placeholder="First Name"
         name="first_name"
@@ -21,10 +26,10 @@
       <label for="floatingInput">First name</label>
     </div>
 
-    <div class="form-floating">
+    <div class="form-floating mb-4">
       <input
         type="text"
-        class="form-control mb-4"
+        class="form-control"
         id="lastname"
         placeholder="Last Name"
         name="last_name"
@@ -32,49 +37,61 @@
       <label for="floatingInput">Last name</label>
     </div>
 
-    <div class="form-floating">
+    <div class="form-floating has-validation mb-4">
       <input
         type="text"
-        class="form-control mb-4"
+        class="form-control"
         id="username"
         placeholder="username"
         name="username"
         required
       />
-      <label for="floatingInput">User name<sup class="text-danger">*</sup></label>
+
+      <label for="floatingInput"
+        >User name<sup class="text-danger">*</sup></label
+      >
+      <div class="valid-feedback">Looks good!</div>
+      <div class="invalid-feedback">Please choose a username.</div>
     </div>
 
-    <div class="form-floating">
-      <input
-        type="text"
-        class="form-control mb-4"
-        id="gender"
-        placeholder="gender"
+    <div class="mb-4">
+      <select
         name="gender"
+        class="form-select form-select"
+        aria-label="form-select-sm example"
         required
-      />
-      <label for="floatingInput">Gender<sup class="text-danger">*</sup></label>
+      >
+        <option value="">Gender</option>
+        <option value="female">female</option>
+        <option value="male">male</option>
+      </select>
+
+      <div class="invalid-feedback">Please select an option</div>
     </div>
 
-    <div class="form-floating">
+    <div class="form-floating mb-4">
       <input
         type="email"
-        class="form-control mb-4"
+        class="form-control"
         id="email"
         placeholder="name@example.com"
         name="email"
         required
       />
-      <label for="floatingInput">Email address<sup class="text-danger">*</sup></label>
+      <label for="floatingInput"
+        >Email address<sup class="text-danger">*</sup></label
+      >
       <% if(emailExist) { %>
       <p class="text-danger">User with this email already exists</p>
       <% } %>
+      <div class="invalid-feedback">Email is required</div>
+      <div class="valid-feedback">Looks good!</div>
     </div>
-    
-    <div class="form-floating">
+
+    <div class="form-floating mb-4">
       <input
         type="tel"
-        class="form-control mb-4"
+        class="form-control"
         id="phoneno"
         placeholder="9876543210"
         name="phone_no"
@@ -82,17 +99,21 @@
       <label for="floatingInput">Phone no</label>
     </div>
 
-    <div class="form-floating">
+    <div class="form-floating mb-4">
       <input
         type="password"
-        class="form-control mb-4"
+        class="form-control"
         id="floatingPassword"
         placeholder="Password"
         name="password"
         minlength="3"
         required
       />
-      <label for="floatingPassword">Password<sup class="text-danger">*</sup></label>
+      <label for="floatingPassword"
+        >Password<sup class="text-danger">*</sup></label
+      >
+      <div class="valid-feedback">Looks good!</div>
+      <div class="invalid-feedback">password is required</div>
     </div>
     <button class="btn btn-lg btn-primary my-3" type="submit">
       Create account</button
@@ -104,6 +125,32 @@
     >
   </form>
 </main>
+
+<script>
+  // Example starter JavaScript for disabling form submissions if there are invalid fields
+  (() => {
+    "use strict";
+
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    const forms = document.querySelectorAll(".needs-validation");
+
+    // Loop over them and prevent submission
+    Array.from(forms).forEach((form) => {
+      form.addEventListener(
+        "submit",
+        (event) => {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+
+          form.classList.add("was-validated");
+        },
+        false
+      );
+    });
+  })();
+</script>
 
 <%- include('../partials/footer.ejs') %>
 <!-- footer -->

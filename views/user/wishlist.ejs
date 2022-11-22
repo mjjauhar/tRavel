@@ -1,0 +1,81 @@
+<%- include('../partials/header.ejs') %> <%- include('../partials/navbar.ejs')
+%>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-3 pt-2">
+      <div
+        class="d-flex flex-column flex-shrink-0 p-3 bg-light rounded"
+        style="width: 280px"
+      >
+        <a
+          href="/"
+          class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none"
+        >
+          <svg class="bi pe-none me-2" width="40" height="32"></svg>
+          <span class="fs-4">Your Lists</span>
+        </a>
+        <hr />
+        <ul class="nav nav-pills flex-column mb-auto">
+          <% if (false) { %>
+          <li class="nav-item">
+            <a href="#" class="nav-link active" aria-current="page">
+              <svg class="bi pe-none me-2" width="16" height="16"></svg>
+              Home
+            </a>
+          </li>
+          <% } %>
+          <li>
+            <a href="#" class="nav-link link-dark">
+              <svg class="bi pe-none me-2" width="16" height="16"></svg>
+              + Add new List
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-9 pt-2" id="productCard">
+      <% if( login ) { %> <% items.forEach(function(item){ %>
+      <div class="card mb-3">
+        <div class="row g-0">
+          <div class="col-md-2">
+            <img
+              src="<%= item.imgUrl %>"
+              class="img-fluid rounded-start img-thumbnail"
+              alt="product_img"
+              style="width: 12rem; height: 9rem"
+            />
+          </div>
+          <div class="col-md-7">
+            <div class="card-body">
+              <h5 class="card-title"><%= item.name %></h5>
+              <p class="card-text"><%= item.description %></p>
+              <p class="card-text">
+                <big class="text-muted"><%= item.price %></big>
+              </p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card-body">
+              <button
+                class="btn w-100 btn-warning"
+                onclick="addToCart('<%= item._id %>')"
+              >
+                Add to cart
+              </button>
+              <button
+                class="mt-4 w-100 btn btn-danger"
+                onclick="removeFromWishlist('<%= item._id %>')"
+              >
+                Remove item
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <% })} %>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer_infos.ejs') %> <%-
+include('../partials/footer.ejs') %>

@@ -1,5 +1,7 @@
 const userModel = require("../models/user");
 const productModel = require("../models/product");
+const wishlistModel = require("../models/wishlist");
+const cartModel = require("../models/cart");
 const addressModel = require("../models/address");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
@@ -22,20 +24,31 @@ const proceedIfLoggedOut = (req, res, next) => {
 };
 
 /////////////////////////////////// RENDERS ///////////////////////////////////
-// render_landing_page ----------------------------
+// RENDER LANDING PAGE
 const landing_page = async (req, res) => {
+  const userId = req.session.userId;
   let products = await productModel.find({
     is_deleted: false,
   });
+  const wishlist = await wishlistModel
+    .findOne({ userId: userId })
+    .populate("productId");
+  const wishlistItems = wishlist?.productId;
   if (req.session.isAuth) {
     res.render("user/landing_page", {
       login: true,
       products,
+      wishlistItems,
     });
   } else {
-    res.render("user/landing_page", { login: false, products });
+    res.render("user/landing_page", {
+      login: false,
+      products,
+      wishlistItems: [],
+    });
   }
 };
+// RENDER PRODUCT INFO
 const product_page = async (req, res) => {
   const proId = req.params.id;
   let product = await productModel.findOne({
@@ -46,24 +59,176 @@ const product_page = async (req, res) => {
   if (req.session.isAuth) {
     res.render("user/product_page", {
       login: true,
-      product
+      product,
     });
   } else {
     res.render("user/product_page", { login: false, product });
   }
 };
-// render_user_signup_page.------------------------
+// RENDER CART
+const cart = async (req, res) => {
+  if (req.session.isAuth) {
+    const userId = req.session.userId;
+    const cart = await cartModel
+      .findOne({ userId })
+      .populate("items.productId");
+    if (cart) {
+      let itemsInCart = cart.items;
+      let cart_total = cart.cartTotal;
+      res.render("user/cart", {
+        login: true,
+        itemsInCart,
+        cart_total,
+      });
+    } else {
+      res.render("user/cart", { login: false, itemsInCart: [], cart_total: 0 });
+    }
+  }
+};
+//ADD TO CART
+const add_to_cart = async (req, res) => {
+  const productId = req.params.id;
+  const userId = req.session.userId;
+  const cartExist = await cartModel.findOne({ userId });
+  const product = await productModel.findOne({ _id: productId });
+  const totalPrice = product.price;
+  if (cartExist) {
+    let prodExistInCart = await cartModel.findOne({
+      userId,
+      "items.productId": productId,
+    });
+    if (prodExistInCart === null) {
+      await cartModel.findOneAndUpdate(
+        { userId },
+        {
+          $addToSet: { items: { productId, totalPrice } },
+          $inc: { cartTotal: totalPrice },
+        }
+      );
+    } 
+  } else {
+    const new_cart = new cartModel({
+      userId,
+      items: [{ productId, totalPrice }],
+      cartTotal: totalPrice,
+    });
+    await new_cart.save();
+  }
+  res.redirect("back");
+};
+// INCREMENT CART PRODUCT QUANTITY
+const increment_cart_prod_qty = async (req, res) => {
+  const product_id = req.params.proId;
+  const userId = req.session.userId;
+  let price = parseInt(req.params.proPrice);
+  let product = await productModel.findById(product_id);
+  await cartModel.findOneAndUpdate(
+    { userId, "items.productId": product_id },
+    {
+      $inc: {
+        "items.$.quantity": 1,
+        "items.$.totalPrice": price,
+        cartTotal: product.price,
+      },
+    }
+  );
+  res.redirect("back");
+};
+// DECREMENT CART PRODUCT QUANTITY
+const decrement_cart_prod_qty = async (req, res) => {
+  const product_id = req.params.proId;
+  const userId = req.session.userId;
+  let price = parseInt(req.params.proPrice);
+  price = price * -1;
+  let product = await productModel.findById(product_id);
+  await cartModel.findOneAndUpdate(
+    { userId, "items.productId": product_id },
+    {
+      $inc: {
+        "items.$.quantity": -1,
+        "items.$.totalPrice": price,
+        cartTotal: -product.price,
+      },
+    }
+  );
+  res.redirect("back");
+};
+// REMOVE FROM CART
+const remove_from_cart = async (req, res) => {
+  const userId = req.session.userId;
+  const productId = req.params.proId;
+  const productQty = req.params.proQty;
+  const cart = await cartModel.findOne({ userId });
+  const product = await productModel.findOne({ _id: productId });
+  const product_price = product.price;
+  const cart_total = cart.cartTotal;
+  const totalPrice = cart_total - product_price * productQty;
+  const final_total = Math.abs(totalPrice);
+  await cartModel.updateOne({ userId }, { $set: { cartTotal: final_total } });
+  await cartModel.updateOne({ userId }, { $pull: { items: { productId } } });
+  res.redirect("back");
+};
+// RENDER WISHLIST
+const wishlist = async (req, res) => {
+  if (req.session.isAuth) {
+    const userId = req.session.userId;
+    const cart = await cartModel.findOne({ userId });
+    const wishlist = await wishlistModel
+      .findOne({ userId })
+      .populate("productId");
+    let items;
+    if (wishlist != null) {
+      items = wishlist.productId;
+    } else {
+      items = [];
+    }
+    res.render("user/wishlist", {
+      login: true,
+      items,
+    });
+  } else {
+    res.render("user/wishlist", { login: false });
+  }
+};
+// ADD TO WISHLIST
+const add_to_wishlist = async (req, res) => {
+  const proId = req.params.id;
+  const userId = req.session.userId;
+  const wishlistExist = await wishlistModel.findOne({ userId });
+  if (wishlistExist) {
+    await wishlistModel.findOneAndUpdate(
+      { userId },
+      { $addToSet: { productId: proId } }
+    );
+  } else {
+    const new_wishlist = new wishlistModel({
+      userId,
+      productId: [proId],
+    });
+    await new_wishlist.save();
+  }
+  res.redirect("back");
+};
+// REMOVE FROM WISHLIST
+const remove_from_wishlist = async (req, res) => {
+  const userId = req.session.userId;
+  const proId = req.params.id;
+
+  await wishlistModel.updateOne({ userId }, { $pull: { productId: proId } });
+  res.redirect("back");
+};
+// RENDER SIGNUP PAGE
 const signup_page = (req, res) => {
   res.render("user/signup", { emailExist: req.session.exists });
 };
-// render_user_signin_page.------------------------
+// RENDER SIGNIN PAGE
 const login_page = (req, res) => {
   res.render("user/login", {
     emailErr: req.session.emailError,
     passwordErr: req.session.passwordError,
   });
 };
-// render_user_account_page
+// RENDER ACCOUNT PAGE
 const account = async (req, res) => {
   const userId = req.session.userId;
   const user = await userModel.find({ _id: userId });
@@ -87,7 +252,7 @@ const account = async (req, res) => {
     gender,
   });
 };
-
+// RENDER ADDRESS PAGE
 const address = async (req, res) => {
   const userId = req.session.userId;
   const user = await userModel.findOne({ _id: userId });
@@ -108,7 +273,7 @@ const address = async (req, res) => {
     userAddresses,
   });
 };
-
+// RENDER ADDRESS EDIT PAGE
 const edit_address_page = async (req, res) => {
   const addIndex = req.params.id;
   const userId = req.session.userId;
@@ -121,7 +286,6 @@ const edit_address_page = async (req, res) => {
   const type = getAddress.address[addIndex].type;
   const addId = getAddress.address[addIndex]._id;
 
-  // console.log(getAddress.address[addIndex].name);
   res.render("user/edit_address", {
     name,
     phone_no,
@@ -135,6 +299,7 @@ const edit_address_page = async (req, res) => {
 };
 
 /////////////////////////////////// ADD DATA ///////////////////////////////////
+// ADD ADDRESS
 const add_address = async (req, res) => {
   const userId = req.session.userId;
   const push_address = req.body;
@@ -178,7 +343,7 @@ const edit_user = async (req, res) => {
     console.log("user info edited");
   });
 };
-
+// EDIT ADDRESS
 const edit_address = async (req, res) => {
   const userId = req.session.userId;
   var addId = req.params.id;
@@ -197,7 +362,7 @@ const edit_address = async (req, res) => {
   );
   res.redirect("/user/address");
 };
-
+// DELETE ADDRESS
 const delete_address = async (req, res) => {
   const userId = req.session.userId;
   var addId = req.params.id;
@@ -227,7 +392,7 @@ let transporter = nodemailer.createTransport({
   },
 });
 
-// Resend OTP
+// RESEND OTP
 const resend_otp = function (req, res) {
   var mailOptions = {
     to: email2,
@@ -249,7 +414,7 @@ const resend_otp = function (req, res) {
   });
 };
 
-// OTP Validation
+// OTP VALIDATION
 const otp_validation = async (req, res) => {
   let usrId = req.params.id;
   if (req.body.otp == otp) {
@@ -262,17 +427,17 @@ const otp_validation = async (req, res) => {
     res.render("user/otp", { user, msg: "otp is incorrect" });
   }
 };
-// Post Request that handles Signup
+// SIGNUP POST
 const signup = async (req, res) => {
   const { first_name, last_name, username, phone_no, email, password, gender } =
-    req.body; // asigning user data to variables.
+    req.body;
   req.session.exists = false;
-  let user = await userModel.findOne({ email }); // checking if user email exist in database.
+  let user = await userModel.findOne({ email });
   if (user) {
     req.session.exists = true;
     return res.redirect("/user/signup");
-  } // two or more users with same email can't exist.
-  const hashedPsw = await bcrypt.hash(password, 12); // else continue and hash password.
+  }
+  const hashedPsw = await bcrypt.hash(password, 12);
   const created_date = new Date();
 
   user = new userModel({
@@ -284,10 +449,9 @@ const signup = async (req, res) => {
     email,
     gender,
     password: hashedPsw,
-  }); // creating new user.
+  });
 
   email2 = email;
-  // send mail with defined transport object
   var mailOptions = {
     to: email,
     subject: "Otp for registration is: ",
@@ -295,7 +459,7 @@ const signup = async (req, res) => {
       "<h3>OTP for account verification is </h3>" +
       "<h1 style='font-weight:bold;'>" +
       otp +
-      "</h1>", // html body
+      "</h1>",
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
@@ -313,32 +477,31 @@ const signup = async (req, res) => {
       console.log(err);
     });
 };
-// ------------------------------------------------
 
-// user login--------------------------------------
+// LOGIN
 const login = async (req, res) => {
   req.session.emailError = false;
   req.session.passwordError = false;
-  const { email, password } = req.body; // asigning user entered datas to variables.
+  const { email, password } = req.body;
   const user = await userModel.findOne({
     $and: [{ email: email }, { type: "user" }, { is_blocked: false }],
-  }); // checking if the email exist in database.
+  });
 
   if (!user) {
     req.session.emailError = true;
     return res.redirect("/user/login");
   }
-  const isMatch = await bcrypt.compare(password, user.password); // If it does exist, check password..
+  const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
     req.session.passwordError = true;
     return res.redirect("/user/login");
   }
   req.session.user = user.username;
   req.session.userId = user._id;
-  req.session.isAuth = true; // then save the state that the user is authenticated.
+  req.session.isAuth = true;
   res.redirect("/");
 };
-
+//LOGOUT
 const logout = (req, res) => {
   req.session.destroy((err) => {
     if (err) throw err;
@@ -365,4 +528,12 @@ module.exports = {
   edit_address_page,
   delete_address,
   product_page,
+  cart,
+  add_to_cart,
+  remove_from_cart,
+  wishlist,
+  add_to_wishlist,
+  remove_from_wishlist,
+  increment_cart_prod_qty,
+  decrement_cart_prod_qty,
 };

@@ -19,10 +19,27 @@ const {
   edit_address_page,
   delete_address,
   product_page,
+  cart,
+  add_to_cart,
+  wishlist,
+  add_to_wishlist,
+  remove_from_wishlist,
+  remove_from_cart,
+  increment_cart_prod_qty,
+  decrement_cart_prod_qty,
 } = require("../controllers/user.controllers");
 
 app.route("/").get(landing_page);
-app.route("/:productname/:id").get(product_page);
+app.route("/p/:id/:productname").get(product_page);
+app.route("/cart").get(cart);
+app.route("/add/cart/:id").post(add_to_cart);
+app.route("/increment/qty/cart/:proId/:proPrice").post(increment_cart_prod_qty);
+app.route("/decrement/qty/cart/:proId/:proPrice").post(decrement_cart_prod_qty);
+app.route("/remove/cart/:proId/:proQty").post(remove_from_cart);
+
+app.route("/wishlist").get(wishlist);
+app.route("/add/wishlist/:id").post(add_to_wishlist);
+app.route("/remove/wishlist/:id").post(remove_from_wishlist);
 
 app.route("/user/logout").post(proceedIfLoggedIn, logout);
 app.route("/user/account").get(proceedIfLoggedIn, account);

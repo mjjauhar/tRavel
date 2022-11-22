@@ -65,3 +65,19 @@
   background-color: #ffffff;
   border-radius: 7px 0px 0px 7px;
 }
+
+.iti__flag {background-image: url("/public/images/flags.png");}
+    
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .iti__flag {background-image: url("/public/images/flags@2x.png");}
+}
+.hide {
+    display: none
+}
+.error {
+    color: red;
+    outline: 1px solid red;
+}
+.success{
+    color: green;
+}

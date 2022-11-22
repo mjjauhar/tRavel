@@ -101,6 +101,7 @@ include('../partials/admin_navbar.ejs') %>
                   <button
                     class="btn-sm btn btn-outline-danger"
                     type="submit"
+                    onclick="confirm('Are you sure to block this user?')"
                   >
                     <small>BLOCK</small>
                   </button>
@@ -116,6 +117,7 @@ include('../partials/admin_navbar.ejs') %>
                   <button
                     class="btn-sm btn btn-outline-success"
                     type="submit"
+                    onclick="confirm('Are you sure to unblock this user?')"
                   >
                     <small>UNBLOCK</small>
                   </button>

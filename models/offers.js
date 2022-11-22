@@ -1,12 +1,11 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
-var paymentSchema = new Schema({
-  cartId: {
-    type: [Schema.Types.ObjectId],
-    ref: "cart",
+var offerSchema = new Schema({
+  offer_name: {
+    type: String,
   },
-  quantity: {
+  discount: {
     type: Number,
   },
   created_date: Date,

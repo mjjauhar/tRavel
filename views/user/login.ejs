@@ -15,7 +15,7 @@
     </div>
     <div class="col-12 col-md-6 text-center">
       <main class="form-signin">
-        <form action="/user/login" method="post">
+        <form action="/user/login" method="post" novalidate>
           <img
             class="mb-4 navbar-brand-login"
             src="/public/images/logo-no-background.svg"
@@ -30,12 +30,16 @@
               id="floatingInput"
               placeholder="name@example.com"
               name="email"
+              required
             />
             <label for="floatingInput" class="form-label">Email address</label>
-
+            <div class="invalid-feedback">Email is required</div>
             <% if(emailErr){ %>
-              <span class="position-absolute top-0 end-0 translate-middle badge rounded-pill bg-danger">Invalid email</span>
-              <% } %>
+            <span
+              class="position-absolute top-0 end-0 translate-middle badge rounded-pill bg-danger"
+              >Invalid email</span
+            >
+            <% } %>
           </div>
 
           <div class="form-floating mx-5">
@@ -46,13 +50,17 @@
               placeholder="Password"
               name="password"
               minlength="3"
+              required
             />
             <label for="floatingPassword" class="form-label">Password</label>
             <% if(passwordErr){ %>
-              <span class="position-absolute top-0 end-0 translate-middle badge rounded-pill bg-danger">Wrong Password</span>
-              <% } %>
+            <span
+              class="position-absolute top-0 end-0 translate-middle badge rounded-pill bg-danger"
+              >Wrong Password</span
+            >
+            <% } %>
           </div>
-      
+
           <!-- An element to toggle between password visibility -->
           <br /><input type="checkbox" onclick="myFunction()" /> Show Password
           <br />
