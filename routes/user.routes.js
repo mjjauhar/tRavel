@@ -27,6 +27,9 @@ const {
   remove_from_cart,
   increment_cart_prod_qty,
   decrement_cart_prod_qty,
+  checkout_page,
+  confirm_checkout,
+  order_success,
 } = require("../controllers/user.controllers");
 
 app.route("/").get(landing_page);
@@ -36,6 +39,10 @@ app.route("/add/cart/:id").post(add_to_cart);
 app.route("/increment/qty/cart/:proId/:proPrice").post(increment_cart_prod_qty);
 app.route("/decrement/qty/cart/:proId/:proPrice").post(decrement_cart_prod_qty);
 app.route("/remove/cart/:proId/:proQty").post(remove_from_cart);
+
+app.route("/checkout").get(checkout_page);
+app.route("/order_success").get(order_success);
+app.route("/checkout/confirm").post(confirm_checkout);
 
 app.route("/wishlist").get(wishlist);
 app.route("/add/wishlist/:id").post(add_to_wishlist);

@@ -87,3 +87,41 @@ function decreasePriceByQty(productId, productPrice) {
     },
   });
 }
+
+function placeOrder(index) {
+  let num = parseInt(index);
+  let paymentMethod = document.getElementById("cod").checked
+    ? "COD"
+    : "Razorpay";
+  $.ajax({
+    url: "/placeOrder",
+    data: {
+      index: num,
+      paymentMethod: paymentMethod,
+    },
+    method: "post",
+    success: (response) => {
+      if (response.codSuccess) {
+        location.href = "/orderSuccess";
+      } else {
+        razorpayPayment(response);
+      }
+    },
+  });
+}
+
+function confirmCheckout(cartId) {
+  $.ajax({
+    url: "/checkout/confirm",
+    method: "post",
+    success: (response) => {
+      if (response) {
+        console.log("order success");
+        window.location.href = "/order_success";
+      } else {
+        alert("something went wrong");
+        console.log("order failed");
+      }
+    },
+  });
+}

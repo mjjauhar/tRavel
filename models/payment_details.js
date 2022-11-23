@@ -2,15 +2,22 @@ var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
 var paymentSchema = new Schema({
-  cartId: {
-    type: [Schema.Types.ObjectId],
-    ref: "cart",
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: "user",
   },
-  quantity: {
+  total_amount:{
     type: Number,
   },
+  payment_method: {
+    type: String,
+    default: "none",
+  },
+  payment_status: {
+    type: String,
+    default: 'pending',
+  },
   created_date: Date,
-  modified_date: Date,
 });
 
 module.exports = mongoose.model("payment", paymentSchema);

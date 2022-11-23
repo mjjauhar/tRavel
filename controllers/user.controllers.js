@@ -3,6 +3,8 @@ const productModel = require("../models/product");
 const wishlistModel = require("../models/wishlist");
 const cartModel = require("../models/cart");
 const addressModel = require("../models/address");
+const orderModel = require("../models/order");
+const paymentModel = require("../models/payment_details");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 require("dotenv").config();
@@ -88,14 +90,21 @@ const cart = async (req, res) => {
     if (cart) {
       let itemsInCart = cart.items;
       let cart_total = cart.cartTotal;
-      // console.log(itemsInCart);
+      let cartId = cart._id;
+      // console.log(cartId);
       res.render("user/cart", {
         login: true,
         itemsInCart,
         cart_total,
+        cartId,
       });
     } else {
-      res.render("user/cart", { login: false, itemsInCart: [], cart_total: 0 });
+      res.render("user/cart", {
+        login: false,
+        itemsInCart: [],
+        cart_total: 0,
+        cartId: {},
+      });
     }
   }
 };
@@ -182,13 +191,72 @@ const remove_from_cart = async (req, res) => {
   await cartModel.updateOne({ userId }, { $pull: { items: { productId } } });
   res.redirect("back");
 };
+
+// CHECKOUT PAGE
+const checkout_page = async (req, res) => {
+  const userId = req.session.userId;
+  const cart = await cartModel.findOne({ userId }).populate("items.productId");
+  const cartId = cart._id;
+  const total_amount = cart.cartTotal;
+  const created_date = new Date();
+  const getUserAddresses = await addressModel.findOne({ user: userId });
+  const addresses = getUserAddresses.address;
+  // console.log(addresses);
+  const cart_payment_details_exists = await paymentModel.findOne({
+    userId,
+    cartId,
+  });
+  if (!cart_payment_details_exists) {
+    const new_payment = new paymentModel({
+      userId,
+      total_amount,
+      created_date,
+    });
+    await new_payment.save();
+  }
+  res.render("user/checkout", { cart, addresses });
+};
+// CONFIRM CHECKOUT
+const confirm_checkout = async (req, res) => {
+  const { addressId, payment_method } = req.body;
+  const userId = req.session.userId;
+  const payment = await paymentModel.findOne({ userId });
+  const paymentId = payment._id;
+  const created_date = new Date();
+  const cart = await cartModel.findOne({ userId });
+  const allProdDetailsInCart = cart.items;
+  const cartProdIds = [];
+  allProdDetailsInCart.forEach(function (prod) {
+    cartProdIds.push(prod.productId);
+  });
+  console.log(cartProdIds);
+  console.log(addressId);
+  console.log(payment_method);
+  console.log(paymentId);
+  const new_order = new orderModel({
+    userId,
+    paymentId,
+    addressId,
+    order_status: "Order Confirmed",
+    productId: cartProdIds,
+    created_date,
+  });
+  await new_order.save();
+  res.redirect("/order_success");
+};
+
+// ORDER SUCCESS PAGE
+const order_success = async (req, res) => {
+  await cartModel.findOneAndDelete({});
+  res.render("user/order_success");
+};
+
 // RENDER WISHLIST
 const wishlist = async (req, res) => {
   if (req.session.isAuth) {
     const userId = req.session.userId;
     const cart = await cartModel.findOne({ userId });
     // console.log(cart.items);
-    const cartItems = cart.items;
     const wishlist = await wishlistModel
       .findOne({ userId })
       .populate("productId");
@@ -197,6 +265,12 @@ const wishlist = async (req, res) => {
       items = wishlist.productId;
     } else {
       items = [];
+    }
+    let cartItems;
+    if (cart != null) {
+      cartItems = cart?.items;
+    } else {
+      cartItems = [];
     }
     res.render("user/wishlist", {
       login: true,
@@ -396,7 +470,7 @@ const delete_address = async (req, res) => {
 var otp = Math.random();
 otp = otp * 1000000;
 otp = parseInt(otp);
-console.log(otp);
+// console.log(otp);
 var email2;
 let transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -553,4 +627,7 @@ module.exports = {
   remove_from_wishlist,
   increment_cart_prod_qty,
   decrement_cart_prod_qty,
+  checkout_page,
+  confirm_checkout,
+  order_success,
 };

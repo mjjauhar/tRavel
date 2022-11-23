@@ -1,10 +1,50 @@
-<%- include('../partials/header.ejs') %> <%- include('../partials/navbar.ejs')
-%>
-<div class="container-fluid">
+<%- include('../partials/header.ejs') %> <%-
+include('../partials/order_navbar.ejs') %>
+<div class="container-fluid mt-3">
   <div class="row">
-    
+    <div class="col-8" id="addressCard">
+        <select
+          name="addressId"
+          class="form-select"
+          aria-label="Default select example"
+        >
+          <option selected>Select an address</option>
+          <% addresses.forEach(function(address){ %>
+          <option value="<%= address._id %>">
+            <%= address.type %> - <%= address.name %>,<%= address.city %>, <%=
+            address.pincode %>, <%= address.country %> , Phone: <%=
+            address.phone_no %>
+          </option>
+          <% }) %>
+        </select>
+        <div class="d-flex justify-content-start">
+          <div class="form-check pe-5">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="payment_method"
+              id="method1"
+              value="cash_on_delivery"
+            />
+            <label class="form-check-label" for="method1">
+              cash on delivery
+            </label>
+          </div>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="payment_method"
+              id="method2"
+              value="razerpay"
+            />
+            <label class="form-check-label" for="method2"> razerpay </label>
+          </div>
+        </div>
+        <button type="submit" onclick="confirmCheckout()">Continue to payment</button>
+    </div>
+    <div class="col-4"></div>
   </div>
 </div>
 
-<%- include('../partials/footer_infos.ejs') %> <%-
-include('../partials/footer.ejs') %>
+<%- include('../partials/footer.ejs') %>

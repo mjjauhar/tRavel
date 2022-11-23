@@ -75,14 +75,9 @@
             <% } %>
           </div>
           <div class="col-3">
-            <div class="card-body">
-              <form action="" method="post">
-                <button class="btn w-100 btn-warning" type="button">
-                  Place Order
-                </button>
-              </form>
+            <div class="card-body pt-5 mt-1">
               <button
-                class="mt-4 w-100 btn btn-danger"
+                class="w-100 btn btn-danger"
                 id="removeItem"
                 onclick="removeFromCart('<%= item.productId._id %>','<%= item?.quantity %>')"
               >
@@ -121,6 +116,13 @@
           >
             <h5>Total Amount</h5>
             <h5><%= cart_total %></h5>
+          </div>
+          <div>
+            <a href="/checkout">
+              <button class="btn w-100 btn-warning" type="button">
+                Proceed to checkout
+              </button>
+            </a>
           </div>
         </div>
       </div>
