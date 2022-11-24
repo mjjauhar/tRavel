@@ -1,11 +1,18 @@
+.myCard {
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+}
+.myCard:hover {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
 .myColor {
   background: #0e5255;
 }
 .half_trapezoid {
-	border-bottom: 30px solid #ffea28;
-	border-right: 15px solid transparent;
-	height: 0;
-	width: 100px;
+  border-bottom: 30px solid #ffea28;
+  border-right: 15px solid transparent;
+  height: 0;
+  width: 100px;
 }
 .sidenav {
   height: 100%;
@@ -66,18 +73,22 @@
   border-radius: 7px 0px 0px 7px;
 }
 
-.iti__flag {background-image: url("/public/images/flags.png");}
-    
+.iti__flag {
+  background-image: url("/public/images/flags.png");
+}
+
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-    .iti__flag {background-image: url("/public/images/flags@2x.png");}
+  .iti__flag {
+    background-image: url("/public/images/flags@2x.png");
+  }
 }
 .hide {
-    display: none
+  display: none;
 }
 .error {
-    color: red;
-    outline: 1px solid red;
+  color: red;
+  outline: 1px solid red;
 }
-.success{
-    color: green;
+.success {
+  color: green;
 }

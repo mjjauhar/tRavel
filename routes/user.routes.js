@@ -30,23 +30,25 @@ const {
   checkout_page,
   confirm_checkout,
   order_success,
+  verifyPayment,
 } = require("../controllers/user.controllers");
 
 app.route("/").get(landing_page);
 app.route("/p/:id/:productname").get(product_page);
-app.route("/cart").get(cart);
-app.route("/add/cart/:id").post(add_to_cart);
-app.route("/increment/qty/cart/:proId/:proPrice").post(increment_cart_prod_qty);
-app.route("/decrement/qty/cart/:proId/:proPrice").post(decrement_cart_prod_qty);
-app.route("/remove/cart/:proId/:proQty").post(remove_from_cart);
+app.route("/cart").get(proceedIfLoggedIn, cart);
+app.route("/add/cart/:id").post(proceedIfLoggedIn, add_to_cart);
+app.route("/increment/qty/cart/:proId/:proPrice").post(proceedIfLoggedIn, increment_cart_prod_qty);
+app.route("/decrement/qty/cart/:proId/:proPrice").post(proceedIfLoggedIn, decrement_cart_prod_qty);
+app.route("/remove/cart/:proId/:proQty").post(proceedIfLoggedIn, remove_from_cart);
 
-app.route("/checkout").get(checkout_page);
-app.route("/order_success").get(order_success);
-app.route("/checkout/confirm").post(confirm_checkout);
+app.route("/checkout").get(proceedIfLoggedIn, checkout_page);
+app.route("/order_success").get(proceedIfLoggedIn, order_success);
+app.route("/checkout/confirm").post(proceedIfLoggedIn, confirm_checkout);
+app.route('/verify-payment').post(proceedIfLoggedIn, verifyPayment);
 
-app.route("/wishlist").get(wishlist);
-app.route("/add/wishlist/:id").post(add_to_wishlist);
-app.route("/remove/wishlist/:id").post(remove_from_wishlist);
+app.route("/wishlist").get(proceedIfLoggedIn, wishlist);
+app.route("/add/wishlist/:id").post(proceedIfLoggedIn, add_to_wishlist);
+app.route("/remove/wishlist/:id").post(proceedIfLoggedIn, remove_from_wishlist);
 
 app.route("/user/logout").post(proceedIfLoggedIn, logout);
 app.route("/user/account").get(proceedIfLoggedIn, account);

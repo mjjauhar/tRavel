@@ -34,6 +34,12 @@
       </div>
     </div>
     <div class="col-9 pt-2" id="productCard">
+      <% if(items.length === 0){ %>
+        <div class="text-center">
+          <img src="/public/images/icons/search-not-found.webp" alt="webp">
+          <h4>No items in wishlist</h4>
+        </div>
+        <% } %>
       <% if( login ) { %> <% items.forEach(function(item){ %>
       <div class="card mb-3">
         <div class="row g-0">
@@ -57,7 +63,7 @@
           <div class="col-md-3">
             <div class="card-body">
               <% let inCart = cartItems.some(product =>
-              product.productId.toString() === item?._id.toString() ) %> <%
+              product?.productId.toString() === item?._id.toString() ) %> <%
               if(inCart) { %>
               <a href="/cart"
                 ><button class="btn w-100 btn-secondary">Go to cart</button></a

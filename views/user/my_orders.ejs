@@ -1,0 +1,268 @@
+<%- include('../partials/header.ejs') %>
+<section style="background-color: #f7f8f9">
+  <%- include('../partials/navbar.ejs') %>
+  <div class="container-fluid mt-4">
+    <div class="row">
+      <div class="col-3">
+        <div class="rectangle ps-4 pt-2 text-dark">
+          <h5><b><%= full_name %></b></h5>
+          <p><%= phone_no %></p>
+        </div>
+
+        <a href="" class="text-decoration-none"
+          ><div class="rectangle d-flex ps-4 align-items-center text-dark">
+            <i class="bi bi-cart2"></i>
+            <big> &ensp; Orders & Returns</big>
+          </div></a
+        >
+        <a href="/user/account" class="text-decoration-none"
+          ><div class="rectangle d-flex ps-4 align-items-center text-dark">
+            <i class="bi bi-person"></i>
+            <big> &ensp; My Profile</big>
+          </div></a
+        >
+
+        <a href="/user/address" class="text-decoration-none"
+          ><div
+            class="selected_rectangle d-flex ps-4 align-items-center text-dark"
+          >
+            <i class="bi bi-envelope"></i>
+            <big> &ensp; Address</big>
+          </div></a
+        >
+
+        <form
+          method="post"
+          action="/user/logout"
+          class="rectangle ps-2 d-flex align-items-center"
+        >
+          <button class="btn-lg text-decoration-none btn text-danger">
+            <i class="bi bi-box-arrow-right"></i> &ensp; Logout
+          </button>
+        </form>
+      </div>
+      <div class="col-9">
+        <div class="container-fluid mt-3">
+          <div class="row">
+            <% if( userAddresses.length === 0 ) { %>
+            <div class="col-12 text-center">
+              <img
+                src="/public/images/icons/search-not-found.webp"
+                alt="No address found"
+              />
+              <h4>No Address Added</h4>
+            </div>
+            <% } else { %> <% userAddresses.forEach(function(userAddress,
+            index){ %>
+            <div class="col-6">
+              <h6><%= userAddress.type %> address</h6>
+              <ul class="list-group">
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <div>Name:</div>
+                  <div class="fw-bold"><%= userAddress.name %></div>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <div>Phone No:</div>
+                  <div class="fw-bold"><%= userAddress.phone_no %></div>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <div>Country:</div>
+                  <div class="fw-bold"><%= userAddress.country %></div>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <div>Pincode:</div>
+                  <div class="fw-bold"><%= userAddress.pincode %></div>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <div>City:</div>
+                  <div class="fw-bold"><%= userAddress.city %></div>
+                </li>
+              </ul>
+
+              <a
+                href="/user/edit/address/<%= index %>"
+                class="btn btn-sm btn-outline-danger form-control mb-4"
+                >Edit</a
+              >
+            </div>
+            <% })}%>
+            <!-- add new address form toggler -->
+            <p class="pt-5">
+              <button
+                class="btn btn-sm form-control btn-outline-success"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#addNewAddressCollapse"
+                aria-expanded="false"
+                aria-controls="addNewAddressCollapse"
+              >
+                + Add new Address
+              </button>
+            </p>
+            <div class="collapse" id="addNewAddressCollapse">
+              <div class="card card-body">
+                <!-- form  -->
+                <form method="post" action="/user/add/address/<%= userId %>">
+                  <div class="container-fluid">
+                    <div class="row">
+                      <div class="col-6">
+                        <div class="mb-5">
+                          <label for="country" class="form-label"
+                            >Country</label
+                          >
+                          <input
+                            id="id"
+                            type="text"
+                            class="form-control"
+                            name="country"
+                          />
+                        </div>
+                        <div class="mb-5">
+                          <label for="pincode" class="form-label"
+                            >Pincode</label
+                          >
+                          <input
+                            id="id"
+                            type="number"
+                            class="form-control"
+                            name="pincode"
+                          />
+                        </div>
+                        <div class="mb-5">
+                          <label for="phone_no" class="form-label"
+                            >Mobile Number</label
+                          >
+                          <input
+                            id="id"
+                            type="tel"
+                            class="form-control"
+                            name="phone_no"
+                            value="<%= phone_no %>"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="mb-5">
+                          <label for="city" class="form-label">City</label>
+
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="city"
+                            id="id"
+                          />
+                        </div>
+
+                        <div class="mb-5">
+                          <label for="type" class="form-label">Type</label>
+                          <select
+                            name="type"
+                            class="form-select form-select"
+                            aria-label=".form-select-sm example"
+                          >
+                            <option selected>Select an option</option>
+                            <option value="office">office</option>
+                            <option value="home">home</option>
+                          </select>
+                        </div>
+                        <div class="mb-5">
+                          <label for="name" class="form-label">Name</label>
+                          <input
+                            id="id"
+                            type="text"
+                            class="form-control"
+                            name="name"
+                            value="<%= full_name %>"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="text-end">
+                      <p id="noChange"></p>
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        onclick="window.location.reload()"
+                      >
+                        Cancel
+                      </button>
+                      <!-- Button trigger modal -->
+                      <button
+                        type="button"
+                        class="btn btn-dark"
+                        data-bs-toggle="modal"
+                        data-bs-target="#addNewAddressModal"
+                      >
+                        Save changes
+                      </button>
+
+                      <!-- Modal -->
+                      <div
+                        class="modal fade"
+                        id="addNewAddressModal"
+                        tabindex="-1"
+                        aria-labelledby="addNewAddressModalLabel"
+                        aria-hidden="true"
+                      >
+                        <div
+                          class="modal-dialog modal-dialog-centered text-start"
+                        >
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h1
+                                class="modal-title fs-5"
+                                id="addNewAddressModalLabel"
+                              >
+                                Save Edits
+                              </h1>
+                              <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                              ></button>
+                            </div>
+                            <div class="modal-body">
+                              Are you sure you want to save the edits ?
+                            </div>
+                            <div class="modal-footer">
+                              <button
+                                type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal"
+                                onclick="window.location.reload()"
+                              >
+                                Close
+                              </button>
+                              <button type="submit" class="btn btn-primary">
+                                Save changes
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- end of add new address dropdown -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/footer_infos.ejs') %> <%-
+include('../partials/footer.ejs') %>

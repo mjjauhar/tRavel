@@ -88,40 +88,65 @@ function decreasePriceByQty(productId, productPrice) {
   });
 }
 
-function placeOrder(index) {
-  let num = parseInt(index);
-  let paymentMethod = document.getElementById("cod").checked
-    ? "COD"
-    : "Razorpay";
+$("#checkout-form").submit((e) => {
+  e.preventDefault();
   $.ajax({
-    url: "/placeOrder",
-    data: {
-      index: num,
-      paymentMethod: paymentMethod,
-    },
+    url: "/checkout/confirm",
     method: "post",
+    data: $("#checkout-form").serialize(),
     success: (response) => {
-      if (response.codSuccess) {
-        location.href = "/orderSuccess";
+      if (response.status) {
+        window.location.href = "/order_success";
+        console.log(response);
       } else {
         razorpayPayment(response);
       }
     },
   });
-}
+});
 
-function confirmCheckout(cartId) {
-  $.ajax({
-    url: "/checkout/confirm",
-    method: "post",
-    success: (response) => {
-      if (response) {
-        console.log("order success");
-        window.location.href = "/order_success";
-      } else {
-        alert("something went wrong");
-        console.log("order failed");
-      }
+function razorpayPayment(order) {
+  var options = {
+    key: "rzp_test_g5EMovE0Fdz2IM", // Enter the Key ID generated from the Dashboard
+    amount: order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    currency: "INR",
+    name: "t-Ravel",
+    description: "Test Transaction",
+    image: "",
+    order_id: order.order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    callback_url: "https://eneqd3r9zrjok.x.pipedream.net/",
+    handler: function (response) {
+      verifyPayment(response, order);
     },
-  });
+    prefill: {
+      name: "t-Ravels",
+      email: "gaurav.kumar@example.com",
+      contact: "9999999999",
+    },
+    notes: {
+      address: "Razorpay Corporate Office",
+    },
+    theme: {
+      color: "#3399cc",
+    },
+  };
+  function verifyPayment(payment, order) {
+    $.ajax({
+      url: "/verify-payment",
+      data: {
+        payment,
+        order,
+      },
+      method: "post",
+      success: (response) => {
+        if (response.status) {
+          location.href = "/order_success";
+        } else {
+          alert("payment failed");
+        }
+      },
+    });
+  }
+  var rzp1 = new Razorpay(options);
+  rzp1.open();
 }

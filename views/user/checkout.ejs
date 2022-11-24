@@ -3,12 +3,13 @@ include('../partials/order_navbar.ejs') %>
 <div class="container-fluid mt-3">
   <div class="row">
     <div class="col-8" id="addressCard">
+      <form action="" id="checkout-form">
         <select
           name="addressId"
           class="form-select"
           aria-label="Default select example"
+          required
         >
-          <option selected>Select an address</option>
           <% addresses.forEach(function(address){ %>
           <option value="<%= address._id %>">
             <%= address.type %> - <%= address.name %>,<%= address.city %>, <%=
@@ -37,11 +38,13 @@ include('../partials/order_navbar.ejs') %>
               name="payment_method"
               id="method2"
               value="razerpay"
+              checked
             />
             <label class="form-check-label" for="method2"> razerpay </label>
           </div>
         </div>
-        <button type="submit" onclick="confirmCheckout()">Continue to payment</button>
+        <button type="submit">Continue to payment</button>
+      <!-- </form> -->
     </div>
     <div class="col-4"></div>
   </div>

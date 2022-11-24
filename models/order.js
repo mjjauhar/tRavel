@@ -6,20 +6,32 @@ var orderSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "user",
   },
-  paymentId: {
-    type: Schema.Types.ObjectId,
-    ref: "payment",
-  },
   addressId: {
     type: Schema.Types.ObjectId,
     ref: "address",
   },
   order_status: {
     type: String,
+    default: "Order Not Confirmed"
   },
   productId: {
     type: [Schema.Types.ObjectId],
     ref: "product",
+  },
+  cartId: {
+    type: Schema.Types.ObjectId,
+    ref: "cart",
+  },
+  total_amount:{
+    type: Number,
+  },
+  payment_method: {
+    type: String,
+    default: "none",
+  },
+  payment_status: {
+    type: String,
+    default: 'none',
   },
   created_date: Date,
   delivered_date: Date,

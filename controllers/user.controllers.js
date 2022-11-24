@@ -4,10 +4,11 @@ const wishlistModel = require("../models/wishlist");
 const cartModel = require("../models/cart");
 const addressModel = require("../models/address");
 const orderModel = require("../models/order");
-const paymentModel = require("../models/payment_details");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
+const Razorpay = require("razorpay");
 require("dotenv").config();
+
 
 /////////////////////////////////// SESSION MIDDLEWARE ///////////////////////////////////
 const proceedIfLoggedIn = (req, res, next) => {
@@ -55,7 +56,7 @@ const product_page = async (req, res) => {
   const userId = req.session.userId;
   const proId = req.params.id;
   const cart = await cartModel.findOne({ userId });
-  const cartItems = cart.items;
+  const cartItems = cart?.items;
   let product = await productModel.findOne({
     is_deleted: false,
     _id: proId,
@@ -79,6 +80,13 @@ const product_page = async (req, res) => {
       cartItems: [],
     });
   }
+};
+
+// RENDER MY ORDERS PAGE
+const my_orders = async (req, res) => {
+  const userId = req.session.userId;
+  const orders = await orderModel.findById({ userId }).populate("productId");
+  res.render("user/my_orders", { orders });
 };
 // RENDER CART
 const cart = async (req, res) => {
@@ -198,59 +206,123 @@ const checkout_page = async (req, res) => {
   const cart = await cartModel.findOne({ userId }).populate("items.productId");
   const cartId = cart._id;
   const total_amount = cart.cartTotal;
-  const created_date = new Date();
   const getUserAddresses = await addressModel.findOne({ user: userId });
   const addresses = getUserAddresses.address;
   // console.log(addresses);
-  const cart_payment_details_exists = await paymentModel.findOne({
+  const order_exists = await orderModel.findOne({
     userId,
     cartId,
   });
-  if (!cart_payment_details_exists) {
-    const new_payment = new paymentModel({
+  if (!order_exists) {
+    const new_order = new orderModel({
+      cartId,
       userId,
       total_amount,
-      created_date,
     });
-    await new_payment.save();
+    await new_order.save();
   }
   res.render("user/checkout", { cart, addresses });
-};
-// CONFIRM CHECKOUT
-const confirm_checkout = async (req, res) => {
-  const { addressId, payment_method } = req.body;
-  const userId = req.session.userId;
-  const payment = await paymentModel.findOne({ userId });
-  const paymentId = payment._id;
-  const created_date = new Date();
-  const cart = await cartModel.findOne({ userId });
-  const allProdDetailsInCart = cart.items;
-  const cartProdIds = [];
-  allProdDetailsInCart.forEach(function (prod) {
-    cartProdIds.push(prod.productId);
-  });
-  console.log(cartProdIds);
-  console.log(addressId);
-  console.log(payment_method);
-  console.log(paymentId);
-  const new_order = new orderModel({
-    userId,
-    paymentId,
-    addressId,
-    order_status: "Order Confirmed",
-    productId: cartProdIds,
-    created_date,
-  });
-  await new_order.save();
-  res.redirect("/order_success");
 };
 
 // ORDER SUCCESS PAGE
 const order_success = async (req, res) => {
-  await cartModel.findOneAndDelete({});
   res.render("user/order_success");
+  await cartModel.findOneAndDelete();
 };
 
+// CONFIRM CHECKOUT
+const confirm_checkout = async (req, res) => {
+  const { addressId, payment_method } = req.body;
+  const userId = req.session.userId;
+  const created_date = new Date();
+  const cart = await cartModel.findOne({ userId });
+  const cartId = cart._id;
+  const allProdDetailsInCart = cart.items;
+  const order = await orderModel.findOne({ userId, cartId });
+  const orderId = order._id.toString();
+  console.log(orderId);
+  const orderTotal = order.total_amount;
+  const cartProdIds = [];
+  allProdDetailsInCart.forEach(function (prod) {
+    cartProdIds.push(prod.productId);
+  });
+  let payment_status;
+  if (payment_method === "cash_on_delivery") {
+    payment_status = "pending";
+  } else {
+
+    var instance = new Razorpay({
+      key_id: "rzp_test_g5EMovE0Fdz2IM",
+      key_secret: "wCcHyG6eCD0smoqjpQo4IjOs",
+    });
+
+    instance.orders.create(
+      {
+        amount: orderTotal,
+        currency: "INR",
+        receipt: orderId,
+      },
+      function (err, order) {
+        if (err) {
+          console.log(err);
+        } else {
+          res.json({ order });
+          console.log("New Order: ", order);
+        }
+      }
+    );
+  }
+
+  const order_exists = await orderModel.findOne({
+    userId,
+    cartId,
+  });
+  if (order_exists) {
+    await orderModel.updateOne(
+      { userId, cartId },
+      {
+        $set: {
+          addressId,
+          order_status: "Order Confirmed",
+          productId: cartProdIds,
+          created_date,
+          payment_method,
+          payment_status,
+        },
+      }
+    );
+  } else {
+    res.redirect("/cart");
+  }
+
+  // res.redirect("/order_success");
+};
+
+const verifyPayment = async (req, res) => {
+  const userId = req.session.userId;
+  const details = req.body
+  console.log(details);
+  const crypto = require('crypto')
+  const cart = await cartModel.findOne({ userId })
+  let hmac = crypto.createHmac('sha256', process.env.RZP_KEY_SECRET)
+  hmac.update(details['payment[razorpay_order_id]'] + '|' + details['payment[razorpay_payment_id]'])
+  hmac = hmac.digest('hex')
+
+  const orderId = details['order[order][receipt]']
+  console.log(orderId);
+  if(hmac == details['payment[razorpay_signature]']) {
+      console.log('order Successfull');
+      await cartModel.findByIdAndDelete({ _id: cart._id })
+      await orderModel.findByIdAndUpdate(orderId, { $set: { payment_status: 'paid' } }).then((data) => {
+      res.json({ status: true, data })
+  }).catch((err) => {
+      res.data({ status: false, err })
+  })   
+  } else {
+      res.json({ status: false })
+      console.log('payment failed');
+  }
+};
 // RENDER WISHLIST
 const wishlist = async (req, res) => {
   if (req.session.isAuth) {
@@ -278,7 +350,7 @@ const wishlist = async (req, res) => {
       cartItems,
     });
   } else {
-    res.render("user/wishlist", { login: false });
+    res.render("user/wishlist", { login: false, cart });
   }
 };
 // ADD TO WISHLIST
@@ -630,4 +702,5 @@ module.exports = {
   checkout_page,
   confirm_checkout,
   order_success,
+  verifyPayment,
 };
