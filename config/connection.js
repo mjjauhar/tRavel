@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 const session = require("express-session");
 const mongoDBSession = require("connect-mongodb-session")(session);
+require("dotenv").config();
 
 // Set up default mongoose connection
 // const mongoURI = "mongodb://localhost:27017/travel";
 // Mongo DB conncetion
 
-const mongoURI =
-  "mongodb+srv://t-ravel:ZjXAx6cMuoz35E9X@cluster0.mktchvf.mongodb.net/test?retryWrites=true&w=majority&useNewUrlParser=true&useUnifiedTopology=true";
+const mongoURI = process.env.ATLAS_DB_LINK;
 mongoose
   .connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then((res) => console.log("MongoDB connected"))
