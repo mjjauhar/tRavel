@@ -9,7 +9,6 @@ const nodemailer = require("nodemailer");
 const Razorpay = require("razorpay");
 require("dotenv").config();
 
-
 /////////////////////////////////// SESSION MIDDLEWARE ///////////////////////////////////
 const proceedIfLoggedIn = (req, res, next) => {
   if (req.session.isAuth) {
@@ -36,7 +35,12 @@ const landing_page = async (req, res) => {
   const wishlist = await wishlistModel
     .findOne({ userId: userId })
     .populate("productId");
-  const wishlistItems = wishlist?.productId;
+  let wishlistItems;
+  if (wishlist != null) {
+    wishlistItems = wishlist?.productId;
+  } else {
+    wishlistItems = [];
+  }
   if (req.session.isAuth) {
     res.render("user/landing_page", {
       login: true,
@@ -47,7 +51,7 @@ const landing_page = async (req, res) => {
     res.render("user/landing_page", {
       login: false,
       products,
-      wishlistItems: [],
+      wishlistItems,
     });
   }
 };
@@ -56,7 +60,12 @@ const product_page = async (req, res) => {
   const userId = req.session.userId;
   const proId = req.params.id;
   const cart = await cartModel.findOne({ userId });
-  const cartItems = cart?.items;
+  let cartItems;
+  if(cart != null){
+    cartItems = cart?.items;
+  }else{
+    cartItems = [];
+  }
   let product = await productModel.findOne({
     is_deleted: false,
     _id: proId,
@@ -64,7 +73,12 @@ const product_page = async (req, res) => {
   const wishlist = await wishlistModel
     .findOne({ userId: userId })
     .populate("productId");
-  const wishlistItems = wishlist?.productId;
+  let wishlistItems;
+  if (wishlist != null) {
+    wishlistItems = wishlist?.productId;
+  } else {
+    wishlistItems = [];
+  }
   if (req.session.isAuth) {
     res.render("user/product_page", {
       login: true,
@@ -76,7 +90,7 @@ const product_page = async (req, res) => {
     res.render("user/product_page", {
       login: false,
       product,
-      wishlistItems: [],
+      wishlistItems,
       cartItems: [],
     });
   }
@@ -204,8 +218,12 @@ const remove_from_cart = async (req, res) => {
 const checkout_page = async (req, res) => {
   const userId = req.session.userId;
   const cart = await cartModel.findOne({ userId }).populate("items.productId");
-  const cartId = cart._id;
-  const total_amount = cart.cartTotal;
+  let cartId;
+  let total_amount;
+  if (cart != null) {
+    cartId = cart._id;
+    total_amount = cart.cartTotal;
+  }
   const getUserAddresses = await addressModel.findOne({ user: userId });
   const addresses = getUserAddresses.address;
   // console.log(addresses);
@@ -232,15 +250,23 @@ const order_success = async (req, res) => {
 
 // CONFIRM CHECKOUT
 const confirm_checkout = async (req, res) => {
-  const { addressId, payment_method } = req.body;
+  const addressId = req.body["addressId"];
+  const payment_method = req.body["payment_method"];
+  console.log(addressId + " =>> " + payment_method);
   const userId = req.session.userId;
   const created_date = new Date();
   const cart = await cartModel.findOne({ userId });
-  const cartId = cart._id;
+  let cartId;
+  if (cart != null) {
+    cartId = cart._id;
+  }
   const allProdDetailsInCart = cart.items;
   const order = await orderModel.findOne({ userId, cartId });
-  const orderId = order._id.toString();
-  console.log(orderId);
+  let orderId;
+  if (order != null) {
+    orderId = order._id;
+  }
+  // console.log(orderId);
   const orderTotal = order.total_amount;
   const cartProdIds = [];
   allProdDetailsInCart.forEach(function (prod) {
@@ -248,9 +274,9 @@ const confirm_checkout = async (req, res) => {
   });
   let payment_status;
   if (payment_method === "cash_on_delivery") {
+    res.json({ codSuccess: true });
     payment_status = "pending";
   } else {
-
     var instance = new Razorpay({
       key_id: "rzp_test_g5EMovE0Fdz2IM",
       key_secret: "wCcHyG6eCD0smoqjpQo4IjOs",
@@ -260,7 +286,7 @@ const confirm_checkout = async (req, res) => {
       {
         amount: orderTotal,
         currency: "INR",
-        receipt: orderId,
+        receipt: "" + orderId,
       },
       function (err, order) {
         if (err) {
@@ -294,33 +320,41 @@ const confirm_checkout = async (req, res) => {
   } else {
     res.redirect("/cart");
   }
-
   // res.redirect("/order_success");
 };
 
 const verifyPayment = async (req, res) => {
   const userId = req.session.userId;
-  const details = req.body
+  const details = req.body;
   console.log(details);
-  const crypto = require('crypto')
-  const cart = await cartModel.findOne({ userId })
-  let hmac = crypto.createHmac('sha256', process.env.RZP_KEY_SECRET)
-  hmac.update(details['payment[razorpay_order_id]'] + '|' + details['payment[razorpay_payment_id]'])
-  hmac = hmac.digest('hex')
+  const crypto = require("crypto");
+  const cart = await cartModel.findOne({ userId });
+  let hmac = crypto.createHmac("sha256", "wCcHyG6eCD0smoqjpQo4IjOs");
+  hmac.update(
+    details["payment[razorpay_order_id]"] +
+      "|" +
+      details["payment[razorpay_payment_id]"]
+  );
+  hmac = hmac.digest("hex");
 
-  const orderId = details['order[order][receipt]']
-  console.log(orderId);
-  if(hmac == details['payment[razorpay_signature]']) {
-      console.log('order Successfull');
-      await cartModel.findByIdAndDelete({ _id: cart._id })
-      await orderModel.findByIdAndUpdate(orderId, { $set: { payment_status: 'paid' } }).then((data) => {
-      res.json({ status: true, data })
-  }).catch((err) => {
-      res.data({ status: false, err })
-  })   
+  const orderId = details["order[order][receipt]"];
+  console.log("hmac => " + hmac);
+  console.log("orderId => " + orderId);
+
+  if (hmac === details["payment[razorpay_signature]"]) {
+    console.log("order Successfull");
+    await orderModel
+      .findByIdAndUpdate(orderId, { $set: { payment_status: "paid" } })
+      .then((data) => {
+        res.json({ status: true, data });
+      })
+      .catch((err) => {
+        console.log("hiiii");
+        res.data({ status: false, err });
+      });
   } else {
-      res.json({ status: false })
-      console.log('payment failed');
+    res.json({ status: false });
+    console.log("payment failed");
   }
 };
 // RENDER WISHLIST
@@ -542,8 +576,8 @@ const delete_address = async (req, res) => {
 var otp = Math.random();
 otp = otp * 1000000;
 otp = parseInt(otp);
-// console.log(otp);
-var email2;
+var userData;
+
 let transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 465,
@@ -579,44 +613,43 @@ const resend_otp = function (req, res) {
 
 // OTP VALIDATION
 const otp_validation = async (req, res) => {
-  let usrId = req.params.id;
   if (req.body.otp == otp) {
-    await userModel.findOneAndUpdate(
-      { _id: usrId },
-      { $set: { otp_verified: true } }
-    );
-    res.redirect("/user/login");
+    const hashedPsw = await bcrypt.hash(userData.password, 12);
+    const created_date = new Date();
+
+    let newUser = new userModel({
+      first_name: userData.first_name,
+      last_name: userData.last_name,
+      username: userData.username,
+      created_date,
+      phone_no: userData.phone_no,
+      email: userData.email,
+      gender: userData.gender,
+      password: hashedPsw,
+      otp_verified: true,
+    });
+    await newUser
+      .save()
+      .then(res.redirect("/user/login"))
+      .catch((err) => {
+        console.log(err);
+      });
   } else {
     res.render("user/otp", { user, msg: "otp is incorrect" });
   }
 };
 // SIGNUP POST
 const signup = async (req, res) => {
-  const { first_name, last_name, username, phone_no, email, password, gender } =
-    req.body;
+  userData = req.body;
   req.session.exists = false;
-  let user = await userModel.findOne({ email });
+  let user = await userModel.findOne({ email: "userData.email" });
   if (user) {
     req.session.exists = true;
     return res.redirect("/user/signup");
   }
-  const hashedPsw = await bcrypt.hash(password, 12);
-  const created_date = new Date();
 
-  user = new userModel({
-    first_name,
-    last_name,
-    username,
-    created_date,
-    phone_no,
-    email,
-    gender,
-    password: hashedPsw,
-  });
-
-  email2 = email;
   var mailOptions = {
-    to: email,
+    to: userData.email,
     subject: "Otp for registration is: ",
     html:
       "<h3>OTP for account verification is </h3>" +
@@ -633,12 +666,7 @@ const signup = async (req, res) => {
     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
   });
 
-  await user
-    .save()
-    .then(res.render("user/otp", { user, msg: "" }))
-    .catch((err) => {
-      console.log(err);
-    });
+  res.render("user/otp", { user, msg: "" });
 };
 
 // LOGIN

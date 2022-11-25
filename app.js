@@ -35,7 +35,7 @@ const fileStorage = multer.diskStorage({
   },
 });
 
-app.use(multer({ storage: fileStorage }).single("imgUrl"));
+app.use(multer({ storage: fileStorage }).array("imgUrl",5));
 
 // static folder
 app.use("/public", express.static("public"));

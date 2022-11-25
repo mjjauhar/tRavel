@@ -3,8 +3,8 @@ include('../partials/order_navbar.ejs') %>
 <div class="container-fluid mt-3">
   <div class="row">
     <div class="col-8" id="addressCard">
-      <form action="" id="checkout-form">
         <select
+          id="address"
           name="addressId"
           class="form-select"
           aria-label="Default select example"
@@ -24,7 +24,7 @@ include('../partials/order_navbar.ejs') %>
               class="form-check-input"
               type="radio"
               name="payment_method"
-              id="method1"
+              id="cod"
               value="cash_on_delivery"
             />
             <label class="form-check-label" for="method1">
@@ -36,15 +36,14 @@ include('../partials/order_navbar.ejs') %>
               class="form-check-input"
               type="radio"
               name="payment_method"
-              id="method2"
+              id="method1"
               value="razerpay"
               checked
             />
             <label class="form-check-label" for="method2"> razerpay </label>
           </div>
         </div>
-        <button type="submit">Continue to payment</button>
-      <!-- </form> -->
+        <button onclick="placeOrder()">Confirm Order</button>
     </div>
     <div class="col-4"></div>
   </div>

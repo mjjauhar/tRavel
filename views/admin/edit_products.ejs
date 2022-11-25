@@ -22,7 +22,7 @@
         type="text"
         name="name"
         class="form-control mb-4"
-        placeholder="<%= product.name %>"
+        value="<%= product.name %>"
         required
       />
 
@@ -31,7 +31,7 @@
         type="text"
         name="description"
         class="form-control mb-4"
-        placeholder="<%= product.description %>"
+        value="<%= product.description %>"
       />
 
       <label for="">Category</label>
@@ -39,7 +39,7 @@
         type="text"
         name="category"
         class="form-control mb-4"
-        placeholder="<%= product.category %>"
+        value="<%= product.category %>"
       />
 
       <label for="">Price</label>
@@ -47,7 +47,7 @@
         type="number"
         name="price"
         class="form-control mb-4"
-        placeholder="<%= product.price %>"
+        value="<%= product.price %>"
         required
       />
 
@@ -56,21 +56,23 @@
         type="number"
         name="stock"
         class="form-control mb-4"
-        placeholder="<%= product.stock %>"
+        value="<%= product.stock %>"
       />
       <div class="row">
         <div class="col-md-10 col">
           <label for="">Image</label>
           <input
+            accept="image/png, image/jpeg image/avif"
             type="file"
             name="imgUrl"
             class="form-control mb-4"
             onchange="viewImage(event)"
+            multiple
           />
         </div>
         <div class="col-md-2 col">
           <img
-            src="/<%= product.imgUrl %>"
+            src="/<%= product.imgUrl[0] %>"
             alt="image"
             style="width: 100px; height: auto"
             class="m-3"

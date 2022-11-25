@@ -102,12 +102,16 @@ module.exports = {
     const { name, description, category, stock, price } = req.body; // asigning product data to variables.
     console.log("reached add_products");
     const created_date = new Date();
+    req.files.forEach((img) => {});
+    console.log(req.files);
+    const productImages =
+      req.files != null ? req.files.map((img) => img.path) : null;
     const newProduct = new productModel({
       category,
       name,
       description,
       price,
-      imgUrl: req.file.path,
+      imgUrl: productImages,
       stock,
       created_date,
     });

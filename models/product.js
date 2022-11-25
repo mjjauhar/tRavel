@@ -19,7 +19,7 @@ var product = new Schema({
     default: false,
   },
   stock: Number,
-  imgUrl: String,
+  imgUrl: { type: [String] },
   description: String,
   created_date: Date,
   modified_date: Date,

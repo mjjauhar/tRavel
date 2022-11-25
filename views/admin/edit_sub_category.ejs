@@ -21,7 +21,7 @@
         type="text"
         name="name"
         class="form-control mb-4"
-        placeholder="<%= sub_category.name %>"
+        value="<%= sub_category.name %>"
         required
       />
 
@@ -30,7 +30,7 @@
         type="text"
         name="description"
         class="form-control mb-4"
-        placeholder="<%= sub_category.description %>"
+        value="<%= sub_category.description %>"
       />
       <select
         name="main_category"
@@ -38,12 +38,12 @@
         aria-label="Default select example"
       >
         <% main_categories.forEach(function(main_category){ %>
-        <option value="<% main_category.name %>">
-          <% main_category.name %>
+        <option value="<%= main_category.name %>">
+          <%= main_category.name %>
         </option>
         <% }) %>
       </select>
-      <button type="submit" class="btn btn-success">Submit</button>
+      <button type="submit" class="btn btn-success mt-5">Submit</button>
     </form>
   </div>
 </main>

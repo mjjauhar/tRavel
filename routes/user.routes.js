@@ -72,7 +72,7 @@ app
   .get(proceedIfLoggedOut, signup_page)
   .post(proceedIfLoggedOut, signup);
 
-app.route("/user/signup/otp/:id").post(proceedIfLoggedOut, otp_validation);
+app.route("/user/signup/otp").post(proceedIfLoggedOut, otp_validation);
 
 app.route("/user/otp/resend").post(proceedIfLoggedOut, resend_otp);
 
