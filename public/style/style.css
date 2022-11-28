@@ -1,3 +1,6 @@
+.nav-item:hover {
+  filter: url(#threshold) blur(0.6px);
+}
 .myCard {
   box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2);
   transition: 0.3s;

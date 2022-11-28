@@ -61,15 +61,18 @@ const product_page = async (req, res) => {
   const proId = req.params.id;
   const cart = await cartModel.findOne({ userId });
   let cartItems;
-  if(cart != null){
-    cartItems = cart?.items;
-  }else{
+  if (cart != null) {
+    cartItems = cart?.products;
+  } else {
     cartItems = [];
   }
-  let product = await productModel.findOne({
-    is_deleted: false,
-    _id: proId,
-  });
+  let product = await productModel
+    .findOne({
+      is_deleted: false,
+      _id: proId,
+    })
+    .populate("category");
+  console.log(product.category);
   const wishlist = await wishlistModel
     .findOne({ userId: userId })
     .populate("productId");
@@ -99,18 +102,22 @@ const product_page = async (req, res) => {
 // RENDER MY ORDERS PAGE
 const my_orders = async (req, res) => {
   const userId = req.session.userId;
-  const orders = await orderModel.findById({ userId }).populate("productId");
-  res.render("user/my_orders", { orders });
+  const user = await userModel.find({ _id: userId });
+  const full_name = `${user[0].first_name} ${user[0].last_name}`;
+  const phone_no = user[0].phone_no;
+  const orders = await orderModel.find({ userId }).populate("products.productId");
+  res.render("user/my_orders", { orders, full_name, phone_no, login:true });
 };
+
 // RENDER CART
 const cart = async (req, res) => {
   if (req.session.isAuth) {
     const userId = req.session.userId;
     const cart = await cartModel
       .findOne({ userId })
-      .populate("items.productId");
+      .populate("products.productId");
     if (cart) {
-      let itemsInCart = cart.items;
+      let itemsInCart = cart.products;
       let cart_total = cart.cartTotal;
       let cartId = cart._id;
       // console.log(cartId);
@@ -136,26 +143,26 @@ const add_to_cart = async (req, res) => {
   const userId = req.session.userId;
   const cartExist = await cartModel.findOne({ userId });
   const product = await productModel.findOne({ _id: productId });
-  const totalPrice = product.price;
+  const subTotal = product.price;
   if (cartExist) {
     let prodExistInCart = await cartModel.findOne({
       userId,
-      "items.productId": productId,
+      "products.productId": productId,
     });
     if (prodExistInCart === null) {
       await cartModel.findOneAndUpdate(
         { userId },
         {
-          $addToSet: { items: { productId, totalPrice } },
-          $inc: { cartTotal: totalPrice },
+          $addToSet: { products: { productId, subTotal } },
+          $inc: { cartTotal: subTotal },
         }
       );
     }
   } else {
     const new_cart = new cartModel({
       userId,
-      items: [{ productId, totalPrice }],
-      cartTotal: totalPrice,
+      products: [{ productId, subTotal }],
+      cartTotal: subTotal,
     });
     await new_cart.save();
   }
@@ -168,11 +175,11 @@ const increment_cart_prod_qty = async (req, res) => {
   let price = parseInt(req.params.proPrice);
   let product = await productModel.findById(product_id);
   await cartModel.findOneAndUpdate(
-    { userId, "items.productId": product_id },
+    { userId, "products.productId": product_id },
     {
       $inc: {
-        "items.$.quantity": 1,
-        "items.$.totalPrice": price,
+        "products.$.quantity": 1,
+        "products.$.subTotal": product.price,
         cartTotal: product.price,
       },
     }
@@ -184,14 +191,14 @@ const decrement_cart_prod_qty = async (req, res) => {
   const product_id = req.params.proId;
   const userId = req.session.userId;
   let price = parseInt(req.params.proPrice);
-  price = price * -1;
+  // price = price * -1;
   let product = await productModel.findById(product_id);
   await cartModel.findOneAndUpdate(
-    { userId, "items.productId": product_id },
+    { userId, "products.productId": product_id },
     {
       $inc: {
-        "items.$.quantity": -1,
-        "items.$.totalPrice": price,
+        "products.$.quantity": -1,
+        "products.$.subTotal": -product.price,
         cartTotal: -product.price,
       },
     }
@@ -204,79 +211,54 @@ const remove_from_cart = async (req, res) => {
   const productId = req.params.proId;
   const productQty = req.params.proQty;
   const cart = await cartModel.findOne({ userId });
+  let cart_total;
+  if (cart != null) {
+    cart_total = cart.cartTotal;
+  }
   const product = await productModel.findOne({ _id: productId });
   const product_price = product.price;
-  const cart_total = cart.cartTotal;
   const totalPrice = cart_total - product_price * productQty;
   const final_total = Math.abs(totalPrice);
   await cartModel.updateOne({ userId }, { $set: { cartTotal: final_total } });
-  await cartModel.updateOne({ userId }, { $pull: { items: { productId } } });
+  await cartModel.updateOne({ userId }, { $pull: { products: { productId } } });
   res.redirect("back");
 };
 
 // CHECKOUT PAGE
 const checkout_page = async (req, res) => {
   const userId = req.session.userId;
-  const cart = await cartModel.findOne({ userId }).populate("items.productId");
+  const cart = await cartModel
+    .findOne({ userId })
+    .populate("products.productId");
+  let products;
   let cartId;
-  let total_amount;
   if (cart != null) {
+    products = cart.products;
     cartId = cart._id;
-    total_amount = cart.cartTotal;
   }
   const getUserAddresses = await addressModel.findOne({ user: userId });
-  const addresses = getUserAddresses.address;
-  // console.log(addresses);
-  const order_exists = await orderModel.findOne({
-    userId,
-    cartId,
-  });
-  if (!order_exists) {
-    const new_order = new orderModel({
-      cartId,
-      userId,
-      total_amount,
-    });
-    await new_order.save();
+  let addresses;
+  if (getUserAddresses != null) {
+    addresses = getUserAddresses.address;
   }
-  res.render("user/checkout", { cart, addresses });
-};
-
-// ORDER SUCCESS PAGE
-const order_success = async (req, res) => {
-  res.render("user/order_success");
-  await cartModel.findOneAndDelete();
+  res.render("user/checkout", { products, addresses, cartId });
 };
 
 // CONFIRM CHECKOUT
 const confirm_checkout = async (req, res) => {
-  const addressId = req.body["addressId"];
   const payment_method = req.body["payment_method"];
-  console.log(addressId + " =>> " + payment_method);
   const userId = req.session.userId;
-  const created_date = new Date();
   const cart = await cartModel.findOne({ userId });
   let cartId;
+  let orderTotal;
   if (cart != null) {
     cartId = cart._id;
+    orderTotal = cart.cartTotal;
   }
-  const allProdDetailsInCart = cart.items;
-  const order = await orderModel.findOne({ userId, cartId });
-  let orderId;
-  if (order != null) {
-    orderId = order._id;
-  }
-  // console.log(orderId);
-  const orderTotal = order.total_amount;
-  const cartProdIds = [];
-  allProdDetailsInCart.forEach(function (prod) {
-    cartProdIds.push(prod.productId);
-  });
-  let payment_status;
+
   if (payment_method === "cash_on_delivery") {
     res.json({ codSuccess: true });
-    payment_status = "pending";
-  } else {
+  } else if (payment_method === "razerpay") {
     var instance = new Razorpay({
       key_id: "rzp_test_g5EMovE0Fdz2IM",
       key_secret: "wCcHyG6eCD0smoqjpQo4IjOs",
@@ -284,9 +266,9 @@ const confirm_checkout = async (req, res) => {
 
     instance.orders.create(
       {
-        amount: orderTotal,
+        amount: orderTotal * 100,
         currency: "INR",
-        receipt: "" + orderId,
+        receipt: "" + cartId,
       },
       function (err, order) {
         if (err) {
@@ -298,71 +280,104 @@ const confirm_checkout = async (req, res) => {
       }
     );
   }
+};
 
+const verifyPayment = async (req, res) => {
+  const details = req.body;
+  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>" + details);
+  const crypto = require("crypto");
+  let hmac = crypto.createHmac("sha256", "wCcHyG6eCD0smoqjpQo4IjOs");
+  hmac.update(
+    details.payment.razorpay_order_id +
+      "|" +
+      details.payment.razorpay_payment_id,
+    "wCcHyG6eCD0smoqjpQo4IjOs"
+  );
+  hmac = hmac.digest("hex");
+
+  if (hmac === details.payment.razorpay_signature) {
+    console.log("order Successfull");
+    res.json({ status: true });
+  } else {
+    res.json({ status: false });
+    console.log("else === payment failed");
+  }
+};
+
+// ORDER SUCCESS PAGE
+const order_success = async (req, res) => {
+  res.render("user/order_success");
+  const userId = req.session.userId;
+  const addressId = req.params.address_id;
+  const payment_method = req.params.pay_method;
+  let payment_status;
+  if (payment_method === "cash_on_delivery") {
+    payment_status = "pending - pay on delivey";
+  } else if (payment_method === "razerpay") {
+    payment_status = "paid using razerpay - online payment";
+  }
+  const created_date = new Date();
+  const cart = await cartModel.findOne({ userId });
+  let cartId;
+  let total_amount;
+  let products;
+  if (cart != null) {
+    cartId = cart._id;
+    total_amount = cart.cartTotal;
+    products = cart.products;
+  }
   const order_exists = await orderModel.findOne({
     userId,
     cartId,
   });
-  if (order_exists) {
-    await orderModel.updateOne(
-      { userId, cartId },
-      {
-        $set: {
-          addressId,
-          order_status: "Order Confirmed",
-          productId: cartProdIds,
-          created_date,
-          payment_method,
-          payment_status,
-        },
+  if (!order_exists) {
+    const new_order = new orderModel({
+      cartId,
+      userId,
+      total_amount,
+      addressId,
+      products,
+      created_date,
+      payment_method,
+      payment_status,
+    });
+    await new_order.save();
+  }
+  const current_order = await orderModel.findOne({ userId, cartId });
+  const allproducts = await productModel.find();
+  console.log(allproducts);
+  const ordered_products = current_order.products;
+  let ordered_products_ids = [];
+  for (const product of ordered_products) {
+    ordered_products_ids.push(product.productId);
+  }
+  let purchased_quantity;
+  let i;
+  let prod;
+  let no_of_products = ordered_products.length;
+  console.log("no_of_products " + no_of_products);
+  for (i = 0; i < no_of_products; i++) {
+    for (prod of allproducts) {
+      let in_stock_product_id = "" + ordered_products[i].productId;
+      let ordered_prod_id = "" + prod._id;
+      if (in_stock_product_id === ordered_prod_id) {
+        purchased_quantity = parseInt(ordered_products[i].quantity);
+        await productModel.updateOne(
+          { _id: in_stock_product_id },
+          { $inc: { stock: -purchased_quantity } }
+        );
       }
-    );
-  } else {
-    res.redirect("/cart");
+    }
   }
-  // res.redirect("/order_success");
+
+  await cartModel.findOneAndDelete();
 };
 
-const verifyPayment = async (req, res) => {
-  const userId = req.session.userId;
-  const details = req.body;
-  console.log(details);
-  const crypto = require("crypto");
-  const cart = await cartModel.findOne({ userId });
-  let hmac = crypto.createHmac("sha256", "wCcHyG6eCD0smoqjpQo4IjOs");
-  hmac.update(
-    details["payment[razorpay_order_id]"] +
-      "|" +
-      details["payment[razorpay_payment_id]"]
-  );
-  hmac = hmac.digest("hex");
-
-  const orderId = details["order[order][receipt]"];
-  console.log("hmac => " + hmac);
-  console.log("orderId => " + orderId);
-
-  if (hmac === details["payment[razorpay_signature]"]) {
-    console.log("order Successfull");
-    await orderModel
-      .findByIdAndUpdate(orderId, { $set: { payment_status: "paid" } })
-      .then((data) => {
-        res.json({ status: true, data });
-      })
-      .catch((err) => {
-        console.log("hiiii");
-        res.data({ status: false, err });
-      });
-  } else {
-    res.json({ status: false });
-    console.log("payment failed");
-  }
-};
 // RENDER WISHLIST
 const wishlist = async (req, res) => {
   if (req.session.isAuth) {
     const userId = req.session.userId;
     const cart = await cartModel.findOne({ userId });
-    // console.log(cart.items);
     const wishlist = await wishlistModel
       .findOne({ userId })
       .populate("productId");
@@ -374,7 +389,7 @@ const wishlist = async (req, res) => {
     }
     let cartItems;
     if (cart != null) {
-      cartItems = cart?.items;
+      cartItems = cart?.products;
     } else {
       cartItems = [];
     }
@@ -731,4 +746,5 @@ module.exports = {
   confirm_checkout,
   order_success,
   verifyPayment,
+  my_orders,
 };

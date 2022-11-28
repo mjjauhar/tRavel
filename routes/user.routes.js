@@ -31,20 +31,31 @@ const {
   confirm_checkout,
   order_success,
   verifyPayment,
+  my_orders,
 } = require("../controllers/user.controllers");
 
 app.route("/").get(landing_page);
 app.route("/p/:id/:productname").get(product_page);
 app.route("/cart").get(proceedIfLoggedIn, cart);
 app.route("/add/cart/:id").post(proceedIfLoggedIn, add_to_cart);
-app.route("/increment/qty/cart/:proId/:proPrice").post(proceedIfLoggedIn, increment_cart_prod_qty);
-app.route("/decrement/qty/cart/:proId/:proPrice").post(proceedIfLoggedIn, decrement_cart_prod_qty);
-app.route("/remove/cart/:proId/:proQty").post(proceedIfLoggedIn, remove_from_cart);
+app
+  .route("/increment/qty/cart/:proId")
+  .post(proceedIfLoggedIn, increment_cart_prod_qty);
+app
+  .route("/decrement/qty/cart/:proId")
+  .post(proceedIfLoggedIn, decrement_cart_prod_qty);
+app
+  .route("/remove/cart/:proId/:proQty")
+  .post(proceedIfLoggedIn, remove_from_cart);
+
+app.route("/my_orders").get(proceedIfLoggedIn, my_orders);
 
 app.route("/checkout").get(proceedIfLoggedIn, checkout_page);
-app.route("/order_success").get(proceedIfLoggedIn, order_success);
 app.route("/checkout/confirm").post(proceedIfLoggedIn, confirm_checkout);
-app.route('/verify-payment').post(proceedIfLoggedIn, verifyPayment);
+app.route("/verify_payment").post(proceedIfLoggedIn, verifyPayment);
+app
+  .route("/order_success/:pay_method/:address_id")
+  .get(proceedIfLoggedIn, order_success);
 
 app.route("/wishlist").get(proceedIfLoggedIn, wishlist);
 app.route("/add/wishlist/:id").post(proceedIfLoggedIn, add_to_wishlist);
@@ -56,7 +67,7 @@ app.route("/user/account/:id").post(proceedIfLoggedIn, edit_user);
 
 app.route("/user/address").get(proceedIfLoggedIn, address);
 app.route("/user/add/address/:id").post(proceedIfLoggedIn, add_address);
-app.route("/user/delete/address/:id").post(proceedIfLoggedIn, delete_address)
+app.route("/user/delete/address/:id").post(proceedIfLoggedIn, delete_address);
 app
   .route("/user/edit/address/:id")
   .get(proceedIfLoggedIn, edit_address_page)

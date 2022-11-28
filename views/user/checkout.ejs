@@ -3,50 +3,75 @@ include('../partials/order_navbar.ejs') %>
 <div class="container-fluid mt-3">
   <div class="row">
     <div class="col-8" id="addressCard">
-        <select
-          id="address"
-          name="addressId"
-          class="form-select"
-          aria-label="Default select example"
-          required
-        >
-          <% addresses.forEach(function(address){ %>
-          <option value="<%= address._id %>">
-            <%= address.type %> - <%= address.name %>,<%= address.city %>, <%=
-            address.pincode %>, <%= address.country %> , Phone: <%=
-            address.phone_no %>
-          </option>
-          <% }) %>
-        </select>
-        <div class="d-flex justify-content-start">
-          <div class="form-check pe-5">
-            <input
-              class="form-check-input"
-              type="radio"
-              name="payment_method"
-              id="cod"
-              value="cash_on_delivery"
-            />
-            <label class="form-check-label" for="method1">
-              cash on delivery
-            </label>
+      <h4 class="m-3">Please Select an Address:</h4>
+      <select
+        id="address"
+        name="addressId"
+        class="form-select m-3"
+        aria-label="Default select example"
+        required
+      >
+        <% addresses.forEach(function(address){ %>
+        <option value="<%= address._id %>">
+          <%= address.type %> - <%= address.name %>,<%= address.city %>, <%=
+          address.pincode %>, <%= address.country %> , Phone: <%=
+          address.phone_no %>
+        </option>
+        <% }) %>
+      </select>
+      <div class="d-flex justify-content-start m-3">
+        <div class="form-check pe-5 mt-4">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="payment_method"
+            id="cod"
+            value="cash_on_delivery"
+          />
+          <label class="form-check-label h4" for="method1">
+            cash on delivery
+          </label>
+        </div>
+        <div class="form-check mt-4">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="payment_method"
+            id="method1"
+            value="razerpay"
+            checked
+          />
+          <label class="form-check-label h4" for="method2"> razerpay </label>
+        </div>
+      </div>
+      <button class="btn btn-warning m-3" onclick="placeOrder()">
+        Confirm Order
+      </button>
+    </div>
+    <div class="col-4">
+      <% if(products.length != 0){ %> <% products.forEach(function(product){ %>
+      <div class="card mb-3" style="max-width: 540px">
+        <div class="row g-0">
+          <div class="col-md-4">
+            <img src="<%= product.productId.imgUrl[1] %>" class="img-fluid rounded-start" alt="..." />
           </div>
-          <div class="form-check">
-            <input
-              class="form-check-input"
-              type="radio"
-              name="payment_method"
-              id="method1"
-              value="razerpay"
-              checked
-            />
-            <label class="form-check-label" for="method2"> razerpay </label>
+          <div class="col-md-8">
+            <div class="card-body">
+              <h5 class="card-title"><%= product.productId.name %></h5>
+              <p class="card-text">
+                <%= product.productId.price %>
+              </p>
+              <p class="card-text">
+                <small class="text-muted">Last updated 3 mins ago</small>
+              </p>
+            </div>
           </div>
         </div>
-        <button onclick="placeOrder()">Confirm Order</button>
+      </div>
+      <% })} %>
     </div>
-    <div class="col-4"></div>
   </div>
 </div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <%- include('../partials/footer.ejs') %>

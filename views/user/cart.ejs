@@ -13,7 +13,7 @@
         <div class="row g-0">
           <div class="col-2">
             <img
-              src="<%= item?.productId.imgUrl[0] %>"
+              src="<%= item?.productId.imgUrl[1] %>"
               class="img-fluid rounded-start img-thumbnail"
               alt="product_img"
               style="width: 12rem; height: 9rem"
@@ -26,7 +26,7 @@
                 <%= item.productId.description %>
               </p>
               <p class="card-text">
-                <big class="text-muted"><%= item?.productId.price %></big>
+                <big class="text-muted">Rs. <%= item?.subTotal %></big>
               </p>
             </div>
           </div>
@@ -37,7 +37,7 @@
               class="btn btn-sm btn-danger"
               type="button"
               id="decrement_button"
-              onclick="decreasePriceByQty('<%= item?.productId._id %>', '<%= item?.productId.price %>');"
+              onclick="decreasePriceByQty('<%= item?.productId._id %>');"
             >
               -
             </button>
@@ -46,7 +46,7 @@
               class="btn btn-sm btn-danger"
               type="button"
               id="decrement_button"
-              onclick="decreasePriceByQty('<%= item?.productId._id %>', '<%= item?.productId.price %>');"
+              onclick="decreasePriceByQty('<%= item?.productId._id %>');"
             >
               -
             </button>
@@ -64,7 +64,7 @@
               class="btn btn-sm btn-danger"
               type="button"
               id="increment_button"
-              onclick="increasePriceByQty('<%= item?.productId._id %>', '<%= item?.productId.price %>');"
+              onclick="increasePriceByQty('<%= item?.productId._id %>');"
             >
               +
             </button>
@@ -73,7 +73,7 @@
               class="btn btn-sm btn-danger"
               type="button"
               id="increment_button"
-              onclick="increasePriceByQty('<%= item?.productId._id %>', '<%= item?.productId.price %>');"
+              onclick="increasePriceByQty('<%= item?.productId._id %>');"
             >
               +
             </button>
@@ -100,7 +100,7 @@
           <h4 class="card-title fw-bold">Order Summery</h4>
           <div class="mb-3 d-flex justify-content-between">
             <h5>Price:</h5>
-            <h5><%= cart_total %></h5>
+            <h5>Rs. <%= cart_total %></h5>
           </div>
           <div class="mb-3 d-flex justify-content-between">
             <h5>Discount:</h5>
@@ -120,7 +120,7 @@
             class="p-3 mb-2 bg-primary text-white d-flex justify-content-between"
           >
             <h5>Total Amount</h5>
-            <h5><%= cart_total %></h5>
+            <h5>Rs. <%= cart_total %></h5>
           </div>
           <div>
             <a href="/checkout">

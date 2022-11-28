@@ -44,7 +44,11 @@
       </div>
     </div>
     <div class="col-6" id="productCard">
-      <p class="fw-bold h4 mt-5 ms-5"><%= product.name %></p>
+      <div class="ms-5 mt-3">
+        <span> > <%= product.category.main_category %></span>
+        <span> > <%= product.category.name %> ></span>
+      </div>
+      <p class="fw-bold h4 mt-2 ms-5"><%= product.name %></p>
       <p class="mt-4 ms-5"><%= product.description %></p>
       <p class="h2 mt-4 ms-5">Rs <%= product.price %></p>
 

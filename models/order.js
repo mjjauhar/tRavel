@@ -1,41 +1,59 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
-var orderSchema = new Schema({
+
+const orderSchema = new Schema({
   userId: {
     type: Schema.Types.ObjectId,
+    required: true,
     ref: "user",
+  },
+  products: [
+    {
+      productId: {
+        type: Schema.Types.ObjectId,
+        ref: "product",
+      },
+      quantity: {
+        type: Number,
+        ref: "product",
+      },
+      price: {
+        type: Number,
+        ref: "product",
+      },
+      subTotal: {
+        type: Number,
+        ref: "product",
+      },
+      status: {
+        type: String,
+        default: "Order Placed",
+      },
+    },
+  ],
+  total_amount: {
+    type: Number,
   },
   addressId: {
     type: Schema.Types.ObjectId,
     ref: "address",
   },
-  order_status: {
-    type: String,
-    default: "Order Not Confirmed"
-  },
-  productId: {
-    type: [Schema.Types.ObjectId],
-    ref: "product",
-  },
   cartId: {
     type: Schema.Types.ObjectId,
     ref: "cart",
   },
-  total_amount:{
-    type: Number,
-  },
+  created_date: Date,
+  delivered_date: Date,
+  canceled_date: Date,
   payment_method: {
     type: String,
     default: "none",
   },
   payment_status: {
     type: String,
-    default: 'none',
+    default: "Not paid",
   },
-  created_date: Date,
-  delivered_date: Date,
-  canceled_date: Date,
 });
 
 module.exports = mongoose.model("order", orderSchema);

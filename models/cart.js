@@ -6,7 +6,7 @@ var cartSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "user",
   },
-  items: [
+  products: [
     {
       productId: {
         type: Schema.Types.ObjectId,
@@ -14,10 +14,16 @@ var cartSchema = new Schema({
       },
       quantity: {
         type: Number,
+        ref: "product",
         default: 1,
       },
-      totalPrice: {
+      price: {
         type: Number,
+        ref: "product",
+      },
+      subTotal: {
+        type: Number,
+        ref: "product",
         default: 0,
       },
       date: {
@@ -30,7 +36,6 @@ var cartSchema = new Schema({
     type: Number,
     default: 0,
   },
-  
 });
 
 module.exports = mongoose.model("cart", cartSchema);
