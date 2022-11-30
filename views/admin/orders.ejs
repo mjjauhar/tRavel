@@ -1,0 +1,217 @@
+<%- include('../partials/header.ejs') %> <%-
+include('../partials/admin_navbar.ejs') %>
+<div class="container-fluid">
+  <div class="row">
+    <nav
+      id="sidebarMenu"
+      class="col-md-3 col-lg-2 d-md-block myColor sidebar sidenav collapse"
+    >
+      <div class="position-sticky pt-3 sidebar-sticky">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a
+              class="nav-link active text-light"
+              aria-current="page"
+              href="/admin/dashboard"
+            >
+              <span data-feather="home" class="align-text-bottom"></span>
+              Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-dark admin_rectangle" href="/admin/orders">
+              <span data-feather="file" class="align-text-bottom"></span>
+              Orders
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="/admin/products">
+              <span
+                data-feather="shopping-cart"
+                class="align-text-bottom"
+              ></span>
+              Products
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="/admin/main_categories">
+              <span data-feather="file" class="align-text-bottom"></span>
+              Main Categories
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="/admin/sub_categories">
+              <span data-feather="file" class="align-text-bottom"></span>
+              Sub Categories
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="/admin/users">
+              <span data-feather="users" class="align-text-bottom"></span>
+              Users
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="/admin/banner">
+              <span data-feather="users" class="align-text-bottom"></span>
+              Banners
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="/admin/coupons">
+              <span data-feather="users" class="align-text-bottom"></span>
+              Coupons
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <h1 class="h2 pt-3 pb-2 mb-3 border-bottom">Orders</h1>
+      <div class="container">
+        <table class="table" id="productsTable">
+          <thead>
+            <tr class="text-dark bg-light shadow sorter-header">
+              <th scope="col"></th>
+              <th scope="col" style="width: 12%" class="text-center">Date</th>
+              <th scope="col" class="text-center">Product</th>
+              <th scope="col" class="text-center">Image</th>
+              <th scope="col" class="text-center">Quantity</th>
+              <th scope="col" class="text-center">Buyer</th>
+              <th scope="col" class="text-center">Status</th>
+              <th scope="col" class="text-center" style="width: 10%;">More Info</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% all_orders.forEach(function(order){ %> <% let prodsInOneOrder =
+            order.products; %> <% prodsInOneOrder.forEach(function(prod){ %>
+            <tr>
+              <th scope="row"></th>
+              <td style="font-size: 13px">
+                <%= moment(order.created_date).format('llll') %>
+              </td>
+              <td><%= prod.productId.name %></td>
+              <td>
+                <img
+                  src="/<%= prod.productId.imgUrl[1] %> "
+                  alt="img"
+                  style="width: 50px; height: 50px"
+                />
+              </td>
+              <td class="text-center"><%= prod.quantity %></td>
+              <td>
+                <small
+                  ><%= order.userId.first_name %> <%= order.userId.last_name
+                  %></small
+                >
+              </td>
+              <td>
+                <div class="dropdown">
+                  <% if(prod.status==='Order Confirmed'){ %>
+                  <button
+                    class="btn btn-outline-dark dropdown-toggle btn-sm"
+                    style="width: 165px"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <%= prod.status %>
+                  </button>
+                  <% } else if(prod.status==='Shipped'){ %>
+                  <button
+                    class="btn btn-outline-primary dropdown-toggle btn-sm"
+                    style="width: 165px"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <%= prod.status %>
+                  </button>
+                  <% } else if(prod.status==='Out For Delivery'){ %>
+                  <button
+                    class="btn btn-outline-info dropdown-toggle btn-sm"
+                    style="width: 165px"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <%= prod.status %>
+                  </button>
+                  <% } else if(prod.status==='Delivered'){ %>
+                  <button
+                    class="btn btn-outline-success dropdown-toggle btn-sm"
+                    style="width: 165px"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <%= prod.status %>
+                  </button>
+                  <% } else if(prod.status==='Canceled'){ %>
+                  <button
+                    class="btn btn-outline-danger dropdown-toggle btn-sm"
+                    style="width: 165px"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <%= prod.status %>
+                  </button>
+                  <% } %>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <button
+                        class="dropdown-item"
+                        onclick="edit_order_status('<%= prod._id %>','<%= order._id %>', 'Order Confirmed')"
+                      >
+                        Order Confirmed
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        class="dropdown-item"
+                        onclick="edit_order_status('<%= prod._id %>','<%= order._id %>', 'Shipped')"
+                      >
+                        Shipped
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        class="dropdown-item"
+                        onclick="edit_order_status('<%= prod._id %>','<%= order._id %>', 'Out For Delivery')"
+                      >
+                        Out For Delivery
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        class="dropdown-item"
+                        onclick="edit_order_status('<%= prod._id %>','<%= order._id %>', 'Delivered')"
+                      >
+                        Delivered
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        class="dropdown-item"
+                        onclick="edit_order_status('<%= prod._id %>','<%= order._id %>', 'Canceled')"
+                      >
+                        Canceled
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+              <td>
+                <a class="btn btn-sm btn-light w-100 shadow" href="/admin/orders/<%= prod.productId._id %> ">More Info</a>
+              </td>
+            </tr>
+            <% })}) %>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<%- include('../partials/footer.ejs') %>

@@ -1,0 +1,69 @@
+<%- include('../partials/header.ejs') %>
+<div
+  class="container-fluid"
+  style="
+    height: 100vh;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgb(0, 0, 0, 0.3)),
+      url(/public/images/order-more-info-bg.png);
+  "
+>
+  <div class="row">
+    <nav class="col-md-2"></nav>
+    <main class="col-md-10 ps-4 pt-5 mt-3">
+      <div class="card shadow" style="height: 35rem">
+        <div class="card-body m-5">
+          <div class="d-flex justify-content-between mb-2">
+            <span class="card-title h3">Add new Coupon</span>
+            <a href="/admin/coupons" class="btn btn-close"></a>
+          </div>
+          <form action="/admin/coupons/add" method="post">
+            <label for="">Name</label>
+            <input type="text" name="name" class="form-control mb-4" required />
+
+            <label for="">Discount</label>
+            <input type="number" name="discount" class="form-control mb-4" />
+
+            <!-- Button trigger modal -->
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal"
+            >
+              Submit
+            </button>
+
+            <!-- Modal -->
+            <div
+              class="modal fade"
+              id="exampleModal"
+              tabindex="-1"
+              aria-labelledby="exampleModalLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-body">Add new Coupon</div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      Close
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                      Save changes
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<%- include('../partials/footer.ejs') %>

@@ -46,7 +46,7 @@ include('../partials/admin_navbar.ejs') %>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-dark admin_rectangle" href="/admin/users">
+            <a class="nav-link text-light" href="/admin/users">
               <span data-feather="users" class="align-text-bottom"></span>
               Users
             </a>
@@ -58,7 +58,7 @@ include('../partials/admin_navbar.ejs') %>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-light" href="/admin/coupons">
+            <a class="nav-link text-dark admin_rectangle" href="/admin/coupons">
               <span data-feather="users" class="align-text-bottom"></span>
               Coupons
             </a>
@@ -67,75 +67,72 @@ include('../partials/admin_navbar.ejs') %>
       </div>
     </nav>
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-      <div
-        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
-      >
-        <h1 class="h2">Users</h1>
+      <div class="d-flex justify-content-between border-bottom mb-4">
+        <h1 class="h2 pt-3 pb-2 mb-3">Coupons</h1>
+        <a
+          class="btn btn-sm btn-outline-success mt-4 mb-4"
+          href="/admin/coupons/add"
+          >Add New Coupon</a
+        >
       </div>
       <div class="container">
         <table class="table" id="productsTable">
           <thead>
             <tr class="text-dark bg-light shadow sorter-header">
               <th scope="col"></th>
-              <th scope="col" class="text-center">Name</th>
-              <th scope="col" class="text-center">username</th>
-              <th scope="col" class="text-center">Email</th>
-              <th scope="col" class="text-center">Phone no</th>
-              <th scope="col" class="text-center" style="width: 18%;">created_date</th>
-              <th scope="col" class="text-center">Type</th>
-              <th scope="col" class="text-center">Status</th>
-              <th scope="col" class="text-center">Button</th>
+              <th scope="col">Name</th>
+              <th scope="col">Discount</th>
+              <th scope="col">Created Date</th>
+              <th scope="col">Last Modified Date</th>
+              <th scope="col">Options</th>
+              <th scope="col" class="text-center">More Info</th>
             </tr>
           </thead>
-          <tbody>
-            <% users.forEach(function(user){ %>
-            <tr class="indexed">
+          <tbody id="adminCoupon">
+            <% coupons.forEach(function(coupon){ %>
+            <tr>
               <th scope="row"></th>
-              <td class="fw-bold indexed">
-                <%= user?.first_name %> <%= user?.last_name %>
+              <td class="fw-bold"><%= coupon.name %></td>
+              <td><%= coupon.discount %>%</td>
+              <td style="font-size: 13px">
+                <%= moment(coupon.created_date).format('llll') %>
               </td>
-              <td><%= user?.username %></td>
-              <td><%= user?.email %></td>
-              <td><%= user?.phone_no %></td>
-              <td>
-                <small> <%= moment(user?.created_date).format('llll') %> </small>
-              </td>
-              <td><%= user?.type %></td>
-              <% if(user?.is_blocked === false){ %>
-              <td>
-                <small class="text-success">ACTIVE</small>
-              </td>
-              <td>
-                <form
-                  action="/admin/users/block_user/<%= user._id %>"
-                  method="post"
-                >
-                  <button
-                    class="btn-sm btn btn-outline-danger"
-                    type="submit"
-                    onclick="confirm('Are you sure to block this user?')"
-                  >
-                    <small>BLOCK</small>
-                  </button>
-                </form>
+              <% if(coupon.modified_date != null){ %>
+              <td style="font-size: 13px">
+                <%= moment(coupon.modified_date).format('llll') %>
               </td>
               <% } else { %>
-              <td><small class="text-danger">BLOCKED</small></td>
-              <td>
-                <form
-                  action="/admin/users/unblock_user/<%= user._id %>"
-                  method="post"
-                >
-                  <button
-                    class="btn-sm btn btn-outline-success"
-                    type="submit"
-                    onclick="confirm('Are you sure to unblock this user?')"
-                  >
-                    <small>UNBLOCK</small>
-                  </button>
-                </form>
-              </td>
+              <td style="font-size: 13px">No modifications made</td>
               <% } %>
+              <td>
+                <a
+                  class="btn btn-sm btn-outline-primary"
+                  href="/admin/coupons/edit/<%= coupon._id %>"
+                  >Edit</a
+                >
+                <% if(coupon.disable === false){ %>
+                <button
+                  class="btn btn-sm btn-outline-danger"
+                  onclick="disable_coupon('<%= coupon._id %>')"
+                >
+                  Disable
+                </button>
+                <% } else { %>
+                <button
+                  class="btn btn-sm btn-outline-danger"
+                  onclick="enable_coupon('<%= coupon._id %>')"
+                >
+                  Enable
+                </button>
+                <% } %>
+              </td>
+              <td>
+                <a
+                  class="btn btn-sm btn-light w-100 shadow"
+                  href="/admin/coupons/<%= coupon._id %> "
+                  >More Info</a
+                >
+              </td>
             </tr>
             <% }) %>
           </tbody>

@@ -25,6 +25,9 @@ function removeFromWishlist(productId) {
   $.ajax({
     url: "/remove/wishlist/" + productId,
     method: "post",
+    beforeSend: function () {
+      return confirm("Press OK to remove item from wishlist");
+    },
     success: (response) => {
       if (response) {
         $("#productCard").load(location.href + " #productCard>*", "");
@@ -40,6 +43,9 @@ function removeFromCart(productId, productQty) {
   $.ajax({
     url: "/remove/cart/" + productId + "/" + productQty,
     method: "post",
+    beforeSend: function () {
+      return confirm("Press OK to remove the item from cart");
+    },
     success: (response) => {
       if (response) {
         $("#productCard").load(location.href + " #productCard>*", "");
@@ -104,10 +110,11 @@ function placeOrder() {
   $.ajax({
     url: "/checkout/confirm",
     method: "post",
-    // data: $("#checkout-form").serialize(),
     data: {
-      // addressId,
       payment_method,
+    },
+    beforeSend: function () {
+      return confirm("Press OK to continue with the order");
     },
     success: (response) => {
       if (response.codSuccess) {
@@ -133,9 +140,6 @@ function razorpayPayment(order) {
     order_id: order.order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
     // callback_url: "https://eneqd3r9zrjok.x.pipedream.net/",
     handler: function (response) {
-      // alert(response.razorpay_payment_id);
-      //   alert(response.razorpay_order_id);
-      //   alert(response.razorpay_signature)
       verifyPayment(response, order);
     },
     prefill: {
@@ -173,4 +177,132 @@ function razorpayPayment(order) {
   }
   var rzp1 = new Razorpay(options);
   rzp1.open();
+}
+
+// Admin side
+
+function edit_order_status(itemId, orderId, status) {
+  $.ajax({
+    url: "/admin/orders/update_status/" + itemId + "/" + orderId + "/" + status,
+    method: "post",
+    beforeSend: function () {
+      return confirm("Press OK to change order status");
+    },
+    success: (response) => {
+      if (response) {
+        $("#productsTable").load(location.href + " #productsTable>*");
+      } else {
+        alert("something went wrong");
+        console.log("not changed");
+      }
+    },
+  });
+}
+
+function delete_banner(bannerId) {
+  $.ajax({
+    url: "/admin/banner/delete/" + bannerId,
+    method: "get",
+    beforeSend: function () {
+      return confirm("Press OK to delete this banner");
+    },
+    success: (response) => {
+      if (response) {
+        $("#bannerTable").load(location.href + " #bannerTable>*", "");
+      } else {
+        alert("something went wrong");
+        console.log("not deleted");
+      }
+    },
+  });
+}
+
+function restore_banner(bannerId) {
+  $.ajax({
+    url: "/admin/banner/restore/" + bannerId,
+    method: "get",
+    beforeSend: function () {
+      return confirm("Press OK to restore this banner");
+    },
+    success: (response) => {
+      if (response) {
+        $("#bannerTable").load(location.href + " #bannerTable>*", "");
+      } else {
+        alert("something went wrong");
+        console.log("not resored");
+      }
+    },
+  });
+}
+
+function delete_product(prodId) {
+  $.ajax({
+    url: "/admin/product/delete/" + prodId,
+    method: "get",
+    beforeSend: function () {
+      return confirm("Press OK to restore this banner");
+    },
+    success: (response) => {
+      if (response) {
+        $("#adminProd").load(location.href + " #adminProd>*", "");
+      } else {
+        alert("something went wrong");
+        console.log("not deleted");
+      }
+    },
+  });
+}
+
+function restore_product(prodId) {
+  $.ajax({
+    url: "/admin/product/restore/" + prodId,
+    method: "get",
+    beforeSend: function () {
+      return confirm("Press OK to restore this banner");
+    },
+    success: (response) => {
+      if (response) {
+        $("#adminProd").load(location.href + " #adminProd>*", "");
+      } else {
+        alert("something went wrong");
+        console.log("not restored");
+      }
+    },
+  });
+}
+
+function disable_coupon(couponId) {
+  $.ajax({
+    url: "/admin/coupon/disable/" + couponId,
+    method: "get",
+    beforeSend: function () {
+      return confirm("Press OK to disable this banner");
+    },
+    success: (response) => {
+      if (response) {
+        $("#adminCoupon").load(location.href + " #adminCoupon>*", "");
+      } else {
+        alert("something went wrong");
+        console.log("not disabled");
+      }
+    },
+  });
+}
+
+function enable_coupon(couponId) {
+  $.ajax({
+    url: "/admin/coupon/enable/" + couponId,
+    method: "get",
+    beforeSend: function () {
+      return confirm("Press OK to enable this banner");
+    },
+    success: (response) => {
+      if (response) {
+        $("#adminCoupon").load(location.href + " #adminCoupon>*", "");
+      } else {
+        alert("something went wrong");
+        console.log("not enabled");
+      }
+    },
+  });
 }

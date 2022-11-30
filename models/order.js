@@ -28,7 +28,7 @@ const orderSchema = new Schema({
       },
       status: {
         type: String,
-        default: "Order Placed",
+        default: "Order Confirmed",
       },
     },
   ],
@@ -44,6 +44,7 @@ const orderSchema = new Schema({
     ref: "cart",
   },
   created_date: Date,
+  expected_delivery_date: Date,
   delivered_date: Date,
   canceled_date: Date,
   payment_method: {

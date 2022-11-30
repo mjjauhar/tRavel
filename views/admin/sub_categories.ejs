@@ -19,7 +19,7 @@ include('../partials/admin_navbar.ejs') %>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-light" href="#">
+            <a class="nav-link text-light" href="/admin/orders">
               <span data-feather="file" class="align-text-bottom"></span>
               Orders
             </a>
@@ -51,6 +51,18 @@ include('../partials/admin_navbar.ejs') %>
               Users
             </a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="/admin/banner">
+              <span data-feather="users" class="align-text-bottom"></span>
+              Banners
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="/admin/coupons">
+              <span data-feather="users" class="align-text-bottom"></span>
+              Coupons
+            </a>
+          </li>
         </ul>
       </div>
     </nav>
@@ -72,12 +84,18 @@ include('../partials/admin_navbar.ejs') %>
           <thead>
             <tr class="text-dark bg-light shadow sorter-header">
               <th scope="col"></th>
-              <th scope="col">Name</th>
-              <th scope="col" style="width: 30%;">Description</th>
-              <th scope="col">Main category</th>
-              <th scope="col">created_date</th>
-              <th scope="col">Status</th>
-              <th scope="col" class="text-end pe-5" style="width: 12%;">Button</th>
+              <th scope="col" class="text-center">Name</th>
+              <th scope="col" class="text-center" style="width: 30%">
+                Description
+              </th>
+              <th scope="col" class="text-center" style="width: 12%">
+                Main category
+              </th>
+              <th scope="col" class="text-center" style="width: 12%">
+                created_date
+              </th>
+              <th scope="col" class="text-center">Status</th>
+              <th scope="col" class="text-center" style="width: 13%">Button</th>
             </tr>
           </thead>
           <tbody>
@@ -88,7 +106,9 @@ include('../partials/admin_navbar.ejs') %>
               <td><small><%= sub_category?.description %></small></td>
               <td><%= sub_category?.main_category %></td>
               <td>
-                <small> <%= moment(sub_category?.created_date).format('llll') %> </small>
+                <small>
+                  <%= moment(sub_category?.created_date).format('llll') %>
+                </small>
               </td>
               <% if(sub_category.delete === false){ %>
               <td><p class="text-success">Active</p></td>

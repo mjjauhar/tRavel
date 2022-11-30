@@ -1,51 +1,103 @@
 <%- include('../partials/header.ejs') %>
+<div
+  class="container-fluid"
+  style="
+    height: 100vh;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgb(0, 0, 0, 0.3)),
+      url(/public/images/order-more-info-bg.png);
+  "
+>
+  <div class="row">
+    <nav class="col-md-2"></nav>
+    <main class="col-md-10 ps-4 pt-5 mt-3">
+      <div class="card shadow" style="height: 35rem">
+        <div class="card-body m-5">
+          <div class="d-flex justify-content-between mb-4">
+            <h1 class="h2">Edit Sub Category</h1>
+            <a href="/admin/sub_categories"
+              ><button type="button" class="btn btn-sm btn-outline-danger">
+                Cancel
+              </button></a
+            >
+          </div>
+          <div class="container">
+            <form
+              action="/admin/sub_categories/edit_sub_category/<%= sub_category._id %>"
+              method="post"
+            >
+              <label for="">Name</label>
+              <input
+                type="text"
+                name="name"
+                class="form-control mb-4"
+                value="<%= sub_category.name %>"
+                required
+              />
 
-<main class="col-md-9 ms-sm-auto col-lg-12 px-md-4">
-  <div
-    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
-  >
-    <h1 class="h2">Edit Sub Category</h1>
-    <a href="/admin/sub_categories"
-      ><button type="button" class="btn btn-sm btn-outline-danger">
-        Cancel
-      </button></a
-    >
-  </div>
-  <div class="container">
-    <form
-      action="/admin/sub_categories/edit_sub_category/<%= sub_category._id %>"
-      method="post"
-    >
-      <label for="">Name</label>
-      <input
-        type="text"
-        name="name"
-        class="form-control mb-4"
-        value="<%= sub_category.name %>"
-        required
-      />
+              <label for="">Description</label>
+              <input
+                type="text"
+                name="description"
+                class="form-control mb-4"
+                value="<%= sub_category.description %>"
+              />
+              <label for="">Main Category</label>
+              <select
+                name="main_category"
+                class="form-select"
+                aria-label="Default select example"
+              >
+                <option value="<%= sub_category.main_category %>" selected>
+                  <%= sub_category.main_category %>
+                </option>
+                <% main_categories.forEach(function(main_category){ %>
+                <option value="<%= main_category.name %>">
+                  <%= main_category.name %>
+                </option>
+                <% }) %>
+              </select>
+              <!-- Button trigger modal -->
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal"
+              >
+                Submit
+              </button>
 
-      <label for="">Description</label>
-      <input
-        type="text"
-        name="description"
-        class="form-control mb-4"
-        value="<%= sub_category.description %>"
-      />
-      <select
-        name="main_category"
-        class="form-select"
-        aria-label="Default select example"
-      >
-        <% main_categories.forEach(function(main_category){ %>
-        <option value="<%= main_category.name %>">
-          <%= main_category.name %>
-        </option>
-        <% }) %>
-      </select>
-      <button type="submit" class="btn btn-success mt-5">Submit</button>
-    </form>
+              <!-- Modal -->
+              <div
+                class="modal fade"
+                id="exampleModal"
+                tabindex="-1"
+                aria-labelledby="exampleModalLabel"
+                aria-hidden="true"
+              >
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-body">Save the changes?</div>
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                      >
+                        Close
+                      </button>
+                      <button type="submit" class="btn btn-success">
+                        Save changes
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
   </div>
-</main>
+</div>
 
 <%- include('../partials/footer.ejs') %>

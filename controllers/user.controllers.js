@@ -6,6 +6,7 @@ const addressModel = require("../models/address");
 const orderModel = require("../models/order");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
+const moment = require("moment");
 const Razorpay = require("razorpay");
 require("dotenv").config();
 
@@ -105,8 +106,18 @@ const my_orders = async (req, res) => {
   const user = await userModel.find({ _id: userId });
   const full_name = `${user[0].first_name} ${user[0].last_name}`;
   const phone_no = user[0].phone_no;
-  const orders = await orderModel.find({ userId }).populate("products.productId");
-  res.render("user/my_orders", { orders, full_name, phone_no, login:true });
+  const orders = await orderModel
+    .find({ userId })
+    .populate("products.productId")
+    .populate("products.productId.category");
+  console.log(orders);
+  res.render("user/my_orders", {
+    orders,
+    moment,
+    full_name,
+    phone_no,
+    login: true,
+  });
 };
 
 // RENDER CART
@@ -317,6 +328,8 @@ const order_success = async (req, res) => {
     payment_status = "paid using razerpay - online payment";
   }
   const created_date = new Date();
+  const now = new Date();
+  const expected_delivery_date = now.setDate(now.getDate() + 7);
   const cart = await cartModel.findOne({ userId });
   let cartId;
   let total_amount;
@@ -340,6 +353,7 @@ const order_success = async (req, res) => {
       created_date,
       payment_method,
       payment_status,
+      expected_delivery_date,
     });
     await new_order.save();
   }

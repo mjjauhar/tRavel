@@ -1,58 +1,115 @@
 <%- include('../partials/header.ejs') %>
+<div
+  class="container-fluid"
+  style="
+    height: 100vh;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgb(0, 0, 0, 0.3)),
+      url(/public/images/order-more-info-bg.png);
+  "
+>
+  <div class="row">
+    <nav class="col-md-2"></nav>
+    <main class="col-md-10 ps-4 pt-5 mt-3">
+      <div class="card shadow overflow-auto" style="height: 35rem">
+        <div class="card-body m-5">
+          <div class="d-flex justify-content-between mb-2">
+            <h1 class="h2">Add new product</h1>
+            <a href="/admin/products"
+              ><button type="button" class="btn btn-sm btn-outline-danger">
+                Cancel
+              </button></a
+            >
+          </div>
+          <div class="container">
+            <form
+              action="/admin/products/add_product"
+              method="post"
+              enctype="multipart/form-data"
+            >
+              <label for="">Name</label>
+              <input
+                type="text"
+                name="name"
+                class="form-control mb-4"
+                required
+              />
 
-<main class="col-md-9 ms-sm-auto col-lg-12 px-md-4">
-  <div
-    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
-  >
-    <h1 class="h2">Add new product</h1>
-    <a href="/admin/products"
-      ><button type="button" class="btn btn-sm btn-outline-danger">
-        Cancel
-      </button></a
-    >
+              <label for="">Description</label>
+              <input type="text" name="description" class="form-control mb-4" />
+              <label for="">Category</label>
+              <select
+                name="category"
+                class="form-select mb-4"
+                aria-label="Default select example"
+              >
+                <% sub_categories.forEach(function(sub_category){ %>
+                <option value="<%= sub_category._id %>">
+                  <%= sub_category.name %>
+                </option>
+                <% }) %>
+              </select>
+
+              <label for="">Price</label>
+              <input
+                type="number"
+                name="price"
+                class="form-control mb-4"
+                required
+              />
+
+              <label for="">Stock</label>
+              <input type="number" name="stock" class="form-control mb-4" />
+
+              <label for="">Image</label>
+              <input
+                type="file"
+                name="imgUrl"
+                accept="image/png, image/jpeg image/avif"
+                class="form-control mb-4"
+                multiple
+              />
+
+              <!-- Button trigger modal -->
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal"
+              >
+                Submit
+              </button>
+
+              <!-- Modal -->
+              <div
+                class="modal fade"
+                id="exampleModal"
+                tabindex="-1"
+                aria-labelledby="exampleModalLabel"
+                aria-hidden="true"
+              >
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-body">Add new Product</div>
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                      >
+                        Close
+                      </button>
+                      <button type="submit" class="btn btn-success">
+                        Save changes
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
   </div>
-  <div class="container">
-    <form
-      action="/admin/products/add_product"
-      method="post"
-      enctype="multipart/form-data"
-    >
-      <label for="">Name</label>
-      <input type="text" name="name" class="form-control mb-4" required />
-
-      <label for="">Description</label>
-      <input type="text" name="description" class="form-control mb-4" />
-      <label for="">Category</label>
-      <select
-        name="category"
-        class="form-select mb-4"
-        aria-label="Default select example"
-      >
-        <% sub_categories.forEach(function(sub_category){ %>
-        <option value="<%= sub_category._id %>">
-          <%= sub_category.name %>
-        </option>
-        <% }) %>
-      </select>
-
-      <label for="">Price</label>
-      <input type="number" name="price" class="form-control mb-4" required />
-
-      <label for="">Stock</label>
-      <input type="number" name="stock" class="form-control mb-4" />
-
-      <label for="">Image</label>
-      <input
-        type="file"
-        name="imgUrl"
-        accept="image/png, image/jpeg image/avif"
-        class="form-control mb-4"
-        multiple
-      />
-
-      <button type="submit" class="btn btn-success">Submit</button>
-    </form>
-  </div>
-</main>
-
-<%- include('../partials/footer.ejs') %>
+  <%- include('../partials/footer.ejs') %>
+</div>

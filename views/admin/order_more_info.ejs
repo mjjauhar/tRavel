@@ -1,0 +1,59 @@
+<%- include('../partials/header.ejs') %>
+<div
+  class="container-fluid"
+  style="
+    height: 100vh;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgb(0, 0, 0, 0.3)),
+      url(/public/images/order-more-info-bg.png);
+  "
+>
+  <div class="row">
+    <nav class="col-md-2"></nav>
+    <main class="col-md-10 ps-4 pt-5 mt-3" id="invoice">
+      <div class="card shadow overflow-auto" style="height: 35rem">
+        <div class="card-body m-5">
+          <div class="d-flex justify-content-between mb-2">
+            <h3>
+              Order Invoice<button
+                id="download-button"
+                type="button"
+                class="btn btn-sm text-primary"
+              >
+                Download Invoice
+              </button>
+            </h3>
+            <a href="/admin/orders" class="btn btn-close"></a>
+          </div>
+          <hr />
+          <p><b>ID :</b> <%= ID %></p>
+          <p><b>Product :</b> <%= PRODUCT_NAME %></p>
+          <p><b>Price :</b> <%= PRICE %></p>
+          <p><b>Quantity :</b> <%= QUANTITY %></p>
+          <p><b>Payment details :</b> <%= PAYMENT_DETAILS %></p>
+          <p><b>Customer Name :</b> <%= CUSTOMER_NAME %></p>
+
+          <p>
+            <b>Delivery Address :</b>
+            <span><%= DELIVERY_ADDRESS.city %>,</span>
+            <span><%= DELIVERY_ADDRESS.pincode %>,</span>
+            <span><%= DELIVERY_ADDRESS.country %>,</span>
+            <span>Phone Number: <%= DELIVERY_ADDRESS.phone_no %></span>
+          </p>
+          <p><b>Delivery Status :</b> <%= DELIVERY_STATUS %></p>
+          <p><b>Ordered Date :</b> <%= ORDER_DATE %></p>
+          <b>All Products Purcahsed With This Order:</b><br />
+          <hr />
+          <% PURCHASED_TOGETHER_WITH.forEach(function(item, index){ %>
+          <span><%= index+1 %>. Product: <%= item.productId.name %></span><br />
+          <span> &ensp;Quantity: <%= item.quantity %></span><br />
+          <span> &ensp;Price: <%= item.subTotal %></span><br />
+          <hr />
+          <% }) %>
+          <span><b>Total amount :</b> <%= TOTAL_AMOUNT %></span>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<%- include('../partials/footer.ejs') %>

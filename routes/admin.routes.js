@@ -30,7 +30,27 @@ const {
   restore_sub_category,
   edit_sub_category_page,
   edit_sub_category,
+  orders,
+  edit_order_status,
+  order_info,
+  banner,
+  add_banner,
+  add_banner_page,
+  edit_banner,
+  edit_banner_page,
+  delete_banner,
+  restore_banner,
+  restore_products,
+  coupons,
+  add_coupons,
+  add_coupons_page,
+  edit_coupon,
+  edit_coupons_page,
+  disable_coupon,
+  enable_coupon,
 } = require("../controllers/admin.controller");
+const { proceedIfLoggedIn } = require("../controllers/user.controllers");
+const coupon = require("../models/coupon");
 
 // LOGIN
 app
@@ -43,9 +63,8 @@ app.route("/dashboard").get(ProceedIfLoggedIn, dashboard);
 
 // PRODUCT
 app.route("/products").get(ProceedIfLoggedIn, products);
-app
-  .route("/products/delete_product/:id")
-  .get(ProceedIfLoggedIn, delete_products);
+app.route("/product/delete/:id").get(ProceedIfLoggedIn, delete_products);
+app.route("/product/restore/:id").get(ProceedIfLoggedIn, restore_products);
 app
   .route("/products/edit_product/:id")
   .get(ProceedIfLoggedIn, edit_products_page)
@@ -54,6 +73,39 @@ app
   .route("/products/add_product")
   .get(ProceedIfLoggedIn, add_products_page)
   .post(ProceedIfLoggedIn, add_products);
+
+// ORDERS
+app.route("/orders").get(ProceedIfLoggedIn, orders);
+app.route("/orders/:id").get(ProceedIfLoggedIn, order_info);
+app
+  .route("/orders/update_status/:itemId/:orderId/:status")
+  .post(ProceedIfLoggedIn, edit_order_status);
+
+// BANNER
+app.route("/banner").get(ProceedIfLoggedIn, banner);
+app
+  .route("/banner/add")
+  .get(ProceedIfLoggedIn, add_banner_page)
+  .post(ProceedIfLoggedIn, add_banner);
+app
+  .route("/banner/edit/:id")
+  .get(proceedIfLoggedIn, edit_banner_page)
+  .post(proceedIfLoggedIn, edit_banner);
+app.route("/banner/delete/:id").get(proceedIfLoggedIn, delete_banner);
+app.route("/banner/restore/:id").get(proceedIfLoggedIn, restore_banner);
+
+// COUPON
+app.route("/coupons").get(ProceedIfLoggedIn, coupons);
+app
+  .route("/coupons/add")
+  .get(ProceedIfLoggedIn, add_coupons_page)
+  .post(ProceedIfLoggedIn, add_coupons);
+app
+  .route("/coupons/edit/:id")
+  .get(proceedIfLoggedIn, edit_coupons_page)
+  .post(proceedIfLoggedIn, edit_coupon);
+app.route("/coupon/disable/:id").get(proceedIfLoggedIn, disable_coupon);
+app.route("/coupon/enable/:id").get(proceedIfLoggedIn, enable_coupon);
 
 // MAIN CATEGORY
 app.route("/main_categories").get(ProceedIfLoggedIn, main_categories);
