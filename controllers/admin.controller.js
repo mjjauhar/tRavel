@@ -288,18 +288,19 @@ module.exports = {
         product_index = index2;
       }
     });
+    console.log(all_products[product_index]);
+
     const ID = find_order._id;
     const CUSTOMER_NAME = `${find_order.userId.first_name} ${find_order.userId.last_name}`;
     const DELIVERY_ADDRESS = all_addresses[address_index];
-    const DELIVERY_STATUS = all_products[product_index].status;
-    const PRICE = all_products[product_index].subTotal;
-    const PRODUCT_NAME = all_products[product_index].productId.name;
-    const QUANTITY = all_products[product_index].quantity;
-    const PAYMENT_DETAILS = find_order.payment_status;
-    const ORDER_DATE = find_order.created_date;
+    const DELIVERY_STATUS = all_products[product_index]?.status;
+    const PRICE = all_products[product_index]?.subTotal;
+    const PRODUCT_NAME = all_products[product_index]?.productId.name;
+    const QUANTITY = all_products[product_index]?.quantity;
+    const PAYMENT_DETAILS = find_order?.payment_status;
+    const ORDER_DATE = find_order?.created_date;
     const PURCHASED_TOGETHER_WITH = all_products;
-    const TOTAL_AMOUNT = find_order.total_amount;
-    console.log(PURCHASED_TOGETHER_WITH);
+    const TOTAL_AMOUNT = find_order?.total_amount;
     res.render("admin/order_more_info", {
       ID,
       CUSTOMER_NAME,

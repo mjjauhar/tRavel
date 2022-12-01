@@ -2,11 +2,11 @@
   filter: url(#threshold) blur(0.6px);
 }
 .myCard {
-  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 1px 2px 0 #0e51557c;
   transition: 0.3s;
 }
 .myCard:hover {
-  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 8px 16px 0 #0e515594;
 }
 .myColor {
   background: #0e5255;
@@ -29,6 +29,7 @@
 .navbar-brand {
   width: 90px;
 }
+
 .navbar-brand-login {
   width: 200px;
 }
@@ -59,6 +60,7 @@
   margin-bottom: 25px;
   margin-top: 15px;
 }
+
 .selected_rectangle {
   width: 300px;
   height: 70px;

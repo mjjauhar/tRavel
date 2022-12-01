@@ -1,39 +1,29 @@
 <%- include('../partials/header.ejs') %> <%- include('../partials/navbar.ejs')
 %>
 <div class="container-fluid">
-  <div class="row">
+  <div class="row" id="productCard">
     <div class="col-3 pt-2">
       <div
         class="d-flex flex-column flex-shrink-0 p-3 bg-light rounded"
         style="width: 280px"
       >
-        <a
-          href="/"
-          class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none"
-        >
-          <svg class="bi pe-none me-2" width="40" height="32"></svg>
-          <span class="fs-4">Your Lists</span>
-        </a>
+        <span class="fs-4 text-center">Your WishLists Info</span>
+
         <hr />
         <ul class="nav nav-pills flex-column mb-auto">
-          <% if (false) { %>
-          <li class="nav-item">
-            <a href="#" class="nav-link active" aria-current="page">
-              <svg class="bi pe-none me-2" width="16" height="16"></svg>
-              Home
-            </a>
-          </li>
-          <% } %>
           <li>
-            <a href="#" class="nav-link link-dark">
-              <svg class="bi pe-none me-2" width="16" height="16"></svg>
-              + Add new List
-            </a>
+            <p>There are <b><%= items.length %></b> items in your wishlist</p>
+          </li>
+          <li>
+            <p>
+              You need <b>Rs.<%= wishlist_total_amount %></b> to buy all your wishlist
+              items.
+            </p>
           </li>
         </ul>
       </div>
     </div>
-    <div class="col-9 pt-2" id="productCard">
+    <div class="col-9 pt-2">
       <% if(items.length === 0){ %>
       <div class="text-center">
         <img src="/public/images/icons/search-not-found.webp" alt="webp" />

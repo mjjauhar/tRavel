@@ -45,6 +45,9 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/", userRouter);
 app.use("/admin", adminRouter);
+app.use("*",(req,res)=>{
+  res.render('404/404');
+})
 
 app.listen(8000, () =>
   console.log("Server running on port http://localhost:8000/")

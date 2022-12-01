@@ -22,6 +22,8 @@
         id="firstname"
         placeholder="First Name"
         name="first_name"
+        pattern="^(?=.{3,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z._]+(?<![_.])$"
+        required
       />
       <label for="floatingInput">First name</label>
     </div>
@@ -32,6 +34,8 @@
         class="form-control"
         id="lastname"
         placeholder="Last Name"
+        pattern="^(?=.{3,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z._]+(?<![_.])$"
+        required
         name="last_name"
       />
       <label for="floatingInput">Last name</label>
@@ -44,6 +48,7 @@
         id="username"
         placeholder="username"
         name="username"
+        pattern="^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$"
         required
       />
 
@@ -77,6 +82,7 @@
         placeholder="name@example.com"
         name="email"
         required
+        pattern="^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$"
       />
       <label for="floatingInput"
         >Email address<sup class="text-danger">*</sup></label

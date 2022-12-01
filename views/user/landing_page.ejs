@@ -1,18 +1,28 @@
 <%- include('../partials/header.ejs') %> <%- include('../partials/navbar.ejs')
 %>
-<div class="card text-bg-dark m-2">
-  <img
-    src="/public/images/banners/New_user_offer_banner.jpg"
-    class="card-img"
-    alt="..."
-  />
-  <div class="card-img-overlay">
-    <h5 class="card-title">Card title</h5>
-    <p class="card-text">
-      This is a wider card with supporting text below as a natural lead-in to
-      additional content. This content is a little bit longer.
-    </p>
-    <p class="card-text"><small>Last updated 3 mins ago</small></p>
+<div
+  id="carouselExampleControls"
+  class="carousel slide p-2 rounded carousel-dark"
+  data-bs-ride="carousel"
+>
+  <div class="carousel-inner">
+    <% banners.forEach(function(banner){ %> <% let imgs = banner.imgUrl %> <%
+    imgs.forEach(function(img){ %>
+    <div class="carousel-item active">
+      <img src="<%= img %> " class="d-block w-100" alt="..." />
+      <div class="carousel-caption d-none d-md-block mb-5 pb-5">
+        <p class="h4 text-end fw-bold" style="color: #0e5255">
+          <%= banner.description %>
+        </p>
+        <h5 class="h1 text-end fw-bold" style="color: #795243">
+          <%= banner.heading %>
+        </h5>
+        <h5 class="mb-5 pb-5 text-end" style="color: #0e5255">
+          <%= banner.extra_details %>
+        </h5>
+      </div>
+    </div>
+    <% })}) %>
   </div>
 </div>
 <section class="container-fluid">
@@ -59,7 +69,7 @@
           >
           <p class="card-text text-truncate"><%= product.description %></p>
           <p class="card-text text-dark fw-bold ps-2 half_trapezoid">
-           Rs. <%= product.price %>
+            Rs. <%= product.price %>
           </p>
         </div>
       </div>

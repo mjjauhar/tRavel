@@ -3,22 +3,29 @@ include('../partials/order_navbar.ejs') %>
 <div class="container-fluid mt-3">
   <div class="row">
     <div class="col-8" id="addressCard">
-      <h4 class="m-3">Please Select an Address:</h4>
-      <select
-        id="address"
-        name="addressId"
-        class="form-select m-3"
-        aria-label="Default select example"
-        required
-      >
-        <% addresses.forEach(function(address){ %>
-        <option value="<%= address._id %>">
-          <%= address.type %> - <%= address.name %>,<%= address.city %>, <%=
-          address.pincode %>, <%= address.country %> , Phone: <%=
-          address.phone_no %>
-        </option>
-        <% }) %>
-      </select>
+      <h4 class="m-3">Please Select An Address:</h4>
+      <div class="d-flex justify-content-between">
+        <select
+          id="address"
+          name="addressId"
+          class="btn btn-outline-success m-3 w-75"
+          aria-label="Default select example"
+          required
+        >
+          <% addresses.forEach(function(address){ %>
+          <option value="<%= address._id %>">
+            <%= address.type %> - <%= address.name %>,<%= address.city %>, <%=
+            address.pincode %>, <%= address.country %> , Phone: <%=
+            address.phone_no %>
+          </option>
+          <% }) %>
+        </select>
+        <a href="/user/add/address" class="ms-3 btn btn-success w-25 m-3 h-25"
+          >+ Add New Address</a
+        >
+      </div>
+      <hr />
+      <h4 class="m-3">Select A Payment Method:</h4>
       <div class="d-flex justify-content-start m-3">
         <div class="form-check pe-5 mt-4">
           <input
@@ -44,26 +51,49 @@ include('../partials/order_navbar.ejs') %>
           <label class="form-check-label h4" for="method2"> razerpay </label>
         </div>
       </div>
+      <hr />
+      <div class="card border-success mb-3">
+        <div class="card-header">Total Amount</div>
+        <div class="card-body text-success">
+          <% if(products.length != 0){ %> <% products.forEach(function(product, no){
+          %>
+          <div class="d-flex justify-content-between">
+            <span class="pe-3"><%= no+1 %>. </span>
+            <span class="w-50 text-truncate"
+              ><%= product.productId.name %></span
+            >
+            <span class="w-25 text-center">Qty.<%= product.quantity %></span>
+            <span class="w-25 text-center">Rs.<%= product.subTotal %></span>
+          </div>
+          <% })} %>
+          </div>
+          <p class="text-end pe-5 fw-bold">Total: Rs. <%= total_amount %></p>
+      </div>
+
       <button class="btn btn-warning m-3" onclick="placeOrder()">
         Confirm Order
       </button>
     </div>
     <div class="col-4">
+      <h3>Products</h3>
+      <hr />
       <% if(products.length != 0){ %> <% products.forEach(function(product){ %>
       <div class="card mb-3" style="max-width: 540px">
         <div class="row g-0">
           <div class="col-md-4">
-            <img src="<%= product.productId.imgUrl[1] %>" class="img-fluid rounded-start" alt="..." />
+            <img
+              src="<%= product.productId.imgUrl[1] %>"
+              class="img-fluid rounded-start"
+              alt="..."
+            />
           </div>
           <div class="col-md-8">
             <div class="card-body">
               <h5 class="card-title"><%= product.productId.name %></h5>
-              <p class="card-text">
-                <%= product.productId.price %>
-              </p>
-              <p class="card-text">
-                <small class="text-muted">Last updated 3 mins ago</small>
-              </p>
+              <div class="d-flex justify-content-between">
+                <span class="card-text">Quantity: <%= product.quantity %></span>
+                <small class="text-muted">Rs. <%= product.subTotal %></small>
+              </div>
             </div>
           </div>
         </div>

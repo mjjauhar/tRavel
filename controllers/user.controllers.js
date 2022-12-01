@@ -4,6 +4,7 @@ const wishlistModel = require("../models/wishlist");
 const cartModel = require("../models/cart");
 const addressModel = require("../models/address");
 const orderModel = require("../models/order");
+const bannerModel = require("../models/banner");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const moment = require("moment");
@@ -33,6 +34,9 @@ const landing_page = async (req, res) => {
   let products = await productModel.find({
     is_deleted: false,
   });
+  let banners = await bannerModel.find({
+    is_deleted: false,
+  });
   const wishlist = await wishlistModel
     .findOne({ userId: userId })
     .populate("productId");
@@ -42,16 +46,19 @@ const landing_page = async (req, res) => {
   } else {
     wishlistItems = [];
   }
+  console.log(banners);
   if (req.session.isAuth) {
     res.render("user/landing_page", {
       login: true,
       products,
+      banners,
       wishlistItems,
     });
   } else {
     res.render("user/landing_page", {
       login: false,
       products,
+      banners,
       wishlistItems,
     });
   }
@@ -102,6 +109,7 @@ const product_page = async (req, res) => {
 
 // RENDER MY ORDERS PAGE
 const my_orders = async (req, res) => {
+  let sort = { created_date: -1 };
   const userId = req.session.userId;
   const user = await userModel.find({ _id: userId });
   const full_name = `${user[0].first_name} ${user[0].last_name}`;
@@ -109,7 +117,8 @@ const my_orders = async (req, res) => {
   const orders = await orderModel
     .find({ userId })
     .populate("products.productId")
-    .populate("products.productId.category");
+    .populate("products.productId.category")
+    .sort(sort);
   console.log(orders);
   res.render("user/my_orders", {
     orders,
@@ -122,30 +131,28 @@ const my_orders = async (req, res) => {
 
 // RENDER CART
 const cart = async (req, res) => {
-  if (req.session.isAuth) {
-    const userId = req.session.userId;
-    const cart = await cartModel
-      .findOne({ userId })
-      .populate("products.productId");
-    if (cart) {
-      let itemsInCart = cart.products;
-      let cart_total = cart.cartTotal;
-      let cartId = cart._id;
-      // console.log(cartId);
-      res.render("user/cart", {
-        login: true,
-        itemsInCart,
-        cart_total,
-        cartId,
-      });
-    } else {
-      res.render("user/cart", {
-        login: false,
-        itemsInCart: [],
-        cart_total: 0,
-        cartId: {},
-      });
-    }
+  const userId = req.session.userId;
+  const cart = await cartModel
+    .findOne({ userId })
+    .populate("products.productId");
+  if (cart) {
+    let itemsInCart = cart.products;
+    let cart_total = cart.cartTotal;
+    let cartId = cart._id;
+    // console.log(cartId);
+    res.render("user/cart", {
+      login: true,
+      itemsInCart,
+      cart_total,
+      cartId,
+    });
+  } else {
+    res.render("user/cart", {
+      login: true,
+      itemsInCart: [],
+      cart_total: 0,
+      cartId: {},
+    });
   }
 };
 //ADD TO CART
@@ -237,22 +244,30 @@ const remove_from_cart = async (req, res) => {
 
 // CHECKOUT PAGE
 const checkout_page = async (req, res) => {
-  const userId = req.session.userId;
-  const cart = await cartModel
-    .findOne({ userId })
-    .populate("products.productId");
-  let products;
-  let cartId;
-  if (cart != null) {
-    products = cart.products;
-    cartId = cart._id;
+  const cart = await cartModel.find();
+  console.log(cart);
+  if (cart.length != 0) {
+    const userId = req.session.userId;
+    const cart = await cartModel
+      .findOne({ userId })
+      .populate("products.productId");
+    let products;
+    let total_amount;
+    let cartId;
+    if (cart != null) {
+      products = cart.products;
+      cartId = cart._id;
+      total_amount = cart.cartTotal;
+    }
+    const getUserAddresses = await addressModel.findOne({ user: userId });
+    let addresses;
+    if (getUserAddresses != null) {
+      addresses = getUserAddresses.address;
+    }
+    res.render("user/checkout", { products, addresses, cartId, total_amount });
+  } else {
+    res.redirect("back");
   }
-  const getUserAddresses = await addressModel.findOne({ user: userId });
-  let addresses;
-  if (getUserAddresses != null) {
-    addresses = getUserAddresses.address;
-  }
-  res.render("user/checkout", { products, addresses, cartId });
 };
 
 // CONFIRM CHECKOUT
@@ -396,8 +411,12 @@ const wishlist = async (req, res) => {
       .findOne({ userId })
       .populate("productId");
     let items;
+    let wishlist_total_amount = 0;
     if (wishlist != null) {
       items = wishlist.productId;
+      for (let i = 0; i < items.length; i++) {
+        wishlist_total_amount = wishlist_total_amount + items[i].price;
+      }
     } else {
       items = [];
     }
@@ -411,6 +430,7 @@ const wishlist = async (req, res) => {
       login: true,
       items,
       cartItems,
+      wishlist_total_amount,
     });
   } else {
     res.render("user/wishlist", { login: false, cart });
@@ -523,6 +543,9 @@ const edit_address_page = async (req, res) => {
     addIndex,
   });
 };
+const add_address_page = async (req, res) => {
+  res.render("user/add_address");
+};
 
 /////////////////////////////////// ADD DATA ///////////////////////////////////
 // ADD ADDRESS
@@ -543,7 +566,7 @@ const add_address = async (req, res) => {
     });
     await new_address.save();
   }
-  res.redirect("/user/address");
+  res.redirect("back");
 };
 
 /////////////////////////////////// EDIT DATA ///////////////////////////////////
@@ -573,13 +596,14 @@ const edit_user = async (req, res) => {
 const edit_address = async (req, res) => {
   const userId = req.session.userId;
   var addId = req.params.id;
-  const { country, name, phone_no, pincode, type } = req.body;
+  const { country, name, phone_no, pincode, type, city } = req.body;
   await addressModel.updateMany(
     { user: userId, "address._id": addId },
     {
       $set: {
         "address.$.country": country,
         "address.$.name": name,
+        "address.$.city": city,
         "address.$.phone_no": phone_no,
         "address.$.pincode": pincode,
         "address.$.type": type,
@@ -761,4 +785,5 @@ module.exports = {
   order_success,
   verifyPayment,
   my_orders,
+  add_address_page,
 };

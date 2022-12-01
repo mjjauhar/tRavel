@@ -32,6 +32,7 @@ const {
   order_success,
   verifyPayment,
   my_orders,
+  add_address_page,
 } = require("../controllers/user.controllers");
 
 app.route("/").get(landing_page);
@@ -66,7 +67,7 @@ app.route("/user/account").get(proceedIfLoggedIn, account);
 app.route("/user/account/:id").post(proceedIfLoggedIn, edit_user);
 
 app.route("/user/address").get(proceedIfLoggedIn, address);
-app.route("/user/add/address/:id").post(proceedIfLoggedIn, add_address);
+app.route("/user/add/address").get(proceedIfLoggedIn, add_address_page).post(proceedIfLoggedIn, add_address);
 app.route("/user/delete/address/:id").post(proceedIfLoggedIn, delete_address);
 app
   .route("/user/edit/address/:id")
