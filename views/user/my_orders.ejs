@@ -42,7 +42,7 @@
         </form>
       </div>
       <div class="col-9">
-        <div class="container-fluid mt-3">
+        <div class="container-fluid mt-3" id="myOrders">
           <% if(orders.length === 0){ %>
           <div class="text-center">
             <img src="/public/images/icons/empty-cart.webp" alt="webp" />
@@ -57,7 +57,7 @@
                   src="<%= product.productId.imgUrl[1] %> "
                   class="img-fluid rounded-start"
                   alt="product_img"
-                  style="width: 13rem;"
+                  style="width: 13rem"
                 />
               </div>
               <div class="col-md-8">
@@ -67,16 +67,26 @@
                     <%= product.productId.category.name %>
                     <small>Qty: <%= product.quantity %></small>
                   </p>
-                  <p class="card-text">
-                    <small class="text-muted"
-                      ><span class="fw-bold">Order placed on: </span> <%=
-                      moment(order.created_date).format('llll') %> </small
-                    ><br />
-                    <small>
-                      <span class="fw-bold">Expected Delivery Date:</span> <%=
-                      moment(order.expected_delivery_date).format('llll') %>
-                    </small>
-                  </p>
+                  <div class="d-flex justify-content-between">
+                    <p class="card-text pb-3">
+                      <small class="text-muted"
+                        ><span class="fw-bold">Order placed on: </span> <%=
+                        moment(order.created_date).format('llll') %> </small
+                      ><br />
+                      <small>
+                        <span class="fw-bold">Expected Delivery Date:</span> <%=
+                        moment(order.expected_delivery_date).format('llll') %>
+                      </small>
+                    </p>
+                    <% if(product.status != 'Canceled'){ %>
+                    <button
+                      class="btn btn-sm text-danger"
+                      onclick="user_cancel_order('<%= product._id %>','<%= order._id %>')"
+                    >
+                      Cancel Order
+                    </button>
+                    <% } %>
+                  </div>
                   <small></small>
                   <% if(product.status === 'Order Confirmed' ){ %>
                   <div class="progress">

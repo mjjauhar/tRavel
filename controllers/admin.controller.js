@@ -270,7 +270,7 @@ module.exports = {
     });
     const all_addresses = find_address.address;
     const all_products = find_order.products;
-    console.log(all_products[0].status);
+    console.log(all_products.status);
     let address_index;
     let product_index;
     all_addresses.forEach(function (address, index1) {

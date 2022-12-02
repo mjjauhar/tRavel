@@ -32,6 +32,14 @@ var cartSchema = new Schema({
       },
     },
   ],
+  grandTotal: {
+    type: Number,
+    default:0,
+  },
+  discount: {
+    couponId: Schema.Types.ObjectId,
+    percentage: { type: Number, default: 0 },
+  },
   cartTotal: {
     type: Number,
     default: 0,

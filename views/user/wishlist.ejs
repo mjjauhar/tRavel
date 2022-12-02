@@ -16,8 +16,8 @@
           </li>
           <li>
             <p>
-              You need <b>Rs.<%= wishlist_total_amount %></b> to buy all your wishlist
-              items.
+              You need <b>Rs.<%= wishlist_total_amount %></b> to buy all your
+              wishlist items.
             </p>
           </li>
         </ul>
@@ -58,8 +58,12 @@
               product?.productId.toString() === item?._id.toString() ) %> <%
               if(inCart) { %>
               <a href="/cart"
-                ><button class="btn w-100 btn-secondary">Go to cart</button></a
+                ><button class="btn w-100 btn-success">Go to cart</button></a
               >
+              <% } else if(item.stock <= 0) { %>
+              <button class="btn w-100 btn-secondary disabled">
+                Out of Stock
+              </button>
               <% } else { %>
               <button
                 class="btn w-100 btn-warning"

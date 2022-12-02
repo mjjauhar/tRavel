@@ -59,6 +59,12 @@
       <a href="/cart"
         ><button class="btn w-75 ms-5 btn-secondary">Go to cart</button></a
       >
+      <% } else if(product.stock === 0) { %>
+      <button
+        class="btn w-75 ms-5 btn-secondary disabled"
+      >
+        Out of Stock
+      </button>
       <% } else { %>
       <button
         class="btn w-75 ms-5 btn-warning"

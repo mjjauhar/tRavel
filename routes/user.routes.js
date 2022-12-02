@@ -33,6 +33,8 @@ const {
   verifyPayment,
   my_orders,
   add_address_page,
+  cancel_order,
+  apply_coupon,
 } = require("../controllers/user.controllers");
 
 app.route("/").get(landing_page);
@@ -50,12 +52,16 @@ app
   .post(proceedIfLoggedIn, remove_from_cart);
 
 app.route("/my_orders").get(proceedIfLoggedIn, my_orders);
+app
+  .route("/user_cancel_order/:itemId/:orderId")
+  .post(proceedIfLoggedIn, cancel_order);
+app.route("/apply_coupon").post(proceedIfLoggedIn, apply_coupon);
 
 app.route("/checkout").get(proceedIfLoggedIn, checkout_page);
 app.route("/checkout/confirm").post(proceedIfLoggedIn, confirm_checkout);
 app.route("/verify_payment").post(proceedIfLoggedIn, verifyPayment);
 app
-  .route("/order_success/:pay_method/:address_id")
+  .route("/order_success/:pay_method/:address_id/:couponId")
   .get(proceedIfLoggedIn, order_success);
 
 app.route("/wishlist").get(proceedIfLoggedIn, wishlist);
@@ -67,7 +73,10 @@ app.route("/user/account").get(proceedIfLoggedIn, account);
 app.route("/user/account/:id").post(proceedIfLoggedIn, edit_user);
 
 app.route("/user/address").get(proceedIfLoggedIn, address);
-app.route("/user/add/address").get(proceedIfLoggedIn, add_address_page).post(proceedIfLoggedIn, add_address);
+app
+  .route("/user/add/address")
+  .get(proceedIfLoggedIn, add_address_page)
+  .post(proceedIfLoggedIn, add_address);
 app.route("/user/delete/address/:id").post(proceedIfLoggedIn, delete_address);
 app
   .route("/user/edit/address/:id")

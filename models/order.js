@@ -1,7 +1,6 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
-
 const orderSchema = new Schema({
   userId: {
     type: Schema.Types.ObjectId,
@@ -47,6 +46,10 @@ const orderSchema = new Schema({
   expected_delivery_date: Date,
   delivered_date: Date,
   canceled_date: Date,
+  discount: {
+    couponId: Schema.Types.ObjectId,
+    percentage: { type: Number, default: 0 },
+  },
   payment_method: {
     type: String,
     default: "none",

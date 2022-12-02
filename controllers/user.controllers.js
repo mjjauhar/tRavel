@@ -5,6 +5,7 @@ const cartModel = require("../models/cart");
 const addressModel = require("../models/address");
 const orderModel = require("../models/order");
 const bannerModel = require("../models/banner");
+const couponModel = require("../models/coupon");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const moment = require("moment");
@@ -41,10 +42,13 @@ const landing_page = async (req, res) => {
     .findOne({ userId: userId })
     .populate("productId");
   let wishlistItems;
+  let no_of_items_in_wishlist;
   if (wishlist != null) {
     wishlistItems = wishlist?.productId;
+    no_of_items_in_wishlist = wishlistItems.length;
   } else {
     wishlistItems = [];
+    no_of_items_in_wishlist = 0;
   }
   console.log(banners);
   if (req.session.isAuth) {
@@ -53,6 +57,7 @@ const landing_page = async (req, res) => {
       products,
       banners,
       wishlistItems,
+      no_of_items_in_wishlist,
     });
   } else {
     res.render("user/landing_page", {
@@ -60,6 +65,7 @@ const landing_page = async (req, res) => {
       products,
       banners,
       wishlistItems,
+      no_of_items_in_wishlist,
     });
   }
 };
@@ -129,6 +135,24 @@ const my_orders = async (req, res) => {
   });
 };
 
+// CANCEL ORDER //
+const cancel_order = async (req, res) => {
+  const itemId = req.params.itemId;
+  const orderId = req.params.orderId;
+  let canceled_date = new Date();
+  await orderModel.updateOne(
+    { _id: orderId, "products._id": itemId },
+    {
+      $set: {
+        canceled_date,
+        delivered_date: "",
+        "products.$.status": "Canceled",
+      },
+    }
+  );
+  res.redirect("/my_orders");
+};
+
 // RENDER CART
 const cart = async (req, res) => {
   const userId = req.session.userId;
@@ -136,15 +160,27 @@ const cart = async (req, res) => {
     .findOne({ userId })
     .populate("products.productId");
   if (cart) {
-    let itemsInCart = cart.products;
-    let cart_total = cart.cartTotal;
-    let cartId = cart._id;
+    let itemsInCart;
+    let cart_total;
+    let cartId;
+    let coupon_applied = false;
+    if (cart != null) {
+      itemsInCart = cart.products;
+      cartId = cart._id;
+      cart_total = cart.grandTotal;
+      coupon_applied = true;
+      if (cart_total === 0) {
+        coupon_applied = false;
+        cart_total = cart.cartTotal;
+      }
+    }
     // console.log(cartId);
     res.render("user/cart", {
       login: true,
       itemsInCart,
       cart_total,
       cartId,
+      coupon_applied,
     });
   } else {
     res.render("user/cart", {
@@ -152,6 +188,7 @@ const cart = async (req, res) => {
       itemsInCart: [],
       cart_total: 0,
       cartId: {},
+      coupon_applied: false,
     });
   }
 };
@@ -237,16 +274,22 @@ const remove_from_cart = async (req, res) => {
   const product_price = product.price;
   const totalPrice = cart_total - product_price * productQty;
   const final_total = Math.abs(totalPrice);
-  await cartModel.updateOne({ userId }, { $set: { cartTotal: final_total } });
+  await cartModel.updateOne(
+    { userId },
+    { $set: { cartTotal: final_total, grandTotal: 0 } }
+  );
   await cartModel.updateOne({ userId }, { $pull: { products: { productId } } });
   res.redirect("back");
 };
 
 // CHECKOUT PAGE
 const checkout_page = async (req, res) => {
-  const cart = await cartModel.find();
-  console.log(cart);
-  if (cart.length != 0) {
+  const userId = req.session.userId;
+  const cart = await cartModel.findOne({ userId });
+  const coupons = await couponModel.find();
+  console.log(Array.isArray(coupons));
+  const prodsInCart = cart.products;
+  if (prodsInCart.length != 0) {
     const userId = req.session.userId;
     const cart = await cartModel
       .findOne({ userId })
@@ -257,17 +300,53 @@ const checkout_page = async (req, res) => {
     if (cart != null) {
       products = cart.products;
       cartId = cart._id;
-      total_amount = cart.cartTotal;
+      total_amount = cart.grandTotal;
+      if (total_amount === 0) {
+        total_amount = cart.cartTotal;
+      }
     }
     const getUserAddresses = await addressModel.findOne({ user: userId });
     let addresses;
     if (getUserAddresses != null) {
       addresses = getUserAddresses.address;
     }
-    res.render("user/checkout", { products, addresses, cartId, total_amount });
+    res.render("user/checkout", {
+      products,
+      addresses,
+      cartId,
+      total_amount,
+      coupons,
+      userId,
+    });
   } else {
     res.redirect("back");
   }
+};
+
+// APPLY COUPON //
+const apply_coupon = async (req, res) => {
+  const userId = req.session.userId;
+  const couponId = req.body.couponId;
+  if (couponId != "Check coupons") {
+    const cart = await cartModel.findOne({ userId });
+    const cart_total = cart.cartTotal;
+    const coupon = await couponModel.findOne({ _id: couponId });
+    const discount = coupon.discount;
+    const grandTotal = (discount / 100) * cart_total;
+    await cartModel.updateOne(
+      { userId },
+      {
+        $set: {
+          grandTotal,
+          "discount.couponId": couponId,
+          "discount.percentage": discount,
+        },
+      },
+      { upsert: true }
+    );
+    console.log(grandTotal);
+  }
+  res.redirect("/checkout");
 };
 
 // CONFIRM CHECKOUT
@@ -276,10 +355,15 @@ const confirm_checkout = async (req, res) => {
   const userId = req.session.userId;
   const cart = await cartModel.findOne({ userId });
   let cartId;
-  let orderTotal;
+  let total_amount;
   if (cart != null) {
     cartId = cart._id;
-    orderTotal = cart.cartTotal;
+    let grandTotal = cart.grandTotal;
+    if (grandTotal === 0) {
+      total_amount = cart.cartTotal;
+    } else {
+      total_amount = cart.grandTotal;
+    }
   }
 
   if (payment_method === "cash_on_delivery") {
@@ -292,7 +376,7 @@ const confirm_checkout = async (req, res) => {
 
     instance.orders.create(
       {
-        amount: orderTotal * 100,
+        amount: total_amount * 100,
         currency: "INR",
         receipt: "" + cartId,
       },
@@ -335,6 +419,7 @@ const order_success = async (req, res) => {
   res.render("user/order_success");
   const userId = req.session.userId;
   const addressId = req.params.address_id;
+  const couponId = req.params.couponId;
   const payment_method = req.params.pay_method;
   let payment_status;
   if (payment_method === "cash_on_delivery") {
@@ -349,10 +434,24 @@ const order_success = async (req, res) => {
   let cartId;
   let total_amount;
   let products;
+  let discount;
   if (cart != null) {
     cartId = cart._id;
-    total_amount = cart.cartTotal;
+    grandTotal = cart.grandTotal;
+    if (grandTotal === 0) {
+      total_amount = cart.cartTotal;
+      discount = {};
+    } else {
+      total_amount = cart.grandTotal;
+    }
     products = cart.products;
+    discount = cart.discount;
+  }
+  if (couponId != "Check coupons") {
+    await couponModel.updateOne(
+      { _id: couponId },
+      { $push: { users: userId } }
+    );
   }
   const order_exists = await orderModel.findOne({
     userId,
@@ -365,6 +464,7 @@ const order_success = async (req, res) => {
       total_amount,
       addressId,
       products,
+      discount,
       created_date,
       payment_method,
       payment_status,
@@ -398,8 +498,7 @@ const order_success = async (req, res) => {
       }
     }
   }
-
-  await cartModel.findOneAndDelete();
+  await cartModel.deleteOne();
 };
 
 // RENDER WISHLIST
@@ -734,16 +833,18 @@ const login = async (req, res) => {
   if (!user) {
     req.session.emailError = true;
     return res.redirect("/user/login");
+  } else {
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      req.session.passwordError = true;
+      return res.redirect("/user/login");
+    } else {
+      req.session.user = user.username;
+      req.session.userId = user._id;
+      req.session.isAuth = true;
+      res.redirect("/");
+    }
   }
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) {
-    req.session.passwordError = true;
-    return res.redirect("/user/login");
-  }
-  req.session.user = user.username;
-  req.session.userId = user._id;
-  req.session.isAuth = true;
-  res.redirect("/");
 };
 //LOGOUT
 const logout = (req, res) => {
@@ -786,4 +887,6 @@ module.exports = {
   verifyPayment,
   my_orders,
   add_address_page,
+  cancel_order,
+  apply_coupon,
 };

@@ -45,6 +45,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/", userRouter);
 app.use("/admin", adminRouter);
+
 app.use("*",(req,res)=>{
   res.render('404/404');
 })

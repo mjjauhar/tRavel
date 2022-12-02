@@ -44,7 +44,9 @@ function removeFromCart(productId, productQty) {
     url: "/remove/cart/" + productId + "/" + productQty,
     method: "post",
     beforeSend: function () {
-      return confirm("Press OK to remove the item from cart");
+      return confirm(
+        "Press OK to remove the item from cart. Note: if you applied any coupon, it will be removed."
+      );
     },
     success: (response) => {
       if (response) {
@@ -107,6 +109,7 @@ function placeOrder() {
     ? "cash_on_delivery"
     : "razerpay";
   let addressId = document.getElementById("address").value;
+  let couponId = document.getElementById("coupon").value;
   $.ajax({
     url: "/checkout/confirm",
     method: "post",
@@ -120,7 +123,7 @@ function placeOrder() {
       if (response.codSuccess) {
         console.log("response.status => " + response.codSuccess);
         window.location.href =
-          "/order_success/" + payment_method + "/" + addressId;
+          "/order_success/" + payment_method + "/" + addressId + "/" + couponId;
       } else {
         razorpayPayment(response);
       }
@@ -159,6 +162,7 @@ function razorpayPayment(order) {
       ? "cash_on_delivery"
       : "razerpay";
     let addressId = document.getElementById("address").value;
+    let couponId = document.getElementById("coupon").value;
     $.ajax({
       url: "/verify_payment",
       data: {
@@ -168,7 +172,13 @@ function razorpayPayment(order) {
       method: "post",
       success: (response) => {
         if (response.status) {
-          location.href = "/order_success/" + payment_method + "/" + addressId;
+          window.location.href =
+            "/order_success/" +
+            payment_method +
+            "/" +
+            addressId +
+            "/" +
+            couponId;
         } else {
           alert("payment failed");
         }
@@ -177,6 +187,52 @@ function razorpayPayment(order) {
   }
   var rzp1 = new Razorpay(options);
   rzp1.open();
+}
+
+function user_cancel_order(itemId, orderId) {
+  $.ajax({
+    url: "/user_cancel_order/" + itemId + "/" + orderId,
+    method: "post",
+    beforeSend: function () {
+      return confirm("Press OK to Cancel the order");
+    },
+    success: (response) => {
+      if (response) {
+        $("#myOrders").load(location.href + " #myOrders>*");
+      } else {
+        alert("something went wrong");
+        console.log("not changed");
+      }
+    },
+  });
+}
+
+function apply_coupon() {
+  let couponId = document.getElementById("coupon").value;
+  $.ajax({
+    url: "/apply_coupon",
+    method: "post",
+    data: {
+      couponId,
+    },
+    beforeSend: function () {
+      if (couponId != "Check coupons") {
+        return confirm("Press OK to apply the coupon");
+      } else {
+        return confirm("No coupon selected!!");
+      }
+    },
+    success: (response) => {
+      if (response) {
+        $("#checkoutCouponApplied").load(
+          location.href + " #checkoutCouponApplied>*"
+        );
+      } else {
+        alert("something went wrong");
+        console.log("not changed");
+      }
+    },
+  });
 }
 
 // Admin side

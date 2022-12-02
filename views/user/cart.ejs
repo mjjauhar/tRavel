@@ -27,6 +27,7 @@
               </p>
               <p class="card-text">
                 <big class="text-muted">Rs. <%= item?.subTotal %></big>
+                <small class="text-muted ps-5 ms-5">Current Stock: <%= item?.productId.stock %></small>
               </p>
             </div>
           </div>
@@ -102,10 +103,19 @@
             <h5>Price:</h5>
             <h5>Rs. <%= cart_total %></h5>
           </div>
-          <div class="mb-3 d-flex justify-content-between">
+          <div class="d-flex justify-content-between">
             <h5>Discount:</h5>
             <h5>0</h5>
           </div>
+          <% if(coupon_applied){%>
+          <h5>
+            Coupon Applied
+            <i
+              class="bi bi-check2-circle text-success"
+              style="font-size: 30px"
+            ></i>
+          </h5>
+          <% } %>
           <div>
             <h5>
               Free Delivery
@@ -122,6 +132,15 @@
             <h5>Total Amount</h5>
             <h5>Rs. <%= cart_total %></h5>
           </div>
+          <% if(itemsInCart.length === 0 ){ %>
+          <div>
+            <a href="/checkout">
+              <button class="btn w-100 btn-warning" type="button" disabled>
+                Proceed to checkout
+              </button>
+            </a>
+          </div>
+          <% } else { %>
           <div>
             <a href="/checkout">
               <button class="btn w-100 btn-warning" type="button">
@@ -129,6 +148,7 @@
               </button>
             </a>
           </div>
+          <% } %>
         </div>
       </div>
     </div>

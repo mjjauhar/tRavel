@@ -30,8 +30,7 @@
               id="floatingInput"
               placeholder="name@example.com"
               name="email"
-              required
-              pattern="^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$"
+             
             />
             <label for="floatingInput" class="form-label">Email address</label>
             <div class="invalid-feedback">Email is required</div>
@@ -51,7 +50,6 @@
               placeholder="Password"
               name="password"
               minlength="3"
-              required
             />
             <label for="floatingPassword" class="form-label">Password</label>
             <% if(passwordErr){ %>
