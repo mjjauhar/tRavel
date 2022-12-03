@@ -89,6 +89,41 @@ include('../partials/admin_navbar.ejs') %>
           </button>
         </div>
       </div>
+      <div>
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <div class="card shadow">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-3 text-center">
+                      <h6 class="fw-bold">Total Orders</h6>
+                      <h1><%= total_orders %></h1>
+                    </div>
+                    <div class="col-3 text-center">
+                      <h6 class="fw-bold">Delivered</h6>
+                      <h1><%= delivered.length %></h1>
+                    </div>
+                    <div class="col-3 text-center">
+                      <h6 class="fw-bold">On delivery</h6>
+                      <h1><%= on_delivery.length %></h1>
+                    </div>
+                    <div class="col-3 text-center">
+                      <h6 class="fw-bold">Canceled</h6>
+                      <h1><%= canceled.length %></h1>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-4 pt-5">
+              <div class="card shadow">
+                <div class="card-body"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 </div>

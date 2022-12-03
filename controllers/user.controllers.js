@@ -42,13 +42,10 @@ const landing_page = async (req, res) => {
     .findOne({ userId: userId })
     .populate("productId");
   let wishlistItems;
-  let no_of_items_in_wishlist;
   if (wishlist != null) {
     wishlistItems = wishlist?.productId;
-    no_of_items_in_wishlist = wishlistItems.length;
   } else {
     wishlistItems = [];
-    no_of_items_in_wishlist = 0;
   }
   console.log(banners);
   if (req.session.isAuth) {
@@ -57,7 +54,6 @@ const landing_page = async (req, res) => {
       products,
       banners,
       wishlistItems,
-      no_of_items_in_wishlist,
     });
   } else {
     res.render("user/landing_page", {
@@ -65,7 +61,6 @@ const landing_page = async (req, res) => {
       products,
       banners,
       wishlistItems,
-      no_of_items_in_wishlist,
     });
   }
 };

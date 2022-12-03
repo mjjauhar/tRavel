@@ -28,8 +28,71 @@ module.exports = {
 
   /////////////////////////////////// RENDERS ///////////////////////////////////
   // RENDER DASHBOARD //
-  dashboard: (req, res) => {
-    res.render("admin/dashboard");
+  dashboard: async (req, res) => {
+    const orders = await orderModel.find();
+    
+    const delivered_orders = await orderModel.aggregate([
+      {
+        $unwind: "$products",
+      },
+      {
+        $match: { "products.status": "Delivered" },
+      },
+      {
+        $group: {
+          _id: null,
+          result: { $push: "$products._id" },
+        },
+      },
+    ]);
+    const delivered = delivered_orders[0].result;
+
+    const canceled_orders = await orderModel.aggregate([
+      {
+        $unwind: "$products",
+      },
+      {
+        $match: { "products.status": "Canceled" },
+      },
+      {
+        $group: {
+          _id: null,
+          result: { $push: "$products._id" },
+        },
+      },
+    ]);
+    const canceled = canceled_orders[0].result;
+
+    const on_delivery_orders = await orderModel.aggregate([
+      {
+        $unwind: "$products",
+      },
+      {
+        $match: {
+          $or: [
+            { "products.status": "Shipped" },
+            { "products.status": "Out For Delivery" },
+            { "products.status": "Order Confirmed" },
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          result: { $push: "$products._id" },
+        },
+      },
+    ]);
+    const on_delivery = on_delivery_orders[0].result;
+
+    let total_orders = 0;
+    for (let order of orders) {
+      let prods = order.products;
+      total_orders += prods.length;
+    }
+
+    console.log(total_orders);
+    res.render("admin/dashboard", { delivered, on_delivery, total_orders, canceled });
   },
   // LOGIN PAGE //
   admin_login_page: (req, res) => {
@@ -260,17 +323,17 @@ module.exports = {
   },
 
   order_info: async (req, res) => {
-    const prodId = req.params.id;
+    const orderId = req.params.Oid;
+    const prodId = req.params.Pid;
     const find_order = await orderModel
-      .findOne({ "products.$._id": prodId })
+      .findOne({ _id: orderId })
       .populate("userId products.productId");
     const address_id = find_order.addressId;
     const find_address = await addressModel.findOne({
-      "address.$._id": address_id,
+      "address._id": address_id,
     });
     const all_addresses = find_address.address;
     const all_products = find_order.products;
-    console.log(all_products.status);
     let address_index;
     let product_index;
     all_addresses.forEach(function (address, index1) {
@@ -283,17 +346,15 @@ module.exports = {
     all_products.forEach(function (prod, index2) {
       let this_prod_id = "" + prod.productId._id;
       let delivey_prod_id = "" + prodId;
-      console.log(this_prod_id);
       if (this_prod_id === delivey_prod_id) {
         product_index = index2;
       }
     });
-    console.log(all_products[product_index]);
-
-    const ID = find_order._id;
+    const ID = orderId;
+    const DISCOUNT = find_order.discount.percentage;
     const CUSTOMER_NAME = `${find_order.userId.first_name} ${find_order.userId.last_name}`;
     const DELIVERY_ADDRESS = all_addresses[address_index];
-    const DELIVERY_STATUS = all_products[product_index]?.status;
+    const DELIVERY_STATUS = all_products[product_index]?.subTotal;
     const PRICE = all_products[product_index]?.subTotal;
     const PRODUCT_NAME = all_products[product_index]?.productId.name;
     const QUANTITY = all_products[product_index]?.quantity;
@@ -313,6 +374,7 @@ module.exports = {
       TOTAL_AMOUNT,
       PRODUCT_NAME,
       ORDER_DATE,
+      DISCOUNT,
     });
   },
 

@@ -9,7 +9,13 @@
     <% banners.forEach(function(banner){ %> <% let imgs = banner.imgUrl %> <%
     imgs.forEach(function(img){ %>
     <div class="carousel-item active">
-      <img src="<%= img %> " class="d-block w-100" alt="..." />
+      <img src="<%= img %> " class="w-100 d-none d-md-block" alt="..." />
+      <img
+        src="<%= img %> "
+        class="d-md-block d-md-none"
+        style="width: 500px; height: 337px; object-fit: cover"
+        alt="..."
+      />
       <div class="carousel-caption d-none d-md-block mb-5 pb-5">
         <p class="h4 text-end fw-bold" style="color: #0e5255">
           <%= banner.description %>
@@ -21,26 +27,40 @@
           <%= banner.extra_details %>
         </h5>
       </div>
+      <div class="carousel-caption d-lg-none ms-5 ps-5 d-block mb-1 pb-1">
+        <h6 class="text-end fw-bold" style="color: #0e5255;">
+          <%= banner.description %>
+        </h6>
+        <h5 class="text-end fw-bold" style="color: #795243;">
+          <%= banner.heading %>
+        </h5>
+        <h5 class="mb-4 pb-1 text-end" style="color: #0e5255;">
+          <%= banner.extra_details %>
+        </h5>
+      </div>
     </div>
     <% })}) %>
   </div>
 </div>
 <section class="container-fluid">
-  <div class="row row-cols-2 row-cols-md-5 g-4 pt-3" id="productCard">
+  <div class="row row-cols-2 row-cols-md-5 g-4 pt-1" id="productCard">
     <% products.forEach(function(product){ %>
     <div class="col">
       <div class="card h-100 myCard">
         <img
           src="<%= product.imgUrl[1] %>"
-          class="card-img-top"
+          class="card-img-top d-none d-md-block"
           alt="product image"
-          style="width: 15rem; height: 15rem"
+        />
+        <img
+          src="<%= product.imgUrl[1] %>"
+          class="card-img-top d-lg-none d-block"
+          alt="product image"
         />
         <div class="card-img-overlay">
           <h5 class="card-title">
-            <% if ( login ) { %> <% let inWishlist = wishlistItems.some(item =>
-            item._id.toString() === product._id.toString() ) %> <%
-            if(inWishlist) { %>
+            <% let inWishlist = wishlistItems.some(item => item._id.toString()
+            === product._id.toString() ) %> <% if(inWishlist) { %>
             <button
               class="btn-lg btn"
               id="removeItem"
@@ -56,7 +76,7 @@
             >
               <i class="bi bi-heart text-danger"></i>
             </button>
-            <% }} %>
+            <% } %>
           </h5>
         </div>
         <div class="card-body" style="transform: rotate(0)">
@@ -68,7 +88,7 @@
             </h5></a
           >
           <p class="card-text text-truncate"><%= product.description %></p>
-          <p class="card-text text-dark fw-bold ps-2 half_trapezoid">
+          <p class="card-text text-dark fw-bold ps-1 half_trapezoid">
             Rs. <%= product.price %>
           </p>
         </div>

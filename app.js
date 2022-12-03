@@ -43,8 +43,8 @@ app.use("/public", express.static("public"));
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/", userRouter);
 app.use("/admin", adminRouter);
+app.use("/", userRouter);
 
 app.use("*",(req,res)=>{
   res.render('404/404');

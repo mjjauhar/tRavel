@@ -79,7 +79,9 @@ include('../partials/admin_navbar.ejs') %>
               <th scope="col" class="text-center">Quantity</th>
               <th scope="col" class="text-center">Buyer</th>
               <th scope="col" class="text-center">Status</th>
-              <th scope="col" class="text-center" style="width: 10%;">More Info</th>
+              <th scope="col" class="text-center" style="width: 10%">
+                More Info
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -203,7 +205,11 @@ include('../partials/admin_navbar.ejs') %>
                 </div>
               </td>
               <td>
-                <a class="btn btn-sm btn-light w-100 shadow" href="/admin/orders/<%= prod.productId._id %> ">More Info</a>
+                <a
+                  class="btn btn-sm btn-light w-100 shadow"
+                  href="/admin/orders/<%= order._id %>/<%= prod._id %>"
+                  >More Info</a
+                >
               </td>
             </tr>
             <% })}) %>

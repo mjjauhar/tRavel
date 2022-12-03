@@ -76,7 +76,7 @@ app
 
 // ORDERS
 app.route("/orders").get(ProceedIfLoggedIn, orders);
-app.route("/orders/:id").get(ProceedIfLoggedIn, order_info);
+app.route("/orders/:Oid/:Pid").get(ProceedIfLoggedIn, order_info);
 app
   .route("/orders/update_status/:itemId/:orderId/:status")
   .post(ProceedIfLoggedIn, edit_order_status);

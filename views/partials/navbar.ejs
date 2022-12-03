@@ -18,7 +18,7 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <form class="w-50 input-group">
+      <form class="w-md-50 input-group mt-md-0 mt-3">
         <input
           class="form-control"
           type="search"
@@ -30,37 +30,45 @@
         </button>
       </form>
       <ul class="navbar-nav mb-lg-0 ms-auto">
-        <li class="nav-item text-center me-5">
+        <li class="nav-item text-center me-md-5">
           <a class="nav-link myNavLink" href="/"
             ><i id="i" class="bi bi-house"></i><br />Home</a
           >
         </li>
         <!-- <li class="nav-item text-center me-5"> -->
         <% if(login) { %>
-        <li class="nav-item text-center me-5">
+        <li class="nav-item text-center me-md-5">
           <a class="nav-link myNavLink" href="/user/account"
             ><i id="i" class="bi bi-person"></i><br />Account</a
           >
         </li>
         <% } else { %>
-        <li class="nav-item text-center me-5">
+        <li class="nav-item text-center me-md-5">
           <a class="nav-link myNavLink text-warning fw-bold" href="/user/login"
             ><i id="i" class="bi bi-person"></i><br />Login</a
           >
         </li>
         <% } %>
         <!-- </li> -->
-        <li class="nav-item text-center me-5">
+        <li class="nav-item text-center me-md-5">
           <a class="nav-link myNavLink" aria-current="page" href="/wishlist"
-            ><i class="bi bi-heart"></i><br />Wishlist</a
+            ><i class="bi bi-heart"></i><br /><span class="position-relative"
+              >Wishlist
+              <!-- <span
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+              >
+                ?
+                <span class="visually-hidden">unread messages</span> -->
+              </span>
+            </span></a
           >
         </li>
-        <li class="nav-item text-center me-5">
+        <li class="nav-item text-center me-md-5">
           <a class="nav-link myNavLink" aria-current="page" href="/my_orders"
             ><i class="bi bi-bag"></i><br />Orders</a
           >
         </li>
-        <li class="nav-item text-center me-5">
+        <li class="nav-item text-center me-md-5">
           <a class="nav-link myNavLink" aria-current="page" href="/cart"
             ><i class="bi bi-cart2"></i><br />Cart</a
           >
