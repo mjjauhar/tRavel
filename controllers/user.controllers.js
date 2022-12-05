@@ -120,7 +120,7 @@ const my_orders = async (req, res) => {
     .populate("products.productId")
     .populate("products.productId.category")
     .sort(sort);
-  console.log(orders);
+  // console.log(orders);
   res.render("user/my_orders", {
     orders,
     moment,
@@ -135,6 +135,16 @@ const cancel_order = async (req, res) => {
   const itemId = req.params.itemId;
   const orderId = req.params.orderId;
   let canceled_date = new Date();
+  const pro = await orderModel.findOne({ _id: orderId });
+  const pro2s = pro.products;
+  let qty;
+  let prodId;
+  pro2s.forEach(function (pro2) {
+    if ("" + pro2._id === "" + itemId) {
+      qty = pro2.quantity;
+      prodId = pro2.productId;
+    }
+  });
   await orderModel.updateOne(
     { _id: orderId, "products._id": itemId },
     {
@@ -144,6 +154,11 @@ const cancel_order = async (req, res) => {
         "products.$.status": "Canceled",
       },
     }
+  );
+  console.log("dsa>>>>>>>>>>>>>>>" + qty);
+  await productModel.findOneAndUpdate(
+    { _id: prodId },
+    { $inc: { stock: qty } }
   );
   res.redirect("/my_orders");
 };
@@ -304,6 +319,11 @@ const checkout_page = async (req, res) => {
     let addresses;
     if (getUserAddresses != null) {
       addresses = getUserAddresses.address;
+      if (addresses.length === 0) {
+        addresses = [];
+      }
+    } else {
+      addresses = [];
     }
     res.render("user/checkout", {
       products,
@@ -344,6 +364,11 @@ const apply_coupon = async (req, res) => {
   res.redirect("/checkout");
 };
 
+// SEARCH
+const search = async (req, res) => {
+  const products = await productModel.find();
+  res.render("user/search", { login: true, products });
+};
 // CONFIRM CHECKOUT
 const confirm_checkout = async (req, res) => {
   const payment_method = req.body["payment_method"];
@@ -884,4 +909,5 @@ module.exports = {
   add_address_page,
   cancel_order,
   apply_coupon,
+  search,
 };

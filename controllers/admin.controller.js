@@ -30,7 +30,17 @@ module.exports = {
   // RENDER DASHBOARD //
   dashboard: async (req, res) => {
     const orders = await orderModel.find();
-    
+    const out_of_products = await productModel.find({
+      is_deleted: false,
+      stock: 0,
+    });
+    const users = await userModel.find({ type: "user", is_blocked: false });
+    const products = await productModel.find({
+      is_deleted: false,
+      stock: { $gt: 0 },
+    });
+    console.log("users" + users.length);
+
     const delivered_orders = await orderModel.aggregate([
       {
         $unwind: "$products",
@@ -91,8 +101,15 @@ module.exports = {
       total_orders += prods.length;
     }
 
-    console.log(total_orders);
-    res.render("admin/dashboard", { delivered, on_delivery, total_orders, canceled });
+    res.render("admin/dashboard", {
+      delivered,
+      on_delivery,
+      total_orders,
+      canceled,
+      users,
+      products,
+      out_of_products,
+    });
   },
   // LOGIN PAGE //
   admin_login_page: (req, res) => {
@@ -313,6 +330,21 @@ module.exports = {
       await orderModel.updateOne(
         { _id: orderId, "products._id": itemId },
         { $set: { canceled_date, delivered_date: "" } }
+      );
+      const pro = await orderModel.findOne({ _id: orderId });
+      const pro2s = pro.products;
+      let qty;
+      let prodId;
+      pro2s.forEach(function (pro2) {
+        if ("" + pro2._id === "" + itemId) {
+          qty = pro2.quantity;
+          prodId = pro2.productId
+        }
+      });
+      console.log("qty"+qty);
+      await productModel.updateOne(
+        { _id: prodId },
+        { $inc: { stock: qty } }
       );
     }
     await orderModel.updateOne(

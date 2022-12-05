@@ -20,17 +20,20 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <form class="w-md-50 input-group mt-md-0 mt-3">
         <input
+          id="searchbar"
+          onkeyup="search_animal()"
+          type="text"
+          name="search"
+          placeholder="Search animals.."
           class="form-control"
-          type="search"
-          placeholder="Search"
           aria-label="Search"
         />
-        <button class="btn btn-light" type="submit">
+        <a href="/search" class="btn btn-light" type="submit">
           <i class="bi bi-search"></i>
-        </button>
+        </a>
       </form>
       <ul class="navbar-nav mb-lg-0 ms-auto">
-        <li class="nav-item text-center me-md-5">
+        <li class="nav-item text-center me-md-5 ms-md-5">
           <a class="nav-link myNavLink" href="/"
             ><i id="i" class="bi bi-house"></i><br />Home</a
           >
@@ -59,9 +62,9 @@
               >
                 ?
                 <span class="visually-hidden">unread messages</span> -->
-              </span>
-            </span></a
-          >
+              <!-- </span> -->
+            </span>
+          </a>
         </li>
         <li class="nav-item text-center me-md-5">
           <a class="nav-link myNavLink" aria-current="page" href="/my_orders"

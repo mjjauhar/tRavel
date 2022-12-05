@@ -58,6 +58,7 @@ include('../partials/order_navbar.ejs') %>
           class="btn btn-outline-secondary"
           name="discount"
           id="coupon"
+          required
           aria-label="Default select example"
         >
           <option selected>Check coupons</option>
@@ -70,12 +71,22 @@ include('../partials/order_navbar.ejs') %>
           </option>
           <% }}) %>
         </select>
+        <% if (addresses.length == 0) { %>
+        <button class="btn btn-outline-success btn-sm ms-5 disabled">
+          Apply Coupon</button
+        ><small class="ms-4 text-danger">Please create an address first</small>
+        <% } else if(total_amount > 3000 || total_amount < 500) { %>
+        <button class="btn btn-outline-success btn-sm ms-5 disabled">
+          Apply Coupon</button
+        ><small class="ms-4 text-danger">Coupons not available for this order</small>
+        <% } else { %>
         <button
           class="btn btn-outline-success btn-sm ms-5"
           onclick="apply_coupon()"
         >
           Apply Coupon
         </button>
+        <% } %>
       </div>
       <div class="card border-success mb-3" id="checkoutCouponApplied">
         <div class="card-header fw-bold">Order Summary</div>
@@ -94,9 +105,15 @@ include('../partials/order_navbar.ejs') %>
         </div>
         <p class="text-end pe-5 fw-bold">Total: Rs. <%= total_amount %></p>
       </div>
+
+      <% if (addresses.length == 0) { %>
+      <button class="btn btn-warning disabled">Confirm Order</button
+      ><small class="ms-4 text-danger">Please create an address first</small>
+      <% } else { %>
       <button class="btn btn-warning" onclick="placeOrder()">
         Confirm Order
       </button>
+      <% } %>
     </div>
     <div class="col-4">
       <h3>Products</h3>

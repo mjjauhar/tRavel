@@ -1,0 +1,56 @@
+<%- include('../partials/header.ejs') %> <%- include('../partials/navbar.ejs')
+%>
+<section class="container-fluid">
+  <div class="row row-cols-2 row-cols-md-5 g-4 pt-1" id="productCard">
+    <% products.forEach(function(product){ %>
+    <div class="col">
+      <div class="card h-100 myCard animals">
+        <img
+          src="<%= product.imgUrl[1] %>"
+          class="card-img-top d-none d-md-block"
+          alt="product image"
+        />
+        <img
+          src="<%= product.imgUrl[1] %>"
+          class="card-img-top d-lg-none d-block"
+          alt="product image"
+        />
+        <div class="card-img-overlay">
+          <h5 class="card-title"></h5>
+        </div>
+        <div class="card-body" style="transform: rotate(0)">
+          <a
+            href="/p/<%= product._id %>/<%= product.name %>"
+            class="text-decoration-none stretched-link text-dark"
+            ><h5 class="card-title fw-bold text-truncate">
+              <%= product.name %>
+            </h5></a
+          >
+          <p class="card-text text-truncate"><%= product.description %></p>
+          <p class="card-text text-dark fw-bold ps-1 half_trapezoid">
+            Rs. <%= product.price %>
+          </p>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+</section>
+
+<script>
+  function search_animal() {
+    let input = document.getElementById("searchbar").value;
+    input = input.toLowerCase();
+    let x = document.getElementsByClassName("animals");
+    for (i = 0; i < x.length; i++) {
+      if (!x[i].innerHTML.toLowerCase().includes(input)) {
+        x[i].style.display = "none";
+    } else {
+        x[i].style.display = "list-item";
+      }
+    }
+  }
+</script>
+
+<%- include('../partials/footer_infos.ejs') %> <%-
+include('../partials/footer.ejs') %>

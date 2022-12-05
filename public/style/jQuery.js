@@ -5,6 +5,11 @@ $(document).ready(function () {
     }
   });
 });
+$(document).ready(function () {
+  if (window.location.href == "http://localhost:8000/search") {
+    $(this).addClass("active fw-bold");
+  }
+});
 
 function addToWishlist(productId) {
   $.ajax({

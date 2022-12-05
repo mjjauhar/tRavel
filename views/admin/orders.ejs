@@ -141,7 +141,7 @@ include('../partials/admin_navbar.ejs') %>
                   </button>
                   <% } else if(prod.status==='Delivered'){ %>
                   <button
-                    class="btn btn-outline-success dropdown-toggle btn-sm"
+                    class="btn btn-success disabled btn-sm"
                     style="width: 165px"
                     type="button"
                     data-bs-toggle="dropdown"
@@ -151,7 +151,7 @@ include('../partials/admin_navbar.ejs') %>
                   </button>
                   <% } else if(prod.status==='Canceled'){ %>
                   <button
-                    class="btn btn-outline-danger dropdown-toggle btn-sm"
+                    class="btn btn-danger disabled btn-sm"
                     style="width: 165px"
                     type="button"
                     data-bs-toggle="dropdown"

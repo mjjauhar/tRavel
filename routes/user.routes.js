@@ -35,6 +35,7 @@ const {
   add_address_page,
   cancel_order,
   apply_coupon,
+  search,
 } = require("../controllers/user.controllers");
 
 app.route("/").get(landing_page);
@@ -64,6 +65,7 @@ app
   .route("/order_success/:pay_method/:address_id/:couponId")
   .get(proceedIfLoggedIn, order_success);
 
+app.route("/search").get(search);
 app.route("/wishlist").get(proceedIfLoggedIn, wishlist);
 app.route("/add/wishlist/:id").post(proceedIfLoggedIn, add_to_wishlist);
 app.route("/remove/wishlist/:id").post(proceedIfLoggedIn, remove_from_wishlist);

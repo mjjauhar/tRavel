@@ -80,16 +80,9 @@ include('../partials/admin_navbar.ejs') %>
               Export
             </button>
           </div>
-          <button
-            type="button"
-            class="btn btn-sm btn-outline-secondary dropdown-toggle"
-          >
-            <span data-feather="calendar" class="align-text-bottom"></span>
-            This week
-          </button>
         </div>
       </div>
-      <div>
+      <div id="dashboard">
         <div class="container-fluid">
           <div class="row">
             <div class="col-12">
@@ -97,19 +90,19 @@ include('../partials/admin_navbar.ejs') %>
                 <div class="card-body">
                   <div class="row">
                     <div class="col-3 text-center">
-                      <h6 class="fw-bold">Total Orders</h6>
+                      <h6 class="fw-bold"><i class="bi bi-stack text-success"></i> Total Orders</h6>
                       <h1><%= total_orders %></h1>
                     </div>
                     <div class="col-3 text-center">
-                      <h6 class="fw-bold">Delivered</h6>
+                      <h6 class="fw-bold"><i class="bi bi-house-fill text-success"></i> Delivered</h6>
                       <h1><%= delivered.length %></h1>
                     </div>
                     <div class="col-3 text-center">
-                      <h6 class="fw-bold">On delivery</h6>
+                      <h6 class="fw-bold"><i class="bi bi-truck-flatbed text-success"></i> On delivery</h6>
                       <h1><%= on_delivery.length %></h1>
                     </div>
                     <div class="col-3 text-center">
-                      <h6 class="fw-bold">Canceled</h6>
+                      <h6 class="fw-bold"><i class="bi bi-exclamation-square-fill text-danger"></i> Canceled</h6>
                       <h1><%= canceled.length %></h1>
                     </div>
                   </div>
@@ -118,7 +111,50 @@ include('../partials/admin_navbar.ejs') %>
             </div>
             <div class="col-4 pt-5">
               <div class="card shadow">
-                <div class="card-body"></div>
+                <div class="card-body text-center">
+                  <h4>Users</h4>
+                  <h1><%= users.length %></h1>
+                </div>
+              </div>
+            </div>
+            <div class="col-4 pt-5">
+              <div class="card shadow">
+                <div class="card-body text-center">
+                  <h4>Products</h4>
+                  <h1><%= products.length %></h1>
+                </div>
+              </div>
+            </div>
+            <div class="col-4 pt-5">
+              <div class="card shadow">
+                <div class="card-body text-center">
+                  <h4>Out of stock</h4>
+                  <h1><%= out_of_products.length %></h1>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 pt-5">
+              <div class="card shadow">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-12 text-center">
+                      <h4 class="fw-bold">
+                        <i class="bi bi-exclamation-square text-danger"></i> Out
+                        Of Stock Products
+                      </h4>
+                    </div>
+                    <% if(out_of_products.length != 0){ %> <%
+                    out_of_products.forEach(function(product, index){ %>
+                    <div class="col-12 text-center">
+                      <h5><%= index+1 %>- <%= product.name %></h5>
+                    </div>
+                    <% })}else{ %>
+                    <div class="col-12 text-center">
+                      <h5>All Products are in Stock</h5>
+                    </div>
+                    <% } %>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
