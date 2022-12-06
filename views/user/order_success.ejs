@@ -1,10 +1,35 @@
-<%- include('../partials/header.ejs') %> <%-
-include('../partials/order_navbar.ejs') %>
-
-<div class="text-center px-5 mx-5">
+<%- include('../partials/header.ejs') %> <%- include('../partials/navbar.ejs')
+%>
+<div class="text-center px-5 mx-5 d-none d-md-block">
   <h3>ORDER PLACED</h3>
   <img src="/public/images/order_confirm.gif" alt="gif" style="width: 41rem" />
   <a href="/" class="btn btn-lg btn-success w-50">Ok</a>
+</div>
+<div class="text-center d-md-none d-block">
+  <img
+    src="/public/images/order_confirm.gif"
+    alt="gif"
+    style="width: 40px; height: 120px; object-fit: cover"
+  />
+  <span>ORDER PLACED</span>
+  <a href="/" class="btn btn-sm btn-lg btn-success">Ok</a>
+</div>
+<div class="m-3">
+  <h6>Order info</h6>
+  <hr>
+  <% let prods = current_order.products %> <% prods.forEach(function(prod,
+  index){ %>
+  <p><%= index+1 %>: <%= prod.productId.name %></p>
+  <p>Price: <%= prod.subTotal %></p>
+  <p>Qty: <%= prod.quantity %></p>
+  <br>
+  <% }) %>
+  <p>Order Total: <%= current_order.total_amount %></p>
+  <p>Payment Status: <%= current_order.payment_status %></p>
+  <p>
+    Expected delivery date: <%=
+    moment(current_order.expected_delivery_date).format('llll') %>
+  </p>
 </div>
 
 <%- include('../partials/footer.ejs') %>

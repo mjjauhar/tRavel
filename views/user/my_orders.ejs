@@ -3,7 +3,7 @@
   <%- include('../partials/navbar.ejs') %>
   <div class="container-fluid mt-4">
     <div class="row">
-      <div class="col-3">
+      <div class="col-md-3 d-none d-md-block">
         <div class="rectangle ps-4 pt-2 text-dark">
           <h5><b><%= full_name %></b></h5>
           <p><%= phone_no %></p>
@@ -41,7 +41,7 @@
           </button>
         </form>
       </div>
-      <div class="col-9">
+      <div class="col-md-9">
         <div class="container-fluid mt-3" id="myOrders">
           <% if(orders.length === 0){ %>
           <div class="text-center">
@@ -51,13 +51,20 @@
           <% } else { orders.forEach(function(order, index){ %> <% for(product
           of order.products ) { %>
           <div class="card mb-3">
-            <div class="row g-0">
-              <div class="col-md-4">
+            <div class="row">
+              <div class="col-md-4 d-md-block d-none">
                 <img
                   src="<%= product.productId.imgUrl[1] %> "
                   class="img-fluid rounded-start"
                   alt="product_img"
                   style="width: 13rem"
+                />
+              </div>
+              <div class="col-md-4 d-md-none d-block">
+                <img
+                  src="<%= product.productId.imgUrl[1] %> "
+                  class="img-fluid rounded-start"
+                  alt="product_img"
                 />
               </div>
               <div class="col-md-8">

@@ -2,16 +2,27 @@
 %>
 <div class="container-fluid">
   <div class="row" id="productCard">
-    <div class="col-8 pt-2">
+    <div class="col-md-8 col-12 pt-2">
       <% if(itemsInCart.length === 0){ %>
-      <div class="text-center">
+      <div class="text-center d-none d-md-block">
         <img src="/public/images/icons/empty-cart.webp" alt="webp" />
+        <h4>Your cart is empty</h4>
+      </div>
+      <div class="text-center d-md-none d-block">
+        <img src="/public/images/icons/empty-cart.webp" alt="webp" class="w-100" />
         <h4>Your cart is empty</h4>
       </div>
       <% } %> <% if( login ) { %> <% itemsInCart.forEach(function(item){ %>
       <div class="card mb-3">
         <div class="row g-0">
-          <div class="col-2">
+          <div class="col-md-2 d-block d-md-none">
+            <img
+              src="<%= item?.productId.imgUrl[1] %>"
+              class="img-fluid rounded-start img-thumbnail"
+              alt="product_img"
+            />
+          </div>
+          <div class="col-md-2 d-none d-md-block">
             <img
               src="<%= item?.productId.imgUrl[1] %>"
               class="img-fluid rounded-start img-thumbnail"
@@ -19,7 +30,7 @@
               style="width: 12rem; height: 9rem"
             />
           </div>
-          <div class="col-5">
+          <div class="col-md-5 col-12">
             <div class="card-body">
               <h5 class="card-title"><%= item?.productId.name %></h5>
               <p class="card-text text-truncate">
@@ -27,18 +38,19 @@
               </p>
               <p class="card-text">
                 <big class="text-muted">Rs. <%= item?.subTotal %></big>
-                <small class="text-muted ps-5 ms-5">Current Stock: <%= item?.productId.stock %></small>
+                <small class="text-muted ps-5 ms-5"
+                  >Current Stock: <%= item?.productId.stock %></small
+                >
               </p>
             </div>
           </div>
-          <div class="col-2 pt-5">
+          <div class="col-md-2 col-6 pt-md-5 pt-1">
             Qty <% if( item?.quantity === 1 ){ %>
             <button
               disabled
               class="btn btn-sm btn-danger"
               type="button"
               id="decrement_button"
-              onclick="decreasePriceByQty('<%= item?.productId._id %>');"
             >
               -
             </button>
@@ -65,7 +77,6 @@
               class="btn btn-sm btn-danger"
               type="button"
               id="increment_button"
-              onclick="increasePriceByQty('<%= item?.productId._id %>');"
             >
               +
             </button>
@@ -80,14 +91,14 @@
             </button>
             <% } %>
           </div>
-          <div class="col-3">
-            <div class="card-body pt-5 mt-1">
+          <div class="col-md-3 col-6">
+            <div class="card-body pt-md-5 mt-md-1">
               <button
-                class="w-100 btn btn-danger"
+                class="w-50 btn btn-outline-danger"
                 id="removeItem"
                 onclick="removeFromCart('<%= item.productId._id %>','<%= item?.quantity %>')"
               >
-                Remove item
+              <i class="bi bi-trash3"></i>
               </button>
             </div>
           </div>
@@ -95,7 +106,7 @@
       </div>
       <% })} %>
     </div>
-    <div class="col-4 pt-2">
+    <div class="col-md-4 col-12 pt-2">
       <div class="card">
         <div class="card-body">
           <h4 class="card-title fw-bold">Order Summery</h4>

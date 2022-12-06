@@ -19,16 +19,14 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <form class="w-md-50 input-group mt-md-0 mt-3">
-        <input
-          id="searchbar"
-          onkeyup="search_animal()"
+        <a
           type="text"
           name="search"
           placeholder="Search animals.."
           class="form-control"
           aria-label="Search"
-        />
-        <a href="/search" class="btn btn-light" type="submit">
+          href="/search"
+        >
           <i class="bi bi-search"></i>
         </a>
       </form>

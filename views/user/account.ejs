@@ -3,7 +3,7 @@
   <%- include('../partials/navbar.ejs') %>
   <div class="container-fluid mt-4">
     <div class="row">
-      <div class="col-3">
+      <div class="col-md-3 d-none">
         <div class="rectangle ps-4 pt-2 text-dark">
           <% if(full_name) { %>
           <h5><b><%= full_name %></b></h5>
@@ -45,7 +45,8 @@
           </button>
         </form>
       </div>
-      <div class="col-9">
+      <div class="col-md-9">
+        <a href="/user/address" class="btn btn-sm btn-outline-secondary w-100 mb-3">See addresses</a>
         <form method="post" action="/user/account/<%= userId %>">
           <div class="container-fluid">
             <div class="row">
@@ -153,7 +154,6 @@
               >
                 Save changes
               </button>
-
               <!-- Modal -->
               <div
                 class="modal fade"

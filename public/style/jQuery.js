@@ -5,11 +5,6 @@ $(document).ready(function () {
     }
   });
 });
-$(document).ready(function () {
-  if (window.location.href == "http://localhost:8000/search") {
-    $(this).addClass("active fw-bold");
-  }
-});
 
 function addToWishlist(productId) {
   $.ajax({
@@ -18,6 +13,22 @@ function addToWishlist(productId) {
     success: (response) => {
       if (response) {
         $("#productCard").load(location.href + " #productCard>*", "");
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener("mouseenter", Swal.stopTimer);
+            toast.addEventListener("mouseleave", Swal.resumeTimer);
+          },
+        });
+
+        Toast.fire({
+          icon: "success",
+          title: "Product added to wishlist!",
+        });
       } else {
         alert("something went wrong");
         console.log("not added");
@@ -30,38 +41,80 @@ function removeFromWishlist(productId) {
   $.ajax({
     url: "/remove/wishlist/" + productId,
     method: "post",
-    beforeSend: function () {
-      return confirm("Press OK to remove item from wishlist");
-    },
     success: (response) => {
       if (response) {
         $("#productCard").load(location.href + " #productCard>*", "");
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener("mouseenter", Swal.stopTimer);
+            toast.addEventListener("mouseleave", Swal.resumeTimer);
+          },
+        });
+        Toast.fire({
+          icon: "warning",
+          title: "Product removed from wishlist!",
+        });
       } else {
-        alert("something went wrong");
-        console.log("not removed");
+        Swal.fire("Changes are not saved", "", "info");
       }
     },
   });
 }
 
 function removeFromCart(productId, productQty) {
-  $.ajax({
-    url: "/remove/cart/" + productId + "/" + productQty,
-    method: "post",
-    beforeSend: function () {
-      return confirm(
-        "Press OK to remove the item from cart. Note: if you applied any coupon, it will be removed."
-      );
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: "btn btn-success",
+      cancelButton: "btn btn-danger",
     },
-    success: (response) => {
-      if (response) {
-        $("#productCard").load(location.href + " #productCard>*", "");
-      } else {
-        alert("something went wrong");
-        console.log("not removed");
-      }
-    },
+    buttonsStyling: false,
   });
+
+  swalWithBootstrapButtons
+    .fire({
+      title: "Are you sure?",
+      text: "Your product will be removed from the cart!!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel!",
+      reverseButtons: true,
+    })
+    .then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: "/remove/cart/" + productId + "/" + productQty,
+          method: "post",
+          success: (response) => {
+            if (response) {
+              $("#productCard").load(location.href + " #productCard>*", "");
+              swalWithBootstrapButtons.fire(
+                "removed!",
+                "Product removed from cart.",
+                "success"
+              );
+            } else {
+              swalWithBootstrapButtons.fire(
+                "Error",
+                "Something went wrong",
+                "error"
+              );
+            }
+          },
+        });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        swalWithBootstrapButtons.fire(
+          "Cancelled",
+          "Your product is still safe in the cart :)",
+          "error"
+        );
+      }
+    });
 }
 
 function addToCart(productId) {
@@ -71,9 +124,23 @@ function addToCart(productId) {
     success: (response) => {
       if (response) {
         $("#productCard").load(location.href + " #productCard>*", "");
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener("mouseenter", Swal.stopTimer);
+            toast.addEventListener("mouseleave", Swal.resumeTimer);
+          },
+        });
+        Toast.fire({
+          icon: "success",
+          title: "Product added to cart!",
+        });
       } else {
-        alert("something went wrong");
-        console.log("not added");
+        swalWithBootstrapButtons.fire("Error", "Something went wrong", "error");
       }
     },
   });
@@ -87,8 +154,7 @@ function increasePriceByQty(productId) {
       if (response) {
         $("#productCard").load(location.href + " #productCard>*", "");
       } else {
-        alert("something went wrong");
-        console.log("not added");
+        swalWithBootstrapButtons.fire("Error", "Something went wrong", "error");
       }
     },
   });
@@ -102,8 +168,7 @@ function decreasePriceByQty(productId) {
       if (response) {
         $("#productCard").load(location.href + " #productCard>*", "");
       } else {
-        alert("something went wrong");
-        console.log("not added");
+        swalWithBootstrapButtons.fire("Error", "Something went wrong", "error");
       }
     },
   });
@@ -115,25 +180,55 @@ function placeOrder() {
     : "razerpay";
   let addressId = document.getElementById("address").value;
   let couponId = document.getElementById("coupon").value;
-  $.ajax({
-    url: "/checkout/confirm",
-    method: "post",
-    data: {
-      payment_method,
+
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: "btn btn-success",
+      cancelButton: "btn btn-danger",
     },
-    beforeSend: function () {
-      return confirm("Press OK to continue with the order");
-    },
-    success: (response) => {
-      if (response.codSuccess) {
-        console.log("response.status => " + response.codSuccess);
-        window.location.href =
-          "/order_success/" + payment_method + "/" + addressId + "/" + couponId;
-      } else {
-        razorpayPayment(response);
-      }
-    },
+    buttonsStyling: false,
   });
+
+  swalWithBootstrapButtons
+    .fire({
+      title: "Continue With Order?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, Continue!",
+      cancelButtonText: "No, cancel!",
+      reverseButtons: true,
+    })
+    .then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: "/checkout/confirm",
+          method: "post",
+          data: {
+            payment_method,
+          },
+          success: (response) => {
+            if (response.codSuccess) {
+              console.log("response.status => " + response.codSuccess);
+              window.location.href =
+                "/order_success/" +
+                payment_method +
+                "/" +
+                addressId +
+                "/" +
+                couponId;
+            } else {
+              razorpayPayment(response);
+            }
+          },
+        });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        swalWithBootstrapButtons.fire(
+          "Cancelled",
+          "You canceled the order",
+          "error"
+        );
+      }
+    });
 }
 
 function razorpayPayment(order) {
@@ -185,7 +280,11 @@ function razorpayPayment(order) {
             "/" +
             couponId;
         } else {
-          alert("payment failed");
+          swalWithBootstrapButtons.fire(
+            "Error",
+            "Something went wrong",
+            "error"
+          );
         }
       },
     });
@@ -195,49 +294,114 @@ function razorpayPayment(order) {
 }
 
 function user_cancel_order(itemId, orderId) {
-  $.ajax({
-    url: "/user_cancel_order/" + itemId + "/" + orderId,
-    method: "post",
-    beforeSend: function () {
-      return confirm("Press OK to Cancel the order");
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: "btn btn-success",
+      cancelButton: "btn btn-danger",
     },
-    success: (response) => {
-      if (response) {
-        $("#myOrders").load(location.href + " #myOrders>*");
-      } else {
-        alert("something went wrong");
-        console.log("not changed");
-      }
-    },
+    buttonsStyling: false,
   });
+
+  swalWithBootstrapButtons
+    .fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, cancel this order!",
+      cancelButtonText: "No, don't cancel!",
+      reverseButtons: true,
+    })
+    .then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: "/user_cancel_order/" + itemId + "/" + orderId,
+          method: "post",
+          success: (response) => {
+            if (response) {
+              $("#myOrders").load(location.href + " #myOrders>*");
+              swalWithBootstrapButtons.fire(
+                "Canceled!",
+                "Your order has been canceled.",
+                "success"
+              );
+            } else {
+              swalWithBootstrapButtons.fire(
+                "Error",
+                "Something went wrong",
+                "error"
+              );
+            }
+          },
+        });
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        swalWithBootstrapButtons.fire(
+          "Didn't canceled",
+          "Your order is safe :)",
+          "error"
+        );
+      }
+    });
 }
 
 function apply_coupon() {
   let couponId = document.getElementById("coupon").value;
-  $.ajax({
-    url: "/apply_coupon",
-    method: "post",
-    data: {
-      couponId,
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: "btn btn-success",
+      cancelButton: "btn btn-danger",
     },
-    beforeSend: function () {
-      if (couponId != "Check coupons") {
-        return confirm("Press OK to apply the coupon");
-      } else {
-        return confirm("No coupon selected!!");
-      }
-    },
-    success: (response) => {
-      if (response) {
-        $("#checkoutCouponApplied").load(
-          location.href + " #checkoutCouponApplied>*"
-        );
-      } else {
-        alert("something went wrong");
-        console.log("not changed");
-      }
-    },
+    buttonsStyling: false,
   });
+
+  swalWithBootstrapButtons
+    .fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel!",
+      reverseButtons: true,
+    })
+    .then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: "/apply_coupon",
+          method: "post",
+          data: {
+            couponId,
+          },
+          success: (response) => {
+            if (response) {
+              $("#checkoutCouponApplied").load(
+                location.href + " #checkoutCouponApplied>*"
+              );
+              swalWithBootstrapButtons.fire(
+                "Success!",
+                "Coupon applied successfully",
+                "success"
+              );
+            } else {
+              swalWithBootstrapButtons.fire(
+                "Error",
+                "Something went wrong",
+                "error"
+              );
+            }
+          },
+        });
+      } else if (
+        /* Read more about handling dismissals below */
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        swalWithBootstrapButtons.fire(
+          "Cancelled",
+          "Apply coupon failed",
+          "error"
+        );
+      }
+    });
 }
 
 // Admin side
@@ -253,8 +417,7 @@ function edit_order_status(itemId, orderId, status) {
       if (response) {
         $("#productsTable").load(location.href + " #productsTable>*");
       } else {
-        alert("something went wrong");
-        console.log("not changed");
+        swalWithBootstrapButtons.fire("Error", "Something went wrong", "error");
       }
     },
   });
@@ -271,8 +434,7 @@ function delete_banner(bannerId) {
       if (response) {
         $("#bannerTable").load(location.href + " #bannerTable>*", "");
       } else {
-        alert("something went wrong");
-        console.log("not deleted");
+        swalWithBootstrapButtons.fire("Error", "Something went wrong", "error");
       }
     },
   });
@@ -289,8 +451,7 @@ function restore_banner(bannerId) {
       if (response) {
         $("#bannerTable").load(location.href + " #bannerTable>*", "");
       } else {
-        alert("something went wrong");
-        console.log("not resored");
+        swalWithBootstrapButtons.fire("Error", "Something went wrong", "error");
       }
     },
   });
@@ -307,8 +468,7 @@ function delete_product(prodId) {
       if (response) {
         $("#adminProd").load(location.href + " #adminProd>*", "");
       } else {
-        alert("something went wrong");
-        console.log("not deleted");
+        swalWithBootstrapButtons.fire("Error", "Something went wrong", "error");
       }
     },
   });
@@ -325,8 +485,7 @@ function restore_product(prodId) {
       if (response) {
         $("#adminProd").load(location.href + " #adminProd>*", "");
       } else {
-        alert("something went wrong");
-        console.log("not restored");
+        swalWithBootstrapButtons.fire("Error", "Something went wrong", "error");
       }
     },
   });
@@ -343,8 +502,7 @@ function disable_coupon(couponId) {
       if (response) {
         $("#adminCoupon").load(location.href + " #adminCoupon>*", "");
       } else {
-        alert("something went wrong");
-        console.log("not disabled");
+        swalWithBootstrapButtons.fire("Error", "Something went wrong", "error");
       }
     },
   });
@@ -361,8 +519,7 @@ function enable_coupon(couponId) {
       if (response) {
         $("#adminCoupon").load(location.href + " #adminCoupon>*", "");
       } else {
-        alert("something went wrong");
-        console.log("not enabled");
+        swalWithBootstrapButtons.fire("Error", "Something went wrong", "error");
       }
     },
   });

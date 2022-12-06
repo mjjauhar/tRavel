@@ -332,6 +332,7 @@ const checkout_page = async (req, res) => {
       total_amount,
       coupons,
       userId,
+      login: true,
     });
   } else {
     res.redirect("back");
@@ -436,7 +437,6 @@ const verifyPayment = async (req, res) => {
 
 // ORDER SUCCESS PAGE
 const order_success = async (req, res) => {
-  res.render("user/order_success");
   const userId = req.session.userId;
   const addressId = req.params.address_id;
   const couponId = req.params.couponId;
@@ -492,7 +492,7 @@ const order_success = async (req, res) => {
     });
     await new_order.save();
   }
-  const current_order = await orderModel.findOne({ userId, cartId });
+  const current_order = await orderModel.findOne({ userId, cartId }).populate("products.productId");
   const allproducts = await productModel.find();
   console.log(allproducts);
   const ordered_products = current_order.products;
@@ -518,6 +518,7 @@ const order_success = async (req, res) => {
       }
     }
   }
+  res.render("user/order_success", { login: true, current_order, moment });
   await cartModel.deleteOne();
 };
 

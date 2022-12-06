@@ -2,7 +2,7 @@
 %>
 <div class="container-fluid">
   <div class="row" id="productCard">
-    <div class="col-3 pt-2">
+    <div class="col-md-3 d-none d-md-block pt-2">
       <div
         class="d-flex flex-column flex-shrink-0 p-3 bg-light rounded"
         style="width: 280px"
@@ -23,21 +23,32 @@
         </ul>
       </div>
     </div>
-    <div class="col-9 pt-2">
+    <div class="col-md-9 col-12 pt-2">
       <% if(items.length === 0){ %>
-      <div class="text-center">
+      <div class="text-center d-none d-md-block">
         <img src="/public/images/icons/search-not-found.webp" alt="webp" />
+        <h4>No items in wishlist</h4>
+      </div>
+      <div class="text-center d-block d-md-none">
+        <img src="/public/images/icons/search-not-found.webp" alt="webp" class="w-100" />
         <h4>No items in wishlist</h4>
       </div>
       <% } %> <% if( login ) { %> <% items.forEach(function(item){ %>
       <div class="card mb-3">
         <div class="row g-0">
-          <div class="col-md-2">
+          <div class="col-md-2 d-none d-md-block">
             <img
               src="<%= item.imgUrl[1] %>"
               class="img-fluid rounded-start img-thumbnail"
               alt="product_img"
               style="width: 12rem; height: 9rem"
+            />
+          </div>
+          <div class="col-md-2 d-block d-md-none">
+            <img
+              src="<%= item.imgUrl[1] %>"
+              class="img-fluid rounded-start img-thumbnail"
+              alt="product_img"
             />
           </div>
           <div class="col-md-7">
@@ -53,30 +64,30 @@
             </div>
           </div>
           <div class="col-md-3">
-            <div class="card-body">
+            <div class="card-body d-flex">
               <% let inCart = cartItems.some(product =>
               product?.productId.toString() === item?._id.toString() ) %> <%
               if(inCart) { %>
-              <a href="/cart"
+              <a href="/cart" class="w-100"
                 ><button class="btn w-100 btn-success">Go to cart</button></a
               >
               <% } else if(item.stock <= 0) { %>
-              <button class="btn w-100 btn-secondary disabled">
+              <button class="btn w-75 btn-secondary disabled">
                 Out of Stock
               </button>
               <% } else { %>
               <button
-                class="btn w-100 btn-warning"
+                class="btn w-75 btn-warning"
                 onclick="addToCart('<%= item?._id %>')"
               >
                 Add to cart
               </button>
               <% } %>
               <button
-                class="mt-4 w-100 btn btn-danger"
+                class="mt-md-4 w-25 btn btn-outline-danger"
                 onclick="removeFromWishlist('<%= item?._id %>')"
               >
-                Remove item
+              <i class="bi bi-trash3"></i>
               </button>
             </div>
           </div>

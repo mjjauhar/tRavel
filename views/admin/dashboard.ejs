@@ -89,19 +89,19 @@ include('../partials/admin_navbar.ejs') %>
               <div class="card shadow">
                 <div class="card-body">
                   <div class="row">
-                    <div class="col-3 text-center">
+                    <div class="col-md-3 text-center">
                       <h6 class="fw-bold"><i class="bi bi-stack text-success"></i> Total Orders</h6>
                       <h1><%= total_orders %></h1>
                     </div>
-                    <div class="col-3 text-center">
+                    <div class="col-md-3 text-center">
                       <h6 class="fw-bold"><i class="bi bi-house-fill text-success"></i> Delivered</h6>
                       <h1><%= delivered.length %></h1>
                     </div>
-                    <div class="col-3 text-center">
+                    <div class="col-md-3 text-center">
                       <h6 class="fw-bold"><i class="bi bi-truck-flatbed text-success"></i> On delivery</h6>
                       <h1><%= on_delivery.length %></h1>
                     </div>
-                    <div class="col-3 text-center">
+                    <div class="col-md-3 text-center">
                       <h6 class="fw-bold"><i class="bi bi-exclamation-square-fill text-danger"></i> Canceled</h6>
                       <h1><%= canceled.length %></h1>
                     </div>
@@ -109,7 +109,7 @@ include('../partials/admin_navbar.ejs') %>
                 </div>
               </div>
             </div>
-            <div class="col-4 pt-5">
+            <div class="col-md-4 pt-5">
               <div class="card shadow">
                 <div class="card-body text-center">
                   <h4>Users</h4>
@@ -117,7 +117,7 @@ include('../partials/admin_navbar.ejs') %>
                 </div>
               </div>
             </div>
-            <div class="col-4 pt-5">
+            <div class="col-md-4 pt-5">
               <div class="card shadow">
                 <div class="card-body text-center">
                   <h4>Products</h4>
@@ -125,7 +125,7 @@ include('../partials/admin_navbar.ejs') %>
                 </div>
               </div>
             </div>
-            <div class="col-4 pt-5">
+            <div class="col-md-4 pt-5">
               <div class="card shadow">
                 <div class="card-body text-center">
                   <h4>Out of stock</h4>

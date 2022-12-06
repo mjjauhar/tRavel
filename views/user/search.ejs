@@ -1,35 +1,115 @@
-<%- include('../partials/header.ejs') %> <%- include('../partials/navbar.ejs')
-%>
+<%- include('../partials/header.ejs') %>
+<nav class="navbar navbar-expand-lg navbar-dark mx-2 mt-2 rounded myColor">
+  <div class="container-fluid">
+    <a href="/"
+      ><img
+        class="navbar-brand"
+        src="/public/images/logo-no-background.svg"
+        alt="tRavel-logo"
+    /></a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <form class="w-md-50 input-group mt-md-0 mt-3">
+        <input
+          id="searchbar"
+          onkeyup="search_animal()"
+          type="text"
+          name="search"
+          placeholder="Search animals.."
+          class="form-control"
+          aria-label="Search"
+        />
+        <a href="/search" class="btn btn-light" type="submit">
+          <i class="bi bi-search"></i>
+        </a>
+      </form>
+      <ul class="navbar-nav mb-lg-0 ms-auto">
+        <li class="nav-item text-center me-md-5 ms-md-5">
+          <a class="nav-link myNavLink" href="/"
+            ><i id="i" class="bi bi-house"></i><br />Home</a
+          >
+        </li>
+        <!-- <li class="nav-item text-center me-5"> -->
+        <% if(login) { %>
+        <li class="nav-item text-center me-md-5">
+          <a class="nav-link myNavLink" href="/user/account"
+            ><i id="i" class="bi bi-person"></i><br />Account</a
+          >
+        </li>
+        <% } else { %>
+        <li class="nav-item text-center me-md-5">
+          <a class="nav-link myNavLink text-warning fw-bold" href="/user/login"
+            ><i id="i" class="bi bi-person"></i><br />Login</a
+          >
+        </li>
+        <% } %>
+        <!-- </li> -->
+        <li class="nav-item text-center me-md-5">
+          <a class="nav-link myNavLink" aria-current="page" href="/wishlist"
+            ><i class="bi bi-heart"></i><br /><span class="position-relative"
+              >Wishlist
+              <!-- <span
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+              >
+                ?
+                <span class="visually-hidden">unread messages</span> -->
+              <!-- </span> -->
+            </span>
+          </a>
+        </li>
+        <li class="nav-item text-center me-md-5">
+          <a class="nav-link myNavLink" aria-current="page" href="/my_orders"
+            ><i class="bi bi-bag"></i><br />Orders</a
+          >
+        </li>
+        <li class="nav-item text-center me-md-5">
+          <a class="nav-link myNavLink" aria-current="page" href="/cart"
+            ><i class="bi bi-cart2"></i><br />Cart</a
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
 <section class="container-fluid">
   <div class="row row-cols-2 row-cols-md-5 g-4 pt-1" id="productCard">
     <% products.forEach(function(product){ %>
-    <div class="col">
-      <div class="card h-100 myCard animals">
-        <img
-          src="<%= product.imgUrl[1] %>"
-          class="card-img-top d-none d-md-block"
-          alt="product image"
-        />
-        <img
-          src="<%= product.imgUrl[1] %>"
-          class="card-img-top d-lg-none d-block"
-          alt="product image"
-        />
-        <div class="card-img-overlay">
-          <h5 class="card-title"></h5>
-        </div>
-        <div class="card-body" style="transform: rotate(0)">
-          <a
-            href="/p/<%= product._id %>/<%= product.name %>"
-            class="text-decoration-none stretched-link text-dark"
-            ><h5 class="card-title fw-bold text-truncate">
-              <%= product.name %>
-            </h5></a
-          >
-          <p class="card-text text-truncate"><%= product.description %></p>
-          <p class="card-text text-dark fw-bold ps-1 half_trapezoid">
-            Rs. <%= product.price %>
-          </p>
+    <div class="col-12 h-25 animals">
+      <div class="card">
+        <div class="row g-0">
+          <div class="col-md-3">
+            <img
+              src="<%= product.imgUrl[1] %>"
+              class="img-fluid rounded-start"
+              alt="..."
+              style="width: 150px"
+            />
+          </div>
+          <div class="col-md-9">
+            <div class="card-body">
+              <a
+                href="/p/<%= product._id %>/<%= product.name %>"
+                class="text-decoration-none stretched-link text-dark"
+                ><h5 class="card-title fw-bold text-truncate">
+                  <%= product.name %>
+                </h5></a
+              >
+              <p class="card-text text-truncate"><%= product.description %></p>
+              <p class="card-text text-dark fw-bold ps-1 half_trapezoid">
+                Rs. <%= product.price %>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -45,7 +125,7 @@
     for (i = 0; i < x.length; i++) {
       if (!x[i].innerHTML.toLowerCase().includes(input)) {
         x[i].style.display = "none";
-    } else {
+      } else {
         x[i].style.display = "list-item";
       }
     }

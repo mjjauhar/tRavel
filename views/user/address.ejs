@@ -3,7 +3,7 @@
   <%- include('../partials/navbar.ejs') %>
   <div class="container-fluid mt-4">
     <div class="row">
-      <div class="col-3">
+      <div class="col-3 d-none d-md-block">
         <div class="rectangle ps-4 pt-2 text-dark">
           <h5><b><%= full_name %></b></h5>
           <p><%= phone_no %></p>
@@ -41,7 +41,7 @@
           </button>
         </form>
       </div>
-      <div class="col-9">
+      <div class="col-12 col-md-9">
         <div class="container-fluid mt-3">
           <div class="row">
             <a href="/user/add/address" class="btn btn-sm btn-outline-success w-100 mb-5">Add New Address</a>
@@ -55,7 +55,7 @@
             </div>
             <% } else { %> <% userAddresses.forEach(function(userAddress,
             index){ %>
-            <div class="col-6">
+            <div class="col-md-6 col-12">
               <h6><%= userAddress.type %> address</h6>
               <ul class="list-group">
                 <li
