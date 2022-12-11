@@ -50,6 +50,6 @@ app.use("*",(req,res)=>{
   res.render('404/404');
 })
 
-app.listen(8000, () =>
-  console.log("Server running on port http://localhost:8000/")
-);
+// app.listen(8000, () =>
+//   console.log("Server running on port http://localhost:8000/")
+// );

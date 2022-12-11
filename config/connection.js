@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const express = require("express");
+const app = express();
 const session = require("express-session");
 const mongoDBSession = require("connect-mongodb-session")(session);
 require("dotenv").config();
@@ -10,7 +12,12 @@ require("dotenv").config();
 const mongoURI = process.env.ATLAS_DB_LINK;
 mongoose
   .connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then((res) => console.log("MongoDB connected"))
+  .then((res) => {
+    console.log("MongoDB connected");
+    app.listen(8000, () =>
+      console.log("Server running on port http://localhost:8000/")
+    );
+  })
   .catch((err) => console.log(err));
 
 const store = new mongoDBSession({
